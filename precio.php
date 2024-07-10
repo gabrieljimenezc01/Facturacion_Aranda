@@ -1,6 +1,6 @@
 <?php
 require 'db.php';
-
+// Manejar eliminación de registros
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
     $sql = "DELETE FROM precio WHERE id = :delete_id";
@@ -13,8 +13,8 @@ if (isset($_GET['delete_id'])) {
         echo "Error al eliminar el registro";
     }
 }
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Manejar actualización de registros
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     foreach ($_POST['id'] as $key => $id) {
         $medida_inicial = $_POST['medida_inicial'][$key];
         $medida_final = $_POST['medida_final'][$key];
@@ -41,6 +41,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+// Manejar inserción de nuevos registros
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
+    $medida_inicial = $_POST['new_medida_inicial'];
+    $medida_final = $_POST['new_medida_final'];
+    $valor_residencial = $_POST['new_valor_residencial'];
+    $valor_comercial = $_POST['new_valor_comercial'];
+    $valor_industrial = $_POST['new_valor_industrial'];
+    $valor_fundador = $_POST['new_valor_fundador'];
+
+    $sql = "INSERT INTO precio (medida_inicial, medida_final, valor_residencial, valor_comercial, valor_industrial, valor_fundador) VALUES (:medida_inicial, :medida_final, :valor_residencial, :valor_comercial, :valor_industrial, :valor_fundador)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':medida_inicial', $medida_inicial, PDO::PARAM_INT);
+    $stmt->bindParam(':medida_final', $medida_final, PDO::PARAM_INT);
+    $stmt->bindParam(':valor_residencial', $valor_residencial, PDO::PARAM_INT);
+    $stmt->bindParam(':valor_comercial', $valor_comercial, PDO::PARAM_INT);
+    $stmt->bindParam(':valor_industrial', $valor_industrial, PDO::PARAM_INT);
+    $stmt->bindParam(':valor_fundador', $valor_fundador, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        $add_msg = "Nuevo registro agregado con éxito";
+    } else {
+        $add_msg = "Error al agregar el registro";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -52,8 +78,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 
-<h2>Actualizar Precios</h2>
+<h2>Manejo de Precios</h2>
 <?php if (isset($update_msg)) { echo "<p>$update_msg</p>"; } ?>
+<?php if (isset($add_msg)) { echo "<p>$add_msg</p>"; } ?>
 
 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
 <table>
@@ -76,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (count($result) > 0) {
         foreach($result as $row) {
             echo "<tr>
-                    <td><input type='hidden' name='id[]' value='" . $row["id"] . "'>" . $row["id"] . "</td>
+                    <td><input type='hidden' name='id[]' value='" . $row["id"] . "'>" . "</td>
                     <td><input type='number' name='medida_inicial[]' value='" . $row["medida_inicial"] . "'></td>
                     <td><input type='number' name='medida_final[]' value='" . $row["medida_final"] . "'></td>
                     <td><input type='number' name='valor_residencial[]' value='" . $row["valor_residencial"] . "'></td>
@@ -84,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <td><input type='number' name='valor_industrial[]' value='" . $row["valor_industrial"] . "'></td>
                     <td><input type='number' name='valor_fundador[]' value='" . $row["valor_fundador"] . "'></td>
                     <td>
-                        <a href='index.php?delete_id=" . $row["id"] . "' class='btn delete-btn' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</a>
+                        <a href='precio.php?delete_id=" . $row["id"] . "' class='btn delete-btn' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</a>
                     </td>
                   </tr>";
         }
@@ -96,7 +123,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ?>
 </table>
 <br>
-<button type="submit" value="Guardar Cambios" class="btn save-btn" >Guardar Cambios </button>
+<button type="submit" name="update" value="Guardar Cambios" class="btn save-btn" >Guardar Cambios </button>
+</form>
+<h2>Agregar Nuevo Registro</h2>
+<form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>" class="add-form">
+    <input type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
+    <input type="number" name="new_medida_final" placeholder="Medida Final" required>
+    <input type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
+    <input type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
+    <input type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
+    <input type="number" name="new_valor_fundador" placeholder="Valor Fundador" required> <Br></Br>
+    <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
 </form>
 </body>
 </html>
