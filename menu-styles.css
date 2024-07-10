@@ -1,0 +1,87 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background-color: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.navbar {
+    background-color: #0074D9;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: #005bb5;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #004494;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-list li {
+    margin-bottom: 1rem;
+}
+
+.menu-list a {
+    color: #0074D9;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.menu-list a:hover {
+    background-color: #f0f4f8;
+}
+
+.menu-list a i {
+    margin-right: 0.5rem;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
