@@ -12,17 +12,17 @@
     <div class="container">
         <div class="form-box1" id="login-box">
             <h2><i class="fa fa-sign-in" aria-hidden="true"></i> Inicio de Sesión</h2><br>
-            <form>
+            <form action="sesion.php" method="post">
                 <div class="input-box">
                     <label for="login-username">Nombre de Usuario</label>
-                    <input type="text" id="login-username" placeholder="Tu Nombre de Usuario"><br>
+                    <input name="user" type="text" id="login-username" placeholder="Tu Nombre de Usuario"><br>
                 </div>
                 <div class="input-box">
                     <label for="login-password">Contraseña</label>
-                    <input type="password" id="login-password" placeholder="********"><br>
+                    <input name="password" type="password" id="login-password" placeholder="********"><br>
                 </div><br>
                 <div class="actions">
-                    <button type="button" onclick="login()">Iniciar Sesión</button>
+                    <button type="submit">Iniciar Sesión</button>
                 </div>
                 <h2><i class="fa fa-users" aria-hidden="true"></i></h2>
                 <div class="switch">
@@ -32,25 +32,29 @@
         </div>
         <div class="form-box2" id="register-box" style="display:none;">
             <h2><i class="fa fa-user-plus" aria-hidden="true"></i> Registro de Usuario</h2>
-            <form>
+            <form action="registro.php" method="post">
+                <div class="input-box">
+                    <label for="register-username">Nombre</label>
+                    <input name="nombre" type="text" id="register-username" placeholder="Tu Nombre">
+                </div>
+                <div class="input-box">
+                    <label for="register-username">Apellido</label>
+                    <input name="apellido" type="text" id="register-username" placeholder="Tu Apellido">
+                </div>
                 <div class="input-box">
                     <label for="register-username">Nombre de Usuario</label>
-                    <input type="text" id="register-username" placeholder="Tu Nombre de Usuario">
+                    <input name="user" type="text" id="register-username" placeholder="Tu Nombre de Usuario">
                 </div>
                 <div class="input-box">
                     <label for="register-password">Contraseña</label>
-                    <input type="password" id="register-password" placeholder="********">
-                </div>
-                <div class="input-box">
-                    <label for="register-confirm-password">Confirmar Contraseña</label>
-                    <input type="password" id="register-confirm-password" placeholder="********">
+                    <input name="password" type="password" id="register-password" placeholder="********">
                 </div>
                 <div class="input-box">
                     <label for="special-password">Contraseña Especial</label>
-                    <input type="password" id="special-password" placeholder="Contraseña Especial">
+                    <input name="special" type="password" id="special-password" placeholder="Contraseña Especial">
                 </div>
                 <div class="actions">
-                    <button type="button" onclick="register()">Registrarse</button>
+                    <button type="submit">Registrarse</button>
                 </div>
                 <div class="switch">
                     <button type="button" onclick="showLogin()">Iniciar Sesión</button>
