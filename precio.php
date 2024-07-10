@@ -3,12 +3,14 @@ require 'db.php';
 
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
-    $sql = "DELETE FROM Inventario WHERE codigo = $delete_id";
+    $sql = "DELETE FROM precio WHERE id = :delete_id";
 
-    if ($conn->query($sql) === TRUE) {
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':delete_id', $delete_id, PDO::PARAM_INT);
+    if ($stmt->execute()) {
         echo "Registro eliminado con éxito";
     } else {
-        echo "Error al eliminar el registro: " . $conn->error;
+        echo "Error al eliminar el registro";
     }
 }
 
@@ -21,104 +23,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $valor_industrial = $_POST['valor_industrial'][$key];
         $valor_fundador = $_POST['valor_fundador'][$key];
 
+        $sql = "UPDATE precio SET medida_inicial = :medida_inicial, medida_final = :medida_final, valor_residencial = :valor_residencial, valor_comercial = :valor_comercial, valor_industrial = :valor_industrial, valor_fundador = :valor_fundador WHERE id = :id";
 
-        $sql = "UPDATE `precio` SET medida_inicial ='$medida_inicial',medida_final='$medida_final',valor_residencial='$valor_residencial',valor_comercial='$valor_comercial',valor_industrial='$valor_industrial',valor_fundador='$valor_fundador' WHERE id=$id";
-        
-        if ($conn->query($sql) === TRUE) {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':medida_inicial', $medida_inicial, PDO::PARAM_INT);
+        $stmt->bindParam(':medida_final', $medida_final, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_residencial', $valor_residencial, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_comercial', $valor_comercial, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_industrial', $valor_industrial, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_fundador', $valor_fundador, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
             $update_msg = "Registros actualizados con éxito";
         } else {
-            $update_msg = "Error al actualizar los registros: " . $conn->error;
+            $update_msg = "Error al actualizar los registros";
         }
     }
 }
 ?>
 
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Precios</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .btn {
-            padding: 10px 20px;
-            text-decoration: none;
-            margin: 5px;
-            border-radius: 5px;
-        }
-        .save-btn {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .delete-btn {
-            background-color: #f44336;
-            color: white;
-        }
-        .pdf-btn {
-            background-color: #2196F3;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="precio-styles.css">
 </head>
 <body>
 
-<h2>Inventario</h2>
+<h2>Actualizar Precios</h2>
 <?php if (isset($update_msg)) { echo "<p>$update_msg</p>"; } ?>
 
 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
 <table>
     <tr>
-        <th>id</th>
-        <th>medida inicial</th>
-        <th>medida final</th>
-        <th>valor residencial</th>
-        <th>valor comercial</th>
-        <th>valor industrial</th>
-        <th>valor fundador</th>
+        <th>ID</th>
+        <th>Medida Inicial</th>
+        <th>Medida Final</th>
+        <th>Valor Residencial</th>
+        <th>Valor Comercial</th>
+        <th>Valor Industrial</th>
+        <th>Valor Fundador</th>
         <th>Acciones</th>
     </tr>
     <?php
     $sql = "SELECT * FROM precio";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
+    if (count($result) > 0) {
+        foreach($result as $row) {
             echo "<tr>
                     <td><input type='hidden' name='id[]' value='" . $row["id"] . "'>" . $row["id"] . "</td>
-                    <td><input type='text' name='medida_inicial[]' value='" . $row["medida_inicial"] . "'></td>
-                    <td><input type='text' name='medida_final[]' value='" . $row["medida_final"] . "'></td>
-                    <td><input type='text' name='valor_residencial[]' value='" . $row["valor_residencial"] . "'></td>
-                    <td><input type='text' name='valor_comercial[]' value='" . $row["valor_comercial"] . "'></td>
-                    <td><input type='text' name='valor_industrial[]' value='" . $row["valor_industrial"] . "'></td>
-                    <td><input type='text' name='valor_fundador[]' value='" . $row["valor_fundador"] . "'></td>
+                    <td><input type='number' name='medida_inicial[]' value='" . $row["medida_inicial"] . "'></td>
+                    <td><input type='number' name='medida_final[]' value='" . $row["medida_final"] . "'></td>
+                    <td><input type='number' name='valor_residencial[]' value='" . $row["valor_residencial"] . "'></td>
+                    <td><input type='number' name='valor_comercial[]' value='" . $row["valor_comercial"] . "'></td>
+                    <td><input type='number' name='valor_industrial[]' value='" . $row["valor_industrial"] . "'></td>
+                    <td><input type='number' name='valor_fundador[]' value='" . $row["valor_fundador"] . "'></td>
                     <td>
-                        <a href='precio.php?delete_id=" . $row["id"] . "' class='btn delete-btn' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</a>
-                        
+                        <a href='index.php?delete_id=" . $row["id"] . "' class='btn delete-btn' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</a>
                     </td>
                   </tr>";
         }
     } else {
-        echo "<tr><td colspan='6'>No hay registros en el inventario</td></tr>";
+        echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
     }
 
-    $conn->close();
+    $conn = null;
     ?>
 </table>
 <br>
-<input type="submit" value="Guardar Cambios" class="btn save-btn">
+<button type="submit" value="Guardar Cambios" class="btn save-btn" >Guardar Cambios </button>
 </form>
 </body>
 </html>
