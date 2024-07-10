@@ -8,9 +8,9 @@ if (isset($_GET['delete_id'])) {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':delete_id', $delete_id, PDO::PARAM_INT);
     if ($stmt->execute()) {
-        echo "Registro eliminado con éxito";
+        $delete_msg  = "Registro eliminado con éxito";
     } else {
-        echo "Error al eliminar el registro";
+        $delete_msg = "Error al eliminar el registro";
     }
 }
 // Manejar actualización de registros
@@ -87,35 +87,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
             <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
         </div>
     </div>
-    <h2>Manejo de Precios</h2>
-    <?php if (isset($update_msg)) {
-        echo "<p>$update_msg</p>";
-    } ?>
-    <?php if (isset($add_msg)) {
-        echo "<p>$add_msg</p>";
-    } ?>
+    <div class="container">
 
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Medida Inicial</th>
-                <th>Medida Final</th>
-                <th>Valor Residencial</th>
-                <th>Valor Comercial</th>
-                <th>Valor Industrial</th>
-                <th>Valor Fundador</th>
-                <th>Acciones</th>
-            </tr>
-            <?php
-            $sql = "SELECT * FROM precio";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (count($result) > 0) {
-                foreach ($result as $row) {
-                    echo "<tr>
+        <h2>Manejo de Precios</h2>
+        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Medida Inicial</th>
+                    <th>Medida Final</th>
+                    <th>Valor Residencial</th>
+                    <th>Valor Comercial</th>
+                    <th>Valor Industrial</th>
+                    <th>Valor Fundador</th>
+                    <th>Acciones</th>
+                </tr>
+                <?php
+                $sql = "SELECT * FROM precio";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if (count($result) > 0) {
+                    foreach ($result as $row) {
+                        echo "<tr>
                     <td><input type='hidden' name='id[]' value='" . $row["id"] . "'>" . "</td>
                     <td><input type='number' name='medida_inicial[]' value='" . $row["medida_inicial"] . "'></td>
                     <td><input type='number' name='medida_final[]' value='" . $row["medida_final"] . "'></td>
@@ -127,27 +123,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
                         <a href='precio.php?delete_id=" . $row["id"] . "' class='btn delete-btn' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</a>
                     </td>
                   </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
                 }
-            } else {
-                echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
-            }
 
-            $conn = null;
-            ?>
-        </table>
-        <br>
-        <button type="submit" name="update" value="Guardar Cambios" class="btn save-btn">Guardar Cambios </button>
-    </form>
-    <h2>Agregar Nuevo Registro</h2>
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
-        <input type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
-        <input type="number" name="new_medida_final" placeholder="Medida Final" required>
-        <input type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
-        <input type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
-        <input type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
-        <input type="number" name="new_valor_fundador" placeholder="Valor Fundador" required> <Br></Br>
-        <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
-    </form>
+                $conn = null;
+                ?>
+            </table>
+            <br>
+            <button type="submit" name="update" value="Guardar Cambios" class="btn save-btn">Guardar Cambios </button>
+        </form>
+        <?php if (isset($update_msg)) {
+            echo "<p>$update_msg</p>";
+        } ?>
+        <?php if (isset($delete_msg)) {
+            echo "<p>$delete_msg</p>";
+        } ?>
+        <h2>Agregar Nuevo Registro</h2>
+        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
+            <input class="inp-form" type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
+            <input class="inp-form" type="number" name="new_medida_final" placeholder="Medida Final" required>
+            <input class="inp-form" type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
+            <input class="inp-form" type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
+            <input class="inp-form" type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
+            <input class="inp-form" type="number" name="new_valor_fundador" placeholder="Valor Fundador" required> <Br></Br>
+            <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
+        </form>
+        <?php if (isset($add_msg)) {
+            echo "<p>$add_msg</p>";
+        } ?>
+    </div>
 </body>
 
 </html>
