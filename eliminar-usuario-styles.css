@@ -126,9 +126,13 @@ td {
     background-color: #f4ecec;  
     border: 1px  solid rgb(115, 115, 115);
 }
-.delete-btn {
-    background-color: #ff1100;
-    color: white;
-    padding: 2px 5px;
-    border-radius: 5px;
+.filtro{
+    text-align: center;
+    margin: auto;
+    margin-bottom: 12px;
+}
+.img-borrar{
+    width: 20px;
+    height: 20px;
+
 }

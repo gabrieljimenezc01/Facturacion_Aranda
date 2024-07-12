@@ -120,7 +120,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
                     <td><input type='number' name='valor_industrial[]' value='" . $row["valor_industrial"] . "'></td>
                     <td><input type='number' name='valor_fundador[]' value='" . $row["valor_fundador"] . "'></td>
                     <td>
-                        <a href='precio.php?delete_id=" . $row["id"] . "' class='btn delete-btn' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</a>
+                        <a href='precio.php?delete_id=" . $row["id"] . "'  onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>
+                        <img class='img-borrar' src='./img/borrar.png' alt='Eliminar'>
+                        </a>
                     </td>
                   </tr>";
                     }

@@ -38,11 +38,6 @@ td {
     color: white;
 }
 
-.delete-btn {
-    background-color: #ff1100;
-    color: white;
-}
-
 input {
     border: 0px;
     padding: 2px 5px;
@@ -106,4 +101,9 @@ button {
     padding-bottom: 10px;
     padding-top: 10px;
     border-radius: 10px;
+}
+.img-borrar{
+    width: 20px;
+    height: 20px;
+    
 }
