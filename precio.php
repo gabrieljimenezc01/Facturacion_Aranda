@@ -140,10 +140,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
         <?php if (isset($delete_msg)) {
             echo "<p>$delete_msg</p>";
         } ?>
+        <div class="div_agregar">
         <h2>Agregar Nuevo Registro</h2>
         <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
             <input class="inp-form" type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
-            <input class="inp-form" type="number" name="new_medida_final" placeholder="Medida Final" required>
+            <input class="inp-form" type="number" name="new_medida_final" placeholder="Medida Final" required> 
             <input class="inp-form" type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
             <input class="inp-form" type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
             <input class="inp-form" type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
@@ -153,6 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
         <?php if (isset($add_msg)) {
             echo "<p>$add_msg</p>";
         } ?>
+        </div>
     </div>
 </body>
 
