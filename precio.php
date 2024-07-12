@@ -44,27 +44,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
 
 // Manejar inserción de nuevos registros
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
-    $medida_inicial = $_POST['new_medida_inicial'];
-    $medida_final = $_POST['new_medida_final'];
-    $valor_residencial = $_POST['new_valor_residencial'];
-    $valor_comercial = $_POST['new_valor_comercial'];
-    $valor_industrial = $_POST['new_valor_industrial'];
-    $valor_fundador = $_POST['new_valor_fundador'];
+    $new_medida_inicial = $_POST['new_medida_inicial'];
+    $new_medida_final = $_POST['new_medida_final'];
+    $new_valor_residencial = $_POST['new_valor_residencial'];
+    $new_valor_comercial = $_POST['new_valor_comercial'];
+    $new_valor_industrial = $_POST['new_valor_industrial'];
+    $new_valor_fundador = $_POST['new_valor_fundador'];
 
-    $sql = "INSERT INTO precio (medida_inicial, medida_final, valor_residencial, valor_comercial, valor_industrial, valor_fundador) VALUES (:medida_inicial, :medida_final, :valor_residencial, :valor_comercial, :valor_industrial, :valor_fundador)";
-
+// Validar que la medida final no coincida con ninguna medida inicial existente
+    $sql = "SELECT COUNT(*) FROM precio WHERE medida_final = :new_medida_inicial";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':medida_inicial', $medida_inicial, PDO::PARAM_INT);
-    $stmt->bindParam(':medida_final', $medida_final, PDO::PARAM_INT);
-    $stmt->bindParam(':valor_residencial', $valor_residencial, PDO::PARAM_INT);
-    $stmt->bindParam(':valor_comercial', $valor_comercial, PDO::PARAM_INT);
-    $stmt->bindParam(':valor_industrial', $valor_industrial, PDO::PARAM_INT);
-    $stmt->bindParam(':valor_fundador', $valor_fundador, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        $add_msg = "Nuevo registro agregado con éxito";
+    $stmt->bindParam(':new_medida_inicial', $new_medida_inicial, PDO::PARAM_INT);
+    $stmt->execute();
+    $count = $stmt->fetchColumn();
+    if ($count > 0) {
+        $add_msg = "Error: La medida final coincide con una medida inicial existente.";
     } else {
-        $add_msg = "Error al agregar el registro";
+        $sql = "INSERT INTO precio (medida_inicial, medida_final, valor_residencial, valor_comercial, valor_industrial, valor_fundador) VALUES (:medida_inicial, :medida_final, :valor_residencial, :valor_comercial, :valor_industrial, :valor_fundador)";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':medida_inicial', $new_medida_inicial, PDO::PARAM_INT);
+        $stmt->bindParam(':medida_final', $new_medida_final, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_residencial', $new_valor_residencial, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_comercial', $new_valor_comercial, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_industrial', $new_valor_industrial, PDO::PARAM_INT);
+        $stmt->bindParam(':valor_fundador', $new_valor_fundador, PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            $add_msg = "Registro agregado con éxito";
+        } else {
+            $add_msg = "Error al agregar el registro";
+        }
     }
 }
 ?>
