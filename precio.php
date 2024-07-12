@@ -23,21 +23,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
         $valor_industrial = $_POST['valor_industrial'][$key];
         $valor_fundador = $_POST['valor_fundador'][$key];
 
-        $sql = "UPDATE precio SET medida_inicial = :medida_inicial, medida_final = :medida_final, valor_residencial = :valor_residencial, valor_comercial = :valor_comercial, valor_industrial = :valor_industrial, valor_fundador = :valor_fundador WHERE id = :id";
-
+        // Validar que la medida inicial no esté en un rango existente para otros registros
+        $sql = "SELECT COUNT(*) FROM precio WHERE :medida_inicial BETWEEN medida_inicial AND medida_final AND id != :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':medida_inicial', $medida_inicial, PDO::PARAM_INT);
-        $stmt->bindParam(':medida_final', $medida_final, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_residencial', $valor_residencial, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_comercial', $valor_comercial, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_industrial', $valor_industrial, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_fundador', $valor_fundador, PDO::PARAM_INT);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-        if ($stmt->execute()) {
-            $update_msg = "Registros actualizados con éxito";
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+        if ($count > 0) {
+            $update_msg2 = "Error: La medida inicial está dentro de un rango existente.";
         } else {
-            $update_msg = "Error al actualizar los registros";
+            // Validar que la medida final no esté en un rango existente para otros registros
+            $sql = "SELECT COUNT(*) FROM precio WHERE :medida_final BETWEEN medida_inicial AND medida_final AND id != :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':medida_final', $medida_final, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                $update_msg2 = "Error: La medida final está dentro de un rango existente.";
+            } else {
+                if ($medida_final < $medida_inicial) {
+                    //validar que la medida final no sea menor que la medida inicial
+                    $update_msg2 = "Error: La medida final es menor que la medida inicial.";
+                } else {
+                    $sql = "UPDATE precio SET medida_inicial = :medida_inicial, medida_final = :medida_final, valor_residencial = :valor_residencial, valor_comercial = :valor_comercial, valor_industrial = :valor_industrial, valor_fundador = :valor_fundador WHERE id = :id";
+
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':medida_inicial', $medida_inicial, PDO::PARAM_INT);
+                    $stmt->bindParam(':medida_final', $medida_final, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_residencial', $valor_residencial, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_comercial', $valor_comercial, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_industrial', $valor_industrial, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_fundador', $valor_fundador, PDO::PARAM_INT);
+                    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+                    if ($stmt->execute()) {
+                        $update_msg = "Registros actualizados con éxito.";
+                    } else {
+                        $update_msg = "Error al actualizar los registros.";
+                    }
+                }
+            }
         }
     }
 }
@@ -51,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
     $new_valor_industrial = $_POST['new_valor_industrial'];
     $new_valor_fundador = $_POST['new_valor_fundador'];
 
-// Validar que la medida final no coincida con ninguna medida inicial existente
+    // Validar que la medida inicial no coincida con ninguna medida final existente
     $sql = "SELECT COUNT(*) FROM precio WHERE medida_final = :new_medida_inicial";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':new_medida_inicial', $new_medida_inicial, PDO::PARAM_INT);
@@ -60,19 +87,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
     if ($count > 0) {
         $add_msg = "Error: La medida final coincide con una medida inicial existente.";
     } else {
-        $sql = "INSERT INTO precio (medida_inicial, medida_final, valor_residencial, valor_comercial, valor_industrial, valor_fundador) VALUES (:medida_inicial, :medida_final, :valor_residencial, :valor_comercial, :valor_industrial, :valor_fundador)";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':medida_inicial', $new_medida_inicial, PDO::PARAM_INT);
-        $stmt->bindParam(':medida_final', $new_medida_final, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_residencial', $new_valor_residencial, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_comercial', $new_valor_comercial, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_industrial', $new_valor_industrial, PDO::PARAM_INT);
-        $stmt->bindParam(':valor_fundador', $new_valor_fundador, PDO::PARAM_INT);
-        if ($stmt->execute()) {
-            $add_msg = "Registro agregado con éxito";
+        //validar que la medida final no sea menor que la medida inicial
+        if ($new_medida_final < $new_medida_inicial) {
+            $add_msg = "Error: La medida final es menor que la medida inicial";
         } else {
-            $add_msg = "Error al agregar el registro";
+            //validar que la medida inicial no este en un rango existente
+            $sql = "SELECT COUNT(*) FROM precio WHERE :new_medida_inicial BETWEEN medida_inicial AND medida_final";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':new_medida_inicial', $new_medida_inicial, PDO::PARAM_INT);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            if ($count > 0) {
+                $add_msg = "Error: La medida inicial está dentro de un YA rango existente.";
+            } else {
+                // Validar que la medida final no esté en un rango existente
+                $sql = "SELECT COUNT(*) FROM precio WHERE :new_medida_final BETWEEN medida_inicial AND medida_final";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':new_medida_final', $new_medida_final, PDO::PARAM_INT);
+                $stmt->execute();
+                $count = $stmt->fetchColumn();
+                if ($count > 0) {
+                    $add_msg = "Error: La medida final está dentro de un rango existente.";
+                } else {
+                    $sql = "INSERT INTO precio (medida_inicial, medida_final, valor_residencial, valor_comercial, valor_industrial, valor_fundador) VALUES (:medida_inicial, :medida_final, :valor_residencial, :valor_comercial, :valor_industrial, :valor_fundador)";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':medida_inicial', $new_medida_inicial, PDO::PARAM_INT);
+                    $stmt->bindParam(':medida_final', $new_medida_final, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_residencial', $new_valor_residencial, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_comercial', $new_valor_comercial, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_industrial', $new_valor_industrial, PDO::PARAM_INT);
+                    $stmt->bindParam(':valor_fundador', $new_valor_fundador, PDO::PARAM_INT);
+                    if ($stmt->execute()) {
+                        $add_msg = "Registro agregado con éxito";
+                    } else {
+                        $add_msg = "Error al agregar el registro";
+                    }
+                }
+            }
         }
     }
 }
@@ -145,6 +196,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
             <br>
             <button type="submit" name="update" value="Guardar Cambios" class="btn save-btn">Guardar Cambios </button>
         </form>
+        <?php if (isset($update_msg2)) {
+            echo "<p>$update_msg2</p>";
+        } ?>
         <?php if (isset($update_msg)) {
             echo "<p>$update_msg</p>";
         } ?>
@@ -152,19 +206,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
             echo "<p>$delete_msg</p>";
         } ?>
         <div class="div_agregar">
-        <h2>Agregar Nuevo Registro</h2>
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
-            <input class="inp-form" type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
-            <input class="inp-form" type="number" name="new_medida_final" placeholder="Medida Final" required> 
-            <input class="inp-form" type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
-            <input class="inp-form" type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
-            <input class="inp-form" type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
-            <input class="inp-form" type="number" name="new_valor_fundador" placeholder="Valor Fundador" required> <Br></Br>
-            <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
-        </form>
-        <?php if (isset($add_msg)) {
-            echo "<p>$add_msg</p>";
-        } ?>
+            <h2>Agregar Nuevo Registro</h2>
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
+                <input class="inp-form" type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
+                <input class="inp-form" type="number" name="new_medida_final" placeholder="Medida Final" required>
+                <input class="inp-form" type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
+                <input class="inp-form" type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
+                <input class="inp-form" type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
+                <input class="inp-form" type="number" name="new_valor_fundador" placeholder="Valor Fundador" required> <Br></Br>
+                <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
+            </form>
+            <?php if (isset($add_msg)) {
+                echo "<p>$add_msg</p>";
+            } ?>
         </div>
     </div>
 </body>
