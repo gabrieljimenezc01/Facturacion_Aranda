@@ -4,11 +4,12 @@ $username = "root";
 $password = "";
 $dbname = "acueducto_aranda";
 
-try {
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-  echo "Connection failed: " . $e->getMessage();
-}
+// Crear conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
 
+// Verificar conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+echo "";
 ?>
