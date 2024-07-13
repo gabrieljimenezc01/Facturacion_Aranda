@@ -11,5 +11,5 @@ function decrypt($data, $key) {
     return openssl_decrypt($encrypted_data, 'aes-256-cbc', $key, 0, $iv);
 }
 
-$key = 'this_is_a_very_secure_key'; // This should be stored securely
+$key = 'secure_key_Facturacion_Aranda'; // This should be stored securely
 ?>
