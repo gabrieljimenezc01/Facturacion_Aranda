@@ -12,7 +12,7 @@
     <div class="container">
         <div class="form-box1" id="login-box">
             <h2><i class="fa fa-sign-in" aria-hidden="true"></i> Inicio de Sesión</h2><br>
-            <form action="sesion.php" method="post">
+            <form action="authenticate.php" method="post" name="login">
                 <div class="input-box">
                     <label for="login-username">Nombre de Usuario</label>
                     <input name="user" type="text" id="login-username" placeholder="Tu Nombre de Usuario"><br>
@@ -93,7 +93,7 @@
             if (username === validUsername && password === validPassword) {
                 alert("Inicio de sesión exitoso.");
                 // Redirigir al usuario al menú principal
-                 window.location.href = "menu.html"; // Descomentar para redirigir
+                 window.location.href = "menu.php"; // Descomentar para redirigir
             } else {
                 alert("Nombre de usuario o contraseña incorrectos.");
             }
