@@ -12,7 +12,7 @@
     <div class="container">
         <div class="form-box1" id="login-box">
             <h2><i class="fa fa-sign-in" aria-hidden="true"></i> Inicio de Sesión</h2><br>
-            <form action="sesion.php" method="post">
+            <form action="authenticate.php" method="post" >
                 <div class="input-box">
                     <label for="login-username">Nombre de Usuario</label>
                     <input name="user" type="text" id="login-username" placeholder="Tu Nombre de Usuario"><br>
@@ -22,7 +22,7 @@
                     <input name="password" type="password" id="login-password" placeholder="********"><br>
                 </div><br>
                 <div class="actions">
-                    <button type="submit">Iniciar Sesión</button>
+                    <button type="submit" name="login">Iniciar Sesión</button>
                 </div>
                 <h2><i class="fa fa-users" aria-hidden="true"></i></h2>
                 <div class="switch">
@@ -32,7 +32,7 @@
         </div>
         <div class="form-box2" id="register-box" style="display:none;">
             <h2><i class="fa fa-user-plus" aria-hidden="true"></i> Registro de Usuario</h2>
-            <form action="registro.php" method="post">
+            <form action="create_users.php" method="post">
                 <div class="input-box">
                     <label for="register-username">Nombre</label>
                     <input name="nombre" type="text" id="register-username" placeholder="Tu Nombre">
@@ -54,7 +54,7 @@
                     <input name="special" type="password" id="special-password" placeholder="Contraseña Especial">
                 </div>
                 <div class="actions">
-                    <button type="submit">Registrarse</button>
+                    <button type="submit" name="register">Registrarse</button>
                 </div>
                 <div class="switch">
                     <button type="button" onclick="showLogin()">Iniciar Sesión</button>
@@ -86,6 +86,7 @@
             document.getElementById('register-box').style.display = 'none';
             document.getElementById('login-box').style.display = 'block';
         }
+        /*
         function login() {
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
@@ -93,7 +94,7 @@
             if (username === validUsername && password === validPassword) {
                 alert("Inicio de sesión exitoso.");
                 // Redirigir al usuario al menú principal
-                 window.location.href = "menu.html"; // Descomentar para redirigir
+                 window.location.href = "menu.php"; // Descomentar para redirigir
             } else {
                 alert("Nombre de usuario o contraseña incorrectos.");
             }
@@ -119,6 +120,7 @@
             // Aquí añadir la lógica de registro
             // En una implementación real, enviar los datos al servidor para registrar el usuario
         }
+            */
     </script>
 </body>
 </html>
