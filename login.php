@@ -12,18 +12,33 @@
     <div class="container">
         <div class="form-box1" id="login-box">
             <h2><i class="fa fa-sign-in" aria-hidden="true"></i> Inicio de Sesión</h2><br>
-            <form action="authenticate.php" method="post" >
+            <?php
+            session_start();
+            $errors = isset($_SESSION['errors']) ? $_SESSION['errors'] : [];
+            $old_data = isset($_SESSION['old_data']) ? $_SESSION['old_data'] : [];
+            unset($_SESSION['errors'], $_SESSION['old_data']);
+            ?>
+            <form action="authenticate.php" method="post">
                 <div class="input-box">
                     <label for="login-username">Nombre de Usuario</label>
-                    <input name="user" type="text" id="login-username" placeholder="Tu Nombre de Usuario"><br>
+                    <input name="user" type="text" id="login-username" placeholder="Tu Nombre de Usuario" value="<?= isset($old_data['user']) ? htmlspecialchars($old_data['user']) : '' ?>"><br>
+                    <?php if (isset($errors['user'])): ?>
+                        <p class='error'><?= $errors['user'] ?></p>
+                    <?php endif; ?>
                 </div>
                 <div class="input-box">
                     <label for="login-password">Contraseña</label>
                     <input name="password" type="password" id="login-password" placeholder="********"><br>
+                    <?php if (isset($errors['password'])): ?>
+                        <p class='error'><?= $errors['password'] ?></p>
+                    <?php endif; ?>
                 </div><br>
                 <div class="actions">
                     <button type="submit" name="login">Iniciar Sesión</button>
                 </div>
+                <?php if (isset($errors['general'])): ?>
+                    <p class='error'><?= $errors['general'] ?></p>
+                <?php endif; ?>
                 <h2><i class="fa fa-users" aria-hidden="true"></i></h2>
                 <div class="switch">
                     <button type="button" onclick="showRegister()">Registrar Nueva Cuenta</button>
@@ -32,18 +47,24 @@
         </div>
         <div class="form-box2" id="register-box" style="display:none;">
             <h2><i class="fa fa-user-plus" aria-hidden="true"></i> Registro de Usuario</h2>
+            <?php
+            // Reanuda la sesión para la validación en el mismo archivo
+            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($errors) && !empty($errors)) {
+                echo "<p class='error'>" . implode("<br>", $errors) . "</p>";
+            }
+            ?>
             <form action="create_users.php" method="post">
                 <div class="input-box">
-                    <label for="register-username">Nombre</label>
-                    <input name="nombre" type="text" id="register-username" placeholder="Tu Nombre">
+                    <label for="register-username-nombre">Nombre</label>
+                    <input name="nombre" type="text" id="register-username-nombre" placeholder="Tu Nombre" value="<?= isset($old_data['nombre']) ? htmlspecialchars($old_data['nombre']) : '' ?>">
                 </div>
                 <div class="input-box">
-                    <label for="register-username">Apellido</label>
-                    <input name="apellido" type="text" id="register-username" placeholder="Tu Apellido">
+                    <label for="register-username-apellido">Apellido</label>
+                    <input name="apellido" type="text" id="register-username-apellido" placeholder="Tu Apellido" value="<?= isset($old_data['apellido']) ? htmlspecialchars($old_data['apellido']) : '' ?>">
                 </div>
                 <div class="input-box">
-                    <label for="register-username">Nombre de Usuario</label>
-                    <input name="user" type="text" id="register-username" placeholder="Tu Nombre de Usuario">
+                    <label for="register-username-user">Nombre de Usuario</label>
+                    <input name="user" type="text" id="register-username-user" placeholder="Tu Nombre de Usuario" value="<?= isset($old_data['user']) ? htmlspecialchars($old_data['user']) : '' ?>">
                 </div>
                 <div class="input-box">
                     <label for="register-password">Contraseña</label>
@@ -52,6 +73,9 @@
                 <div class="input-box">
                     <label for="special-password">Contraseña Especial</label>
                     <input name="special" type="password" id="special-password" placeholder="Contraseña Especial">
+                    <?php if (isset($errors['special'])): ?>
+                        <p class='error'><?= $errors['special'] ?></p>
+                    <?php endif; ?>
                 </div>
                 <div class="actions">
                     <button type="submit" name="register">Registrarse</button>
@@ -70,57 +94,22 @@
         <p>&copy; 2024 Acueducto de Aranda. Todos los derechos reservados. | <a href="#">Términos de Servicio</a> | <a href="#">Política de Privacidad</a> | <a href="#">Contacto</a></p>
     </footer>
 
-
     <script>
-        // Datos estáticos para comprobar la funcionalidad
-        const validUsername = "usuario";
-        const validPassword = "password123";
-        const specialPassword = "12345"; // Contraseña especial
-
         function showRegister() {
             document.getElementById('login-box').style.display = 'none';
             document.getElementById('register-box').style.display = 'block';
         }
 
         function showLogin() {
-            document.getElementById('register-box').style.display = 'none';
             document.getElementById('login-box').style.display = 'block';
-        }
-        /*
-        function login() {
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-
-            if (username === validUsername && password === validPassword) {
-                alert("Inicio de sesión exitoso.");
-                // Redirigir al usuario al menú principal
-                 window.location.href = "menu.php"; // Descomentar para redirigir
-            } else {
-                alert("Nombre de usuario o contraseña incorrectos.");
-            }
+            document.getElementById('register-box').style.display = 'none';
         }
 
-        function register() {
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm-password').value;
-            const specialPwd = document.getElementById('special-password').value;
-
-            if (password !== confirmPassword) {
-                alert("Las contraseñas no coinciden.");
-                return;
-            }
-
-            if (specialPwd !== specialPassword) {
-                alert("Contraseña especial incorrecta. No se puede registrar.");
-                return;
-            }
-
-            alert("Registro exitoso.");
-            // Aquí añadir la lógica de registro
-            // En una implementación real, enviar los datos al servidor para registrar el usuario
-        }
-            */
+        // Mostrar automáticamente el formulario de registro si hay errores de validación
+        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($errors) && !empty($errors)): ?>
+        document.getElementById('login-box').style.display = 'none';
+        document.getElementById('register-box').style.display = 'block';
+        <?php endif; ?>
     </script>
 </body>
 </html>
