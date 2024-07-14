@@ -19,11 +19,9 @@
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Perfil del Usuario</a></li>
-                    <li><a href="#"><i class="fa fa-file" aria-hidden="true"></i> Facturación</a></li>
-                    <li><a href="#"><i class="fa fa-history" aria-hidden="true"></i> Historial de Pagos</a></li>
-                    <li><a href="#"><i class="fa fa-newspaper-o" aria-hidden="true"></i> Reportes y Estadísticas</a></li>
-                    <li><a href="#"><i class="fa fa-cogs" aria-hidden="true"></i> Configuración</a></li>
+                    <li><a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
+                    <li><a href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
+                    <li><a href="#"><i class="fa fa-user-times" aria-hidden="true"></i><br> Eliminar Usuario</a></li>
                 </ul>
             </aside>
             <main class="main-content">
