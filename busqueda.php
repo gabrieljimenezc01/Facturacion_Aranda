@@ -11,7 +11,8 @@ $deuda_cliente = "";
 //buscar clientes en la base de datos
 function datos($codigo)
 {
-    global $conn, $codigo_cliente, $nombre_cliente, $direccion_cliente, $sector_cliente, $uso_cliente, $fundador_cliente, $deuda_cliente;
+    global $conn, $codigo_cliente, $nombre_cliente, $direccion_cliente, $sector_cliente,
+        $uso_cliente, $fundador_cliente, $deuda_cliente, $msg, $msgbase;
     try {
         $sql = "SELECT * FROM clientes WHERE codigo = :codigo ";
         $stmt = $conn->prepare($sql);
@@ -42,10 +43,10 @@ function datos($codigo)
             }
         } else {
             // Si no se encontró el cliente, mostrar un mensaje
-            echo "Cliente no encontrado.";
+            $msg = "Cliente no encontrado.";
         }
     } catch (PDOException $e) {
-        echo "Error en la consulta: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+        $msgbase = "Error en la consulta: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
     }
 }
 
@@ -71,7 +72,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
         $count = $stmt->fetchColumn();
 
         if ($count > 0) {
-            // Insertar el abono en la tabla abonos
+            //validar que el abono no supere la deuda
+            $sql = "SELECT * FROM deudores WHERE cod_cliente = :codi_cliente";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $valor_total = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($valor>$valor_total['valor_total']) {
+                $msgabono= "Valor de abono mayor al de la deuda";
+            } else {
+                // Insertar el abono en la tabla abonos
             $sql = "INSERT INTO abonos (cod_cliente, concepto, fecha, valor) VALUES (:codigo_cliente, :concepto, :fecha, :valor)";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':codigo_cliente', $codigo, PDO::PARAM_INT);
@@ -88,15 +100,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
 
                 if ($stmt->execute()) {
                     $conn->commit();
-                    echo "Abono registrado y deuda actualizada exitosamente.";
+                    $msgabono = "Abono registrado y deuda actualizada exitosamente.";
                 } else {
                     $conn->rollBack();
-                    echo "Error al actualizar la deuda.";
+                    $msgabono = "Error al actualizar la deuda.";
                 }
             } else {
                 $conn->rollBack();
-                echo "Error al registrar el abono.";
+                $msgabono = "Error al registrar el abono.";
             }
+            }
+             
         } else {
             echo "El Cliente no tiene deudas registradas";
         }
@@ -114,23 +128,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Busqueda de Usarios </title>
+    <link rel="stylesheet" href="busqueda-styles.css">
 </head>
 
 <body>
-    <div id="busqueda_ususario">
-        <h2>Busquedad de Usuarios en deuda</h2>
+    <nav class="navbar">
+        <div class="navbar-brand">Modulo Deudas</div>
+        <div>
+            <button class="logout-button">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <?php if (isset($msgbase)) {
+        echo "<p>$msgbase</p>";
+    } ?>
+
+    <div class="busqueda_ususario">
         <form action="busqueda.php" method="post">
-            <label>codigo de usuario</label>
-            <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>'>
-            <button type="submit" name="cliente"> Buscar</button>
+            <div class="form-row">
+                <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>'>
+                <label alt="Label" data-placeholder="código de usuario"></label>
+            </div>
+            <div class="form-row">
+                <button type="submit" name="cliente"> Buscar</button>
+            </div>
         </form>
     </div>
-    <div id="datos-usuario">
-        <h2>informacion del usuario</h2>
+
+    <?php if (isset($msg)) {
+        echo "<label >$msg </label>";
+    } ?>
+
+    <div class="datos-usuario">
         <table>
             <tr>
                 <th> Código</th>
-                <th>Nombre</th>
+                <th>Nombre y Apellido</th>
                 <th>Dirección</th>
                 <th>Sector</th>
             </tr>
@@ -153,20 +186,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
             </tr>
         </table>
     </div>
-    <div id="infomacion_abonos">
-        <?php if ($deuda_cliente) : ?>
-            <h2>Registrar Abono</h2>
+
+
+    <?php if ($deuda_cliente) : ?>
+        <h2>Registrar Abono</h2>
+        <div class="infomacion_abonos">
             <form action="busqueda.php" method="post">
                 <input type="hidden" name="codigo_cliente" value="<?php echo $codigo_cliente; ?>">
-                <label>Concepto</label>
-                <input type="text" name="concepto" required>
-                <label>Fecha</label>
-                <input type="date" name="fecha" required>
-                <label>Valor</label>
-                <input type="number" name="valor" required>
-                <button type="submit" name="abonar">Registrar Abono</button>
-            </form>
 
+
+                <div class="form-row">
+                    <input type="date" name="fecha" required>
+                    <label alt="Label" data-placeholder="Fecha"></label>
+                </div>
+
+                <div class="form-row">
+                    <input type="text" name="concepto" required>
+                    <label alt="Label" data-placeholder="Concepto"></label>
+                </div>
+
+                <div class="form-row">
+                    <input type="number" name="valor" required>
+                    <label alt="Label" data-placeholder="Valor"></label>
+                </div>
+                <div class="form-row">
+                    <button type="submit" name="abonar">Registrar Abono</button>
+                </div>
+            </form>
+            <?php if (isset($msgabono)) {
+                echo "<p>$msgabono</p>";
+            } ?>
+        </div>
+        <div class="historial-abono">
             <h2> Historial de Pagos o Abonos </h2>
             <table>
                 <tr>
@@ -195,9 +246,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                 ?>
             </table>
         <?php endif; ?>
-    </div>
-
-
+        </div>
 </body>
 
 </html>

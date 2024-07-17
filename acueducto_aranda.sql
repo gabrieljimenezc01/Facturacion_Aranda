@@ -49,7 +49,7 @@ CREATE TABLE `clientes` (
   `estrato` int(3) NOT NULL,
   `sector` varchar(20) NOT NULL,
   `uso` varchar(50) NOT NULL,
-  `codigo_medidor` bigint(20) NOT NULL,
+  `codigo_medidor` varchar(50) NOT NULL,
   `diametro_medidor` varchar(50) NOT NULL,
   `fundador` varchar(3) NOT NULL,
   `activo` varchar(3) NOT NULL
