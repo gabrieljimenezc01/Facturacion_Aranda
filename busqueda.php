@@ -136,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <nav class="navbar">
         <div class="navbar-brand">Modulo Deudas</div>
         <div>
-            <button class="logout-button">Cerrar Sesión</button>
+            <button class="logout-button" >Cerrar Sesión</button>
         </div>
     </nav>
 
@@ -202,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                 </div>
 
                 <div class="form-row">
-                    <input type="text" name="concepto" required maxlength="50">
+                    <input type="text" name="concepto" required maxlength="100">
                     <label alt="Label" data-placeholder="Concepto"></label>
                 </div>
 
@@ -222,7 +222,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
             <h2> Historial de Pagos o Abonos </h2>
             <table>
                 <tr>
-                    <th>Codigo</th>
+                    <th>Código</th>
                     <th>Concepto</th>
                     <th>Fecha</th>
                     <th>Valor</th>
