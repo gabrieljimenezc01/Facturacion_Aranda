@@ -43,6 +43,7 @@ function datos($codigo)
             }
         } else {
             // Si no se encontró el cliente, mostrar un mensaje
+            
             $msg = "Cliente no encontrado.";
         }
     } catch (PDOException $e) {
@@ -146,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <div class="busqueda_ususario">
         <form action="busqueda.php" method="post">
             <div class="form-row">
-                <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>'>
+                <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>' min="1">
                 <label alt="Label" data-placeholder="código de usuario"></label>
             </div>
             <div class="form-row">
@@ -201,12 +202,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                 </div>
 
                 <div class="form-row">
-                    <input type="text" name="concepto" required>
+                    <input type="text" name="concepto" required maxlength="50">
                     <label alt="Label" data-placeholder="Concepto"></label>
                 </div>
 
                 <div class="form-row">
-                    <input type="number" name="valor" required>
+                    <input type="number" name="valor" required min="1">
                     <label alt="Label" data-placeholder="Valor"></label>
                 </div>
                 <div class="form-row">
@@ -227,8 +228,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                     <th>Valor</th>
                 </tr>
                 <?php
-                $sql = "SELECT * FROM abonos";
+                $sql = "SELECT * FROM abonos where cod_cliente= :cliente";
                 $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':cliente', $codigo_cliente, PDO::PARAM_INT);
                 $stmt->execute();
                 $abonos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 if (count($abonos) > 0) {
