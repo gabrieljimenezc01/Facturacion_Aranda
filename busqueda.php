@@ -43,7 +43,7 @@ function datos($codigo)
             }
         } else {
             // Si no se encontró el cliente, mostrar un mensaje
-            
+
             $msg = "Cliente no encontrado.";
         }
     } catch (PDOException $e) {
@@ -65,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     $valor = $_POST['valor'];
 
     try {
+        //BUSCAR SI EL CLIENTE ESTA EN LA TABLA DEUDORES
         $conn->beginTransaction();
         $sql = "SELECT COUNT(*) FROM deudores WHERE cod_cliente = :codi_cliente";
         $stmt = $conn->prepare($sql);
@@ -73,45 +74,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
         $count = $stmt->fetchColumn();
 
         if ($count > 0) {
-            //validar que el abono no supere la deuda
+            //validar que el valor de la deuda sea diferente a 0
             $sql = "SELECT * FROM deudores WHERE cod_cliente = :codi_cliente";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
             $stmt->execute();
 
             $valor_total = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($valor>$valor_total['valor_total']) {
-                $msgabono= "Valor de abono mayor al de la deuda";
+            //validar que el abono no supere la deuda
+            if ($valor > $valor_total['valor_total']) {
+                $msgabono = "Valor de abono mayor al de la deuda";
             } else {
                 // Insertar el abono en la tabla abonos
-            $sql = "INSERT INTO abonos (cod_cliente, concepto, fecha, valor) VALUES (:codigo_cliente, :concepto, :fecha, :valor)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':codigo_cliente', $codigo, PDO::PARAM_INT);
-            $stmt->bindParam(':concepto', $concepto, PDO::PARAM_STR);
-            $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
-            $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
-
-            if ($stmt->execute()) {
-                // Actualizar el valor de la deuda en la tabla deudores
-                $sql = "UPDATE deudores SET valor_total = valor_total - :valor WHERE cod_cliente = :codigo_cliente";
+                $sql = "INSERT INTO abonos (cod_cliente, concepto, fecha, valor) VALUES (:codigo_cliente, :concepto, :fecha, :valor)";
                 $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
                 $stmt->bindParam(':codigo_cliente', $codigo, PDO::PARAM_INT);
+                $stmt->bindParam(':concepto', $concepto, PDO::PARAM_STR);
+                $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+                $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
 
                 if ($stmt->execute()) {
-                    $conn->commit();
-                    $msgabono = "Abono registrado y deuda actualizada exitosamente.";
+                    // Actualizar el valor de la deuda en la tabla deudores
+                    $sql = "UPDATE deudores SET valor_total = valor_total - :valor WHERE cod_cliente = :codigo_cliente";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
+                    $stmt->bindParam(':codigo_cliente', $codigo, PDO::PARAM_INT);
+
+                    if ($stmt->execute()) {
+                        //validar si el valor de la deuda es 0 para eliminar al cliente
+                        $sql = "SELECT * FROM deudores WHERE cod_cliente = :codi_cliente";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+                        $stmt->execute();
+                        $valor_actualizado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($valor_actualizado['valor_total'] == 0) {
+                            //eliminar de deudores si el cliente tiene la deuda en 0
+                            $sql = "DELETE FROM deudores WHERE cod_cliente = :codi_cliente";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+                            $stmt->execute();
+                            // echo "cliente eliminado de deudas";
+                        }
+                        $conn->commit();
+                        $msgabono = "Abono registrado y deuda actualizada exitosamente. ";
+                    } else {
+                        $conn->rollBack();
+                        $msgabono = "Error al actualizar la deuda.";
+                    }
                 } else {
                     $conn->rollBack();
-                    $msgabono = "Error al actualizar la deuda.";
+                    $msgabono = "Error al registrar el abono.";
                 }
-            } else {
-                $conn->rollBack();
-                $msgabono = "Error al registrar el abono.";
             }
-            }
-             
         } else {
             echo "El Cliente no tiene deudas registradas";
         }
@@ -129,126 +144,143 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Busqueda de Usarios </title>
-    <link rel="stylesheet" href="busqueda-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="deudas-styles.css">
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">Modulo Deudas</div>
-        <div>
-            <button class="logout-button" >Cerrar Sesión</button>
-        </div>
-    </nav>
-
-    <?php if (isset($msgbase)) {
-        echo "<p>$msgbase</p>";
-    } ?>
-
-    <div class="busqueda_ususario">
-        <form action="busqueda.php" method="post">
-            <div class="form-row">
-                <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>' min="1">
-                <label alt="Label" data-placeholder="código de usuario"></label>
+    <div class="main-container">
+        <nav class="navbar">
+            <div class="navbar-brand">Modulo Deudas</div>
+            <div>
+                <button class="logout-button">Cerrar Sesión</button>
             </div>
-            <div class="form-row">
-                <button type="submit" name="cliente"> Buscar</button>
-            </div>
-        </form>
-    </div>
+        </nav>
 
-    <?php if (isset($msg)) {
-        echo "<label >$msg </label>";
-    } ?>
+        <div class="content">
+            <aside class="sidebar">
+                <ul class="menu-list">
+                    <li><a href="deudores.php"><i class="fa fa-user" aria-hidden="true"></i><br>Lista de Clientes Deudores</a></li>
+                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Administracion Deudas</a></li>
+                </ul>
+            </aside>
+            <main class="main-content">
+                <?php if (isset($msgbase)) {
+                    echo "<p>$msgbase</p>";
+                } ?>
 
-    <div class="datos-usuario">
-        <table>
-            <tr>
-                <th> Código</th>
-                <th>Nombre y Apellido</th>
-                <th>Dirección</th>
-                <th>Sector</th>
-            </tr>
-            <tr>
-                <th><?php echo $codigo_cliente ?></th>
-                <th><?php echo $nombre_cliente ?></th>
-                <th><?php echo $direccion_cliente ?></th>
-                <th><?php echo $sector_cliente ?></th>
-
-            </tr>
-            <tr>
-                <th>Uso</th>
-                <th>Fundador</th>
-                <th>Valor de Deuda</th>
-            </tr>
-            <tr>
-                <th><?php echo $uso_cliente ?></th>
-                <th><?php echo $fundador_cliente ?></th>
-                <th><?php echo $deuda_cliente ?></th>
-            </tr>
-        </table>
-    </div>
-
-
-    <?php if ($deuda_cliente) : ?>
-        <h2>Registrar Abono</h2>
-        <div class="infomacion_abonos">
-            <form action="busqueda.php" method="post">
-                <input type="hidden" name="codigo_cliente" value="<?php echo $codigo_cliente; ?>">
-
-
-                <div class="form-row">
-                    <input type="date" name="fecha" required>
-                    <label alt="Label" data-placeholder="Fecha"></label>
+                <div class="busqueda_ususario">
+                    <form action="busqueda.php" method="post">
+                        <div class="form-row">
+                            <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>' min="1">
+                            <label alt="Label" data-placeholder="Código de usuario..."></label>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" name="cliente"> Buscar</button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="form-row">
-                    <input type="text" name="concepto" required maxlength="100">
-                    <label alt="Label" data-placeholder="Concepto"></label>
+                <?php if (isset($msg)) {
+                    echo "<label >$msg </label>";
+                } ?>
+
+                <div class="datos-usuario">
+                    <table>
+                        <tr>
+                            <th> Código</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Dirección</th>
+                            <th>Sector</th>
+                        </tr>
+                        <tr>
+                            <th><?php echo $codigo_cliente ?></th>
+                            <th><?php echo $nombre_cliente ?></th>
+                            <th><?php echo $direccion_cliente ?></th>
+                            <th><?php echo $sector_cliente ?></th>
+
+                        </tr>
+                        <tr>
+                            <th>Uso</th>
+                            <th>Fundador</th>
+                            <th>Valor de Deuda</th>
+                        </tr>
+                        <tr>
+                            <th><?php echo $uso_cliente ?></th>
+                            <th><?php echo $fundador_cliente ?></th>
+                            <th><?php echo $deuda_cliente ?></th>
+                        </tr>
+                    </table>
                 </div>
 
-                <div class="form-row">
-                    <input type="number" name="valor" required min="1">
-                    <label alt="Label" data-placeholder="Valor"></label>
-                </div>
-                <div class="form-row">
-                    <button type="submit" name="abonar">Registrar Abono</button>
-                </div>
-            </form>
-            <?php if (isset($msgabono)) {
-                echo "<p>$msgabono</p>";
-            } ?>
-        </div>
-        <div class="historial-abono">
-            <h2> Historial de Pagos o Abonos </h2>
-            <table>
-                <tr>
-                    <th>Código</th>
-                    <th>Concepto</th>
-                    <th>Fecha</th>
-                    <th>Valor</th>
-                </tr>
-                <?php
-                $sql = "SELECT * FROM abonos where cod_cliente= :cliente";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':cliente', $codigo_cliente, PDO::PARAM_INT);
-                $stmt->execute();
-                $abonos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                if (count($abonos) > 0) {
-                    foreach ($abonos as $row) {
-                        echo "<tr>
+
+                <?php if ($deuda_cliente) : ?>
+                    <h2>Registrar Abono</h2>
+                    <div class="infomacion_abonos">
+                        <form action="busqueda.php" method="post">
+                            <input type="hidden" name="codigo_cliente" value="<?php echo $codigo_cliente; ?>">
+
+
+                            <div class="form-row">
+                                <input type="date" name="fecha" required>
+                                <label alt="Label" data-placeholder="Fecha"></label>
+                            </div>
+
+                            <div class="form-row">
+                                <input type="text" name="concepto" required maxlength="100">
+                                <label alt="Label" data-placeholder="Concepto"></label>
+                            </div>
+
+                            <div class="form-row">
+                                <input type="number" name="valor" required min="1">
+                                <label alt="Label" data-placeholder="Valor"></label>
+                            </div>
+                            <div class="form-row">
+                                <button type="submit" name="abonar">Registrar Abono</button>
+                            </div>
+                        </form>
+                        <?php if (isset($msgabono)) {
+                            echo "<p>$msgabono</p>";
+                        } ?>
+                    </div>
+                    <div class="historial-abono">
+                        <h2> Historial de Pagos o Abonos </h2>
+                        <table>
+                            <tr>
+                                <th>Código</th>
+                                <th>Concepto</th>
+                                <th>Fecha</th>
+                                <th>Valor</th>
+                            </tr>
+                            <?php
+                            $sql = "SELECT * FROM abonos where cod_cliente= :cliente";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bindParam(':cliente', $codigo_cliente, PDO::PARAM_INT);
+                            $stmt->execute();
+                            $abonos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            if (count($abonos) > 0) {
+                                foreach ($abonos as $row) {
+                                    echo "<tr>
                                 <td> " . $row["cod_cliente"] . "</td>
                                 <td> " . $row["concepto"] . "</td>
                                 <td> " . $row["fecha"] . "</td>
                                 <td> " . $row["valor"] . "</td>
                             </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
-                }
-                ?>
-            </table>
-        <?php endif; ?>
+                                }
+                            } else {
+                                echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
+                            }
+                            ?>
+                        </table>
+                    <?php endif; ?>
+                    </div>
+            </main>
         </div>
+    </div>
+
+
 </body>
 
 </html>
