@@ -40,8 +40,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="deudores.php"><i class="fa fa-user" aria-hidden="true"></i><br>Lista de Clientes Deudores</a></li>
-                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Administracion Deudas</a></li>
+                    <li><a href="deudores.php"><i class="fa fa-user" aria-hidden="true"></i><br>Clientes con Deudas</a></li>
+                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Pago de Deudas</a></li>
                 </ul>
             </aside>
             <main class="main-content">

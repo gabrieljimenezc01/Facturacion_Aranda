@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <title>Busqueda de Usarios </title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
+
     <link rel="stylesheet" href="deudas-styles.css">
 </head>
 
@@ -162,8 +162,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="deudores.php"><i class="fa fa-user" aria-hidden="true"></i><br>Lista de Clientes Deudores</a></li>
-                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Administracion Deudas</a></li>
+                    <li><a href="deudores.php"><i class="fa fa-user" aria-hidden="true"></i><br>Clientes con Deudas</a></li>
+                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Pago de Deudas</a></li>
                 </ul>
             </aside>
             <main class="main-content">
@@ -172,6 +172,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                 } ?>
 
                 <div class="busqueda_ususario">
+                    <h2>Pago de Deudas</h2>
                     <form action="busqueda.php" method="post">
                         <div class="form-row">
                             <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>' min="1">
