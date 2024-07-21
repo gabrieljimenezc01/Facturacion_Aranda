@@ -35,7 +35,7 @@
                 </div><br>
                 <div class="actions">
                     <button type="submit" name="login">Iniciar Sesión</button>
-                </div>
+                </div><br>
                 <?php if (isset($errors['general'])): ?>
                     <p class='error'><?= $errors['general'] ?></p>
                 <?php endif; ?>
