@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <script>
                 alert("La clave especial no coincide"); 
             </script>';
-            header("location: login.php");
+            header("location: register.php");
             exit();
         } 
 
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header("location: principal.php");
                 exit;
         } else {
-            header("location: login.php");
+            header("location: register.php");
         }
     } catch (PDOException $e) {
         echo json_encode([]);

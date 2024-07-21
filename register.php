@@ -6,7 +6,7 @@
     <title>Registro de Usuario</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="login-styles.css">
+    <link rel="stylesheet" href="register-styles.css">
 </head>
 <body>
     <div class="container">
@@ -37,6 +37,9 @@
                 <div class="input-box">
                     <label for="register-password">Contraseña</label>
                     <input name="password" type="password" id="register-password" placeholder="********">
+                    <?php if (isset($errors['password'])): ?>
+                        <p class='error'><?= $errors['password'] ?></p>
+                    <?php endif; ?>
                 </div>
                 <div class="input-box">
                     <label for="special-password">Contraseña Especial</label>
