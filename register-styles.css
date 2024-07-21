@@ -156,7 +156,7 @@ button:hover {
     justify-content: center;
     align-items: center;
     background-color: #0074D9;
-    width: 660px; /* Ancho fijo */
+    width: 675px; /* Ancho fijo */
     height: auto; /* Ajustar automáticamente la altura */
     border-radius: 0px 10px 10px 0px;
 }
