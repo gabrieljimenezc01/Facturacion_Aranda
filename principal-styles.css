@@ -10,7 +10,7 @@ body {
 }
 
 .background-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -260,4 +260,15 @@ p.welcome-message {
     margin: 0 auto 40px;
     font-size: 100px; /* Adjust size as needed */
     color: #007bff;
+}
+
+/* Media query for 1440x700 laptops */
+@media (min-width: 1365px) and (max-width: 1599px) {
+    html {
+        transform: scale(0.8);
+        transform-origin: top left;
+        width: 125%;
+        height: 125%;
+        overflow: hidden;
+    }
 }
