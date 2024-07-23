@@ -30,6 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impresión de Facturas</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="facturas-styles.css">
 </head>
 
@@ -97,10 +99,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "<td>" . htmlspecialchars($row['valor_deuda']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['valor_total']) . "</td>";
                     echo "<td>
-                                <a href='#" . $row["cod_factura"] . "'  onclick='return confirm(\"¿Estás seguro de que deseas ver este registro?\")'>
-                                <img class='img-borrar' src='./img/borrar.png' alt='Eliminar'>
-                                </a>
-                            </td>";
+                        <a href='generate_pdf.php?cod_factura=" . htmlspecialchars($row["cod_factura"]) . "' target='_blank'>
+                            <i class='fa fa-file-pdf-o' aria-hidden='true'></i>
+                        </a>
+                    </td>";
                     echo "</tr>";
                 }
             } else {
