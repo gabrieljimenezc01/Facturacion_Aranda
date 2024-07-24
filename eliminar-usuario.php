@@ -2,14 +2,18 @@
 require 'db.php';
 
 if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
-    $sql = "DELETE FROM clientes WHERE codigo = :delete_id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':delete_id', $delete_id, PDO::PARAM_INT);
-    if ($stmt->execute()) {
-        $delete_msg = "Registro eliminado con éxito";
-    } else {
-        $delete_msg = "Error al eliminar el registro";
+    try {
+        $delete_id = $_GET['delete_id'];
+        $sql = "DELETE FROM clientes WHERE codigo = :delete_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':delete_id', $delete_id, PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            $delete_msg = "Registro eliminado con éxito";
+        } else {
+            $delete_msg = "Error al eliminar el registro";
+        }
+    } catch (PDOException $e) {
+        $msgerro =  " <h2>No se puede eliminar: El cliente tiene deudas </h2>" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
     }
 }
 
@@ -29,6 +33,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,6 +42,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="eliminar-usuario-styles.css">
 </head>
+
 <body>
     <div class="main-container">
         <nav class="navbar">
@@ -54,21 +60,24 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </ul>
             </aside>
             <main class="main-content">
+                <?php if (isset($msgerro)) {
+                    echo "<p>$msgerro</p>";
+                } ?>
                 <h2>Eliminar Usuario</h2>
-                
-                <div class="filtro"> 
-                <!-- Formulario de filtrado -->
-                <form method="POST" action="eliminar-usuario.php">
-                    <label >Filtrar Por: </label>
-                    <input type="text" id="codigo" name="codigo" placeholder="Codigo" value="<?php echo htmlspecialchars($codigo); ?>">
-                    <input type="text" id="nombre" name="nombre" placeholder="Nombre" value="<?php echo htmlspecialchars($nombre); ?>">
-                    <input type="text" id="sector" name="sector" placeholder="Sector"value="<?php echo htmlspecialchars($sector); ?>">
-                    <button type="submit">Filtrar</button>
-                </form>
+
+                <div class="filtro">
+                    <!-- Formulario de filtrado -->
+                    <form method="POST" action="eliminar-usuario.php">
+                        <label>Filtrar Por: </label>
+                        <input type="text" id="codigo" name="codigo" placeholder="Codigo" value="<?php echo htmlspecialchars($codigo); ?>">
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" value="<?php echo htmlspecialchars($nombre); ?>">
+                        <input type="text" id="sector" name="sector" placeholder="Sector" value="<?php echo htmlspecialchars($sector); ?>">
+                        <button type="submit">Filtrar</button>
+                    </form>
                 </div>
                 <table>
                     <tr>
-                        <th>Codigo</th>
+                        <th>Código</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Dirección</th>
@@ -80,12 +89,12 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     if (count($result) > 0) {
                         foreach ($result as $row) {
                             echo "<tr>
-                            <td> ". $row["codigo"] ."</td>
-                            <td> ". $row["nombre"] ."</td>
-                            <td> ". $row["apellido"] ."</td>
-                            <td> ". $row["direccion"] ."</td>
-                            <td> ". $row["sector"] ."</td>
-                            <td> ". $row["fundador"] ."</td>
+                            <td> " . $row["codigo"] . "</td>
+                            <td> " . $row["nombre"] . "</td>
+                            <td> " . $row["apellido"] . "</td>
+                            <td> " . $row["direccion"] . "</td>
+                            <td> " . $row["sector"] . "</td>
+                            <td> " . $row["fundador"] . "</td>
                             <td>
                                 <a href='eliminar-usuario.php?delete_id=" . $row["codigo"] . "'  onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>
                                 <img class='img-borrar' src='./img/borrar.png' alt='Eliminar'>
@@ -96,9 +105,10 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     }
                     ?>
                 </table>
-                
+
             </main>
         </div>
     </div>
 </body>
+
 </html>
