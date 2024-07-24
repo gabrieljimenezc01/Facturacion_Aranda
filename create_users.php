@@ -16,12 +16,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = [];
     $validator = new Validator();
     $validator->validateSpecialPassword($special);
+    $validator->validatePassword($password);
+    $validator->validateUsername($username);
+    $validator->validateName($nombre);
+    $validator->validateSurname($apellido);
+    $validator->validateDuplicateUsername($username);
 
     if ($validator->hasErrors()) {
         $errors = $validator->getErrors();
         $_SESSION['errors'] = $errors;
         $_SESSION['old_data'] = $_POST;
-        header("Location: login.php#register-box");
+        header("Location: register.php");
         exit();
     } else {
         $encrypted_password = encrypt($password, $key);

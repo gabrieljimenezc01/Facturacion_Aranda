@@ -1,4 +1,6 @@
 <?php
+require 'db.php';
+
 class Validator {
   private $errors = [];
 
@@ -9,11 +11,26 @@ class Validator {
     return $this;
   }
 
+  public function validateDuplicateUsername($username) {
+    global $conn;
+    if (!empty($username)) {
+      $sql = "SELECT COUNT(*) FROM login WHERE usuario = :user";
+      $stmt = $conn->prepare($sql);
+      $stmt->bindParam(':user', $username, PDO::PARAM_STR);
+      $stmt->execute();
+      $count = $stmt->fetchColumn();
+      if ($count > 0) {
+        $this->errors['duplicate'] = "El nombre de usuario ya esta en uso.";
+      }
+    }
+    return $this;
+  }
+
   public function validatePassword($password) {
     if (empty($password)) {
       $this->errors['password'] = "La contraseña es obligatoria.";
-    } elseif (strlen($password) < 5) {
-      $this->errors['password'] = "La contraseña debe tener al menos 5 caracteres.";
+    } elseif (strlen($password) < 3) {
+      $this->errors['password'] = "La contraseña debe tener al menos 3 caracteres.";
     }
     return $this;
   }
