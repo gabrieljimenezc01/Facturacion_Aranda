@@ -48,8 +48,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
-                    <li><a href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
+                <li><a href="agregar-usuario.php"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
+                    <li><a href="modificar-usuario.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
                     <li><a href="eliminar-usuario.php"><i class="fa fa-user-times" aria-hidden="true"></i><br> Eliminar Usuario</a></li>
                 </ul>
             </aside>
