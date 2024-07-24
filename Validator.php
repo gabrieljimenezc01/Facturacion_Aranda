@@ -1,10 +1,27 @@
 <?php
+require 'db.php';
+
 class Validator {
   private $errors = [];
 
   public function validateUsername($username) {
     if (empty($username)) {
       $this->errors['user'] = "El nombre de usuario es obligatorio.";
+    }
+    return $this;
+  }
+
+  public function validateDuplicateUsername($username) {
+    global $conn;
+    if (!empty($username)) {
+      $sql = "SELECT COUNT(*) FROM login WHERE usuario = :user";
+      $stmt = $conn->prepare($sql);
+      $stmt->bindParam(':user', $username, PDO::PARAM_STR);
+      $stmt->execute();
+      $count = $stmt->fetchColumn();
+      if ($count > 0) {
+        $this->errors['duplicate'] = "El nombre de usuario ya esta en uso.";
+      }
     }
     return $this;
   }
