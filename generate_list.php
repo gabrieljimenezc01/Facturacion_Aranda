@@ -21,49 +21,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ?>
     <!DOCTYPE html>
     <html lang="es">
+
     <head>
         <meta charset="UTF-8">
         <style>
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
-            .header, .footer {
-                text-align: center;
+
+            .header {
+                display: flex;
+                align-items: center;
                 padding: 10px;
                 background-color: #f1f1f1;
             }
+
             .header img {
-                max-width: 100px;
+                max-width: 80px;
+                margin-right: 20px;
             }
+
+            .header div {
+                text-align: center;
+                flex-grow: 1;
+            }
+
             .header h1 {
-                margin: 10px 0;
+                margin: 5px 0;
             }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
                 margin-top: 20px;
             }
-            table, th, td {
+
+            table,
+            th,
+            td {
                 border: 1px solid black;
             }
-            th, td {
+
+            th,
+            td {
                 padding: 8px;
                 text-align: left;
             }
+
             .footer {
+                text-align: center;
+                padding: 10px;
+                background-color: #f1f1f1;
                 position: fixed;
                 bottom: 0;
                 width: 100%;
-                text-align: center;
             }
         </style>
     </head>
+
     <body>
         <div class="header">
-            <img src="img/Logoacueducto.png" alt="Logo de la Empresa">
-            <h1>Lista de Recaudo para <?php echo ucfirst($list_type); ?></h1>
-            <p>Empresa de Acueducto | NIT: 123456789</p>
-            <p>Sector: <?php echo htmlspecialchars($sector); ?> | Mes: <?php echo htmlspecialchars($mes); ?> | Año: <?php echo htmlspecialchars($año); ?></p>
+            <img src="img/logo.png" alt="Logo de la Empresa9">
+            <div>
+                <h1>Lista de Recaudo para <?php echo ucfirst($list_type); ?></h1>
+                <p>Empresa de Acueducto | NIT: 123456789</p>
+                <p>Sector: <?php echo htmlspecialchars($sector); ?> | Mes: <?php echo htmlspecialchars($mes); ?> | Año:
+                    <?php echo htmlspecialchars($año); ?></p>
+            </div>
         </div>
         <table>
             <thead>
@@ -80,16 +104,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </thead>
             <tbody>
                 <?php foreach ($data as $row): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row[0]); ?></td>
-                    <td><?php echo htmlspecialchars($row[1]); ?></td>
-                    <td><?php echo htmlspecialchars($row[2]); ?></td>
-                    <td><?php echo htmlspecialchars($row[3]); ?></td>
-                    <td><?php echo htmlspecialchars($row[4]); ?></td>
-                    <td><?php echo htmlspecialchars($row[5]); ?></td>
-                    <td><?php echo htmlspecialchars($row[6]); ?></td>
-                    <td><?php echo htmlspecialchars($row[7]); ?></td>
-                </tr>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row[0]); ?></td>
+                        <td><?php echo htmlspecialchars($row[1]); ?></td>
+                        <td><?php echo htmlspecialchars($row[2]); ?></td>
+                        <td><?php echo htmlspecialchars($row[3]); ?></td>
+                        <td><?php echo htmlspecialchars($row[4]); ?></td>
+                        <td><?php echo htmlspecialchars($row[5]); ?></td>
+                        <td><?php echo htmlspecialchars($row[6]); ?></td>
+                        <td><?php echo htmlspecialchars($row[7]); ?></td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -97,6 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p>Footer con información adicional</p>
         </div>
     </body>
+
     </html>
     <?php
     $html = ob_get_clean();
@@ -104,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Inicializar DOMPDF y generar el PDF
     $dompdf = new Dompdf();
     $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->setPaper('letter', 'portrait'); // Ajustar el tamaño del papel a carta
     $dompdf->render();
     $dompdf->stream('lista_recaudo.pdf', ['Attachment' => 0]);
 }

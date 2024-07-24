@@ -31,7 +31,7 @@ if (!isset($_SESSION['user'])) {
     </div>
     <div class="container">
         <h1>Generador de Listas</h1>
-        <form action="generate_list.php" method="POST">
+        <form id="pdfForm" action="generate_list.php" method="POST" target="_blank">
             <div class="form-group">
                 <label for="list-type">Tipo de Lista</label>
                 <select id="list-type" name="list_type" onchange="showForm()">
