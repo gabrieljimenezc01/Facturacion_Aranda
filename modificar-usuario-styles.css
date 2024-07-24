@@ -1,0 +1,287 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.navbar {
+    background-color: #0074D9;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: #005bb5;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #004494;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #d8ecff;
+    padding: 1rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-list li {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ffffff;
+    padding: 1rem 0;
+}
+
+.menu-list a {
+    color: #0074D9;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu-list a:hover {
+    background-color: #c7e3ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+}
+
+.menu-list a i {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    text-align: center;
+    color: #0074D9;
+    margin-bottom: 1.5rem;
+}
+
+.form-modificar {
+    max-width: 1200px; /* Incrementa el ancho del formulario */
+    margin: 0 10px;
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-modificar {
+    display: flex;
+    justify-content: center;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.form-group {
+    flex: 1;
+    margin-right: 0.5rem;
+}
+
+.form-group:last-child {
+    margin-right: 0;
+}
+
+.form-modificar label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-modificar input[type="text"],
+.form-modificar input[type="checkbox"],
+.form-modificar select {
+    width: calc(100% - 22px);
+    padding: 0.375rem;
+    margin-bottom: 0.375rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-modificar input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.form-modificar select {
+    width: 100%;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+.center-row {
+    justify-content: center;
+}
+
+.form-modificar button {
+    display: block;
+    width: 50%;
+    padding: 0.5rem;
+    background-color: #0074D9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-modificar button:hover {
+    background-color: #005bb5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.msg {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #0074D9;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.875rem;
+}
+
+/* .user-list {
+    margin-top: 2rem;
+} */
+
+.user-list input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.user-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-list table, .user-list th, .user-list td {
+    border: 1px solid #ddd;
+}
+
+.user-list th, .user-list td {
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.user-list th {
+    background-color: #0000003a;
+    color: rgb(0, 0, 0);
+}
+
+.user-list tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.img-modificar{
+    width: 20px;
+    height: 20px;
+}
+
+.filtro{
+    text-align: center;
+    margin: auto;
+    margin-bottom: 12px;
+}
+
+.form-filtro {
+    display: block;
+    justify-content: center;
+    padding: 0px 80px;
+    max-height: 30px;
+    margin-bottom: 20px;
+}
+
+.form-filtro input {
+    max-width: 150px;
+    max-height: 30px;
+    margin: 0 10px;
+}
+
+.form-filtro label {
+    max-width: 150px;
+    margin: 0 10px;
+    max-height: 30px;
+    text-align: justify;
+}
+
+.form-filtro button {
+    max-width: 200px;
+    height: 30px;
+    margin: 0 10px;
+}
