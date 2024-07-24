@@ -24,11 +24,11 @@ if (!isset($_SESSION['user'])) {
     <div class="background-overlay"></div>
     <div class="navbar">
         <div class="user-container">
-            <button class="user-btn" onclick="window.location.href='principal.html'">Usuarios</button>
+            <button class="user-btn" onclick="window.location.href='agregar-usuario.php'">Usuarios</button>
             <button class="user-btn" onclick="window.location.href='principal.html'">Busqueda</button>
             <button class="user-btn" onclick="window.location.href='listados.php'">Facturación</button>
             <button class="user-btn" onclick="window.location.href='listados.php'">Listados</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Precios</button>
+            <button class="user-btn" onclick="window.location.href='precio.php'">Precios</button>
             <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
         </div>
     </div>
@@ -42,7 +42,7 @@ if (!isset($_SESSION['user'])) {
             <h2>A continuación, encontrará las principales funcionalidades disponibles:</h2><br>
         </div><br>
         <div class="icons-container">
-            <a href="index.html" class="icon-card">
+            <a href="agregar-usuario.php" class="icon-card">
                 <h2>Modulo Usuarios</h2><br>
                 <i class="fa fa-users fa-5x icon"></i>
             </a>
@@ -58,7 +58,7 @@ if (!isset($_SESSION['user'])) {
                 <h2>Listados</h2><br>
                 <i class="fa fa-newspaper-o fa-5x icon"></i>
             </a>
-            <a href="index.html" class="icon-card">
+            <a href="precio.php" class="icon-card">
                 <h2>Precios</h2><br>
                 <i class="fa fa-money fa-5x icon"></i>
             </a>
