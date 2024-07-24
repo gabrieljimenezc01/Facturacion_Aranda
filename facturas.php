@@ -111,6 +111,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
         </table>
     </div>
+    <?php if (!empty($result)) : ?>
+    <div>
+        <form action="generar_facturas.php" method="post">
+            <input type="hidden" name="sector" value='<?php echo $sector ?>'>
+            <input type="hidden" name="mes" value='<?php echo $mes ?>'>
+            <input type="hidden" name="año" value='<?php echo $año ?>'>
+        <button type="submit" name="descarga">Descargar facturas</button>
+        </form>
+    </div> 
+    <?php endif ?>
 </body>
 
 </html>
