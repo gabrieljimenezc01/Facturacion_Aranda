@@ -26,8 +26,8 @@ if (!isset($_SESSION['user'])) {
         <div class="user-container">
             <button class="user-btn" onclick="window.location.href='principal.html'">Usuarios</button>
             <button class="user-btn" onclick="window.location.href='principal.html'">Busqueda</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Facturación</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Listados</button>
+            <button class="user-btn" onclick="window.location.href='listados.php'">Facturación</button>
+            <button class="user-btn" onclick="window.location.href='listados.php'">Listados</button>
             <button class="user-btn" onclick="window.location.href='avanzar.html'">Precios</button>
             <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
         </div>
@@ -54,7 +54,7 @@ if (!isset($_SESSION['user'])) {
                 <h2>Facturación</h2><br>
                 <i class="fa fa-file-pdf-o fa-5x icon"></i>
             </a>
-            <a href="index.html" class="icon-card">
+            <a href="listados.php" class="icon-card">
                 <h2>Listados</h2><br>
                 <i class="fa fa-newspaper-o fa-5x icon"></i>
             </a>
