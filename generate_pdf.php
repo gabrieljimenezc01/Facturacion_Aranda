@@ -56,16 +56,16 @@ class PDF extends FPDF
 
         // Información del Cliente
         $this->SetFont('Arial', '', 10);
-        $this->Cell(100, 6, 'Nombre: ' . $this->factura['nombre'] . ' ' . $this->factura['apellido'], 1);
-        $this->Cell(25, 6, 'Código: ' . $this->factura['cod_cliente'] , 1, 1);
+        $this->Cell(100, 6, 'Nombre: ' . utf8_decode($this->factura['nombre']) . ' ' .utf8_decode($this->factura['apellido']), 1);
+        $this->Cell(25, 6, utf8_decode('Código: ') . $this->factura['cod_cliente'] , 1, 1);
 
-        $this->Cell(70, 6, 'Direccion: ' . $this->factura['direccion'], 1);
+        $this->Cell(70, 6, utf8_decode('Dirección: '). utf8_decode($this->factura['direccion']), 1);
         $this->Cell(25, 6, 'Sector: ' . $this->factura['sector'], 1);
-        $this->Cell(30, 6, 'Uso: ' . $this->factura['uso'], 1,1);
+        $this->Cell(30, 6, 'Uso: ' . utf8_decode($this->factura['uso']), 1,1);
 
         $this->Cell(25, 6, 'Fundador: ' . $this->factura['fundador'] , 1);
         $this->Cell(45, 6, 'Medidor No: ' . $this->factura['codigo_medidor'] , 1);
-        $this->Cell(55, 6, 'Diametro Med: ' . $this->factura['diametro_medidor'] , 1,1);
+        $this->Cell(55, 6, utf8_decode('Diámetro Med: ') . $this->factura['diametro_medidor'] , 1,1);
         $this->Ln(2);
         
         //Informacion de consumo
@@ -81,10 +81,10 @@ class PDF extends FPDF
     {
         $this->SetY(-25);
         $this->SetFont('Arial', '', 10);
-        $this->Cell(80, 6, 'Periodo Facturado De: ' . $this->factura['fecha_inicio_cobro'].' A '. $this->factura['fecha_fin_cobro'], 1);
+        $this->Cell(80, 6, utf8_decode('Período Facturado De: ') . $this->factura['fecha_inicio_cobro'].' A '. $this->factura['fecha_fin_cobro'], 1);
         $this->Cell(45, 6, 'Mes Facturado: ' . $this->factura['mes_cobrado'], 1,1);
         $this->SetFont('Arial', 'I', 8);
-        $this->Cell(0, 10, 'Página ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
+        $this->Cell(0, 10, utf8_decode('Página') . $this->PageNo() . '/{nb}', 0, 0, 'C');
     }
 
     // Información de la factura
@@ -96,12 +96,12 @@ class PDF extends FPDF
         //concepto de porque se cobra
         $this->Cell(65, 6, 'Concepto ', 1, 0);
         $this->Cell(20, 6, 'Unidades ', 1, 0);
-        $this->Cell(20, 6, 'Val.Unit ', 1, 0);
-        $this->Cell(20, 6, 'Val.Total ', 1, 1);
+        $this->Cell(20, 6, 'Val. Unit ', 1, 0);
+        $this->Cell(20, 6, 'Val. Total ', 1, 1);
 
         $this->SetFont('Arial', '', 10);
 
-        $this->Cell(65, 6, 'Recaudo Basico ', 1, 0);
+        $this->Cell(65, 6, utf8_decode('Recaudo Básico '), 1, 0);
         $this->Cell(20, 6, '', 1, 0);
         $this->Cell(20, 6, '', 1, 0);
         $this->Cell(20, 6, '', 1, 1);
@@ -114,37 +114,25 @@ class PDF extends FPDF
         $this->Cell(65, 6, 'Deuda ', 1, 0);
         $this->Cell(20, 6, ' ', 1, 0);
         $this->Cell(20, 6, ' ', 1, 0);
-        $this->Cell(20, 6, ''. $this->factura['valor_deuda'], 1, 1);
+        $this->Cell(20, 6, ''. number_format($this->factura['valor_deuda']), 1, 1);
         
         $this->Cell(105, 6, 'Total a Pagar ', 1, 0);
-        $this->Cell(20, 6, ''. $this->factura['valor_total'], 1, 1);
+        $this->Cell(20, 6, ''. number_format($this->factura['valor_total']), 1, 1);
         $this->Ln(8);
 
         $this->Cell(125, 6, 'Anotaciones: '. $this->factura['Anotaciones'], 1, 1);
-        $this->Cell(125, 6, 'Valor ultimo pago: '. $this->factura['valor_ultima_factura'], 1, 1);
-        $this->Cell(125, 6, 'Fecha limite de pago: '. $this->factura['fecha_limite_pago'], 1, 1);
+        $this->Cell(125, 6, utf8_decode('Valor último pago: '). number_format($this->factura['valor_ultima_factura']), 1, 1);
+        $this->Cell(125, 6, utf8_decode('Fecha límite de pago: '). $this->factura['fecha_limite_pago'], 1, 1);
         $this->Ln(8);
 
         $this->Cell(105, 6, 'Total a Pagar ', 1, 0);
-        $this->Cell(20, 6, ''. $this->factura['valor_total'], 1, 1);
+        $this->Cell(20, 6, ''. number_format($this->factura['valor_total']), 1, 1);
         $this->Ln(10);
 
-        $this->Image('img/gota_feliz.png', 10, 155, 40); // 150px de ancho (convertido a mm)
-        $this->Cell(39);
-        $this->Cell(40, 6, 'EL AGUA ES VIDA', 0, 1,'C'); 
-        $this->Cell(39);
-        $this->Cell(40, 6, 'UNIDOS TODOS', 0, 1,'C');
-        $this->Cell(39);
-        $this->Cell(40, 6, 'TRABAJAREMOS PARA', 0, 1,'C');
-        $this->Cell(39);
-        $this->Cell(40, 6, 'CUIDARLA', 0, 0,'C');
-        
-
-       /* $this->Cell(0, 10, 'Lectura Anterior: ' . $this->factura['lectura_inicial'], 0, 1);
-        $this->Cell(0, 10, 'Lectura Actual: ' . $this->factura['lectura_final'], 0, 1);
-        $this->Cell(0, 10, 'Valor m3: $' . number_format($this->factura['valor_total'], 2), 0, 1);
-        $this->Cell(0, 10, 'Valor Deuda: $' . number_format($this->factura['valor_deuda'], 2), 0, 1);
-        $this->Cell(0, 10, 'Valor Factura: $' . number_format($this->factura['valor_total'], 2), 0, 1);*/
+        $this->Image('img/gota_feliz.png', 10, 155, 40); 
+        $this->SetXY(50, 155); // Ajustar la posición para que el texto esté centrado debajo de la imagen
+        $this->SetFont('Arial', 'B', 12);
+        $this->MultiCell(40, 6, "EL AGUA ES VIDA\nUNIDOS TODOS\nTRABAJAREMOS PARA\nCUIDARLA", 0, 'C');
     }
 }
 
