@@ -20,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $validator->validateUsername($username);
     $validator->validateName($nombre);
     $validator->validateSurname($apellido);
-    $validator->validateDuplicateUsername($username);
 
     if ($validator->hasErrors()) {
         $errors = $validator->getErrors();

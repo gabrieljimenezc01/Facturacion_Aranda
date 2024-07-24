@@ -25,8 +25,8 @@ if (!isset($_SESSION['user'])) {
     <div class="navbar">
         <div class="user-container">
             <button class="user-btn" onclick="window.location.href='agregar-usuario.php'">Usuarios</button>
-            <button class="user-btn" onclick="window.location.href='principal.html'">Busqueda</button>
-            <button class="user-btn" onclick="window.location.href='listados.php'">Facturación</button>
+            <button class="user-btn" onclick="window.location.href='deudores.php'">Busqueda</button>
+            <button class="user-btn" onclick="window.location.href='facturas.php'">Facturación</button>
             <button class="user-btn" onclick="window.location.href='listados.php'">Listados</button>
             <button class="user-btn" onclick="window.location.href='precio.php'">Precios</button>
             <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
@@ -46,11 +46,11 @@ if (!isset($_SESSION['user'])) {
                 <h2>Modulo Usuarios</h2><br>
                 <i class="fa fa-users fa-5x icon"></i>
             </a>
-            <a href="index.html" class="icon-card">
+            <a href="deudores.php" class="icon-card">
                 <h2>Buscar Usuarios</h2><br>
                 <i class="fa fa-search fa-5x icon"></i>
             </a>
-            <a href="index.html" class="icon-card">
+            <a href="facturas.php" class="icon-card">
                 <h2>Facturación</h2><br>
                 <i class="fa fa-file-pdf-o fa-5x icon"></i>
             </a>
