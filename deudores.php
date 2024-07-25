@@ -22,7 +22,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal</title>
+    <title>Lista Deudores</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="deudas-styles.css">
@@ -31,7 +31,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="main-container">
         <nav class="navbar">
-            <div class="navbar-brand">Modulo Deudas</div>
+            <div class="navbar-brand">Modulo Deudas y Facturas</div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
             </div>
@@ -40,12 +40,13 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="deudores.php"><i class="fa fa-user" aria-hidden="true"></i><br>Clientes con Deudas</a></li>
-                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Pago de Deudas</a></li>
+                    <li><a href="deudores.php"><i class="fa fa-list" aria-hidden="true"></i><br>Lista Deudores</a></li>
+                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Acuerdos de pago</a></li>
+                    <li><a href="clientes_facturas.php"><i class="fa fa-user" aria-hidden="true"></i><br>Facturas de clientes</a></li>
                 </ul>
             </aside>
             <main class="main-content">
-                <h2>Clientes con Deudas</h2>
+                <h2>Deudores</h2>
 
                 <div class="filtro">
                     <!-- Formulario de filtrado -->
