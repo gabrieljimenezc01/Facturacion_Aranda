@@ -40,13 +40,14 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Menú Principal</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="eliminar-usuario-styles.css">
+    <link rel="stylesheet" href="deudas-styles.css">
 </head>
 
 <body>
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Sistema de Facturación</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"></i></a></div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
             </div>
@@ -69,10 +70,24 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <!-- Formulario de filtrado -->
                     <form method="POST" action="eliminar-usuario.php">
                         <label>Filtrar Por: </label>
-                        <input type="text" id="codigo" name="codigo" placeholder="Codigo" value="<?php echo htmlspecialchars($codigo); ?>">
-                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" value="<?php echo htmlspecialchars($nombre); ?>">
-                        <input type="text" id="sector" name="sector" placeholder="Sector" value="<?php echo htmlspecialchars($sector); ?>">
+                        <div class="form-row">
+                        <input type="number" name="codigo"  value='<?php echo $codigo?>' min="1">
+                        <label alt="Label" data-placeholder="Código de usuario"></label>
+                        </div>
+
+                        <div class="form-row">
+                        <input type="text" id="nombre" name="nombre"  value='<?php echo $nombre?>' >
+                        <label alt="Label" data-placeholder="Nombre"></label>
+                        </div>
+
+                        <div class="form-row">
+                        <input type="number" name="sector"  value='<?php echo $sector?>' min="1">
+                        <label alt="Label" data-placeholder="Sector"></label>
+                        </div>   
+
+                        <div class="form-row">
                         <button type="submit">Filtrar</button>
+                        </div>
                     </form>
                 </div>
                 <table>

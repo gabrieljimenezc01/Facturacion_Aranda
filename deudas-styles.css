@@ -115,6 +115,10 @@ body {
     margin: auto;
     margin-bottom: 12px;
 }
+.img-borrar{
+  width: 20px;
+  height: 20px;
+}
 
 table {
     margin: auto;
@@ -282,4 +286,9 @@ button {
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
+}
+.select_mes{
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }

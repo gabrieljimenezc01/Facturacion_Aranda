@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Facturación</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"></i></a></div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
             </div>
@@ -47,9 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="deudores.php"><i class="fa fa-list" aria-hidden="true"></i><br>Lista Deudores</a></li>
-                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Acuerdos de pago</a></li>
-                    <li><a href="clientes_facturas.php"><i class="fa fa-user" aria-hidden="true"></i><br>Facturas de clientes</a></li>
+                    <li><a href="facturas.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
+                    <li><a href="facturas.php"><i class="fa fa-print" aria-hidden="true"></i><br>Imprimir Facturas</a></li>
+                    <li><a href="facturas.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
                 </ul>
             </aside>
             <main class="main-content">
@@ -63,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label alt="Label" data-placeholder="Sector"></label>
                         </div>
                         <div class="form-row">
-                            <select name="mes" required id="mes" class="select">
+                            <select name="mes" required id="mes" class="select_mes">
                                 <option value="<?php echo $mes ?>"><?php echo $mes ?></option>
                                 <option value="ENERO">ENERO</option>
                                 <option value="FEBRERO">FEBRERO</option>

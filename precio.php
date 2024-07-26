@@ -131,71 +131,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Precios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="precio-styles.css">
 </head>
-
 <body>
-    <div class="navbar">
-        <div class="user-container">
-            <button class="user-btn" onclick="window.location.href='principal.html'">Opciones</button>
-            <button class="user-btn" onclick="window.location.href='principal.html'">Opciones</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Opciones</button>
-            <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
+    <nav class="navbar">
+        <div class="navbar-brand">Modulo Precios</div>
+        <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"></i></a></div>
+        <div>
+            <button class="logout-button">Cerrar Sesión</button>
         </div>
-    </div>
+    </nav>
     <div class="container">
+        <div>
+            <h2>Manejo de Precios</h2>
+        </div>
+        <div>
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="table_information">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Medida Inicial</th>
+                            <th>Medida Final</th>
+                            <th>Valor Residencial</th>
+                            <th>Valor Comercial</th>
+                            <th>Valor Industrial</th>
+                            <th>Valor Fundador</th>
+                            <th>Acciones</th>
+                        </tr>
+                        <?php
+                        $sql = "SELECT * FROM precio";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute();
+                        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+                        if (count($result) > 0) {
+                            foreach ($result as $row) {
+                                echo "<tr>
+                                        <td><input type='hidden' name='id[]' value='" . $row["id"] . "'>" . "</td>
+                                        <td><input type='number' name='medida_inicial[]' value='" . $row["medida_inicial"] . "'></td>
+                                        <td><input type='number' name='medida_final[]' value='" . $row["medida_final"] . "'></td>
+                                        <td><input type='number' name='valor_residencial[]' value='" . $row["valor_residencial"] . "'></td>
+                                        <td><input type='number' name='valor_comercial[]' value='" . $row["valor_comercial"] . "'></td>
+                                        <td><input type='number' name='valor_industrial[]' value='" . $row["valor_industrial"] . "'></td>
+                                        <td><input type='number' name='valor_fundador[]' value='" . $row["valor_fundador"] . "'></td>
+                                        <td>
+                                            <a href='precio.php?delete_id=" . $row["id"] . "'  onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>
+                                            <img class='img-borrar' src='./img/borrar.png' alt='Eliminar'>
+                                            </a>
+                                        </td>
+                                    </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
+                        }
 
-        <h2>Manejo de Precios</h2>
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Medida Inicial</th>
-                    <th>Medida Final</th>
-                    <th>Valor Residencial</th>
-                    <th>Valor Comercial</th>
-                    <th>Valor Industrial</th>
-                    <th>Valor Fundador</th>
-                    <th>Acciones</th>
-                </tr>
-                <?php
-                $sql = "SELECT * FROM precio";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                if (count($result) > 0) {
-                    foreach ($result as $row) {
-                        echo "<tr>
-                    <td><input type='hidden' name='id[]' value='" . $row["id"] . "'>" . "</td>
-                    <td><input type='number' name='medida_inicial[]' value='" . $row["medida_inicial"] . "'></td>
-                    <td><input type='number' name='medida_final[]' value='" . $row["medida_final"] . "'></td>
-                    <td><input type='number' name='valor_residencial[]' value='" . $row["valor_residencial"] . "'></td>
-                    <td><input type='number' name='valor_comercial[]' value='" . $row["valor_comercial"] . "'></td>
-                    <td><input type='number' name='valor_industrial[]' value='" . $row["valor_industrial"] . "'></td>
-                    <td><input type='number' name='valor_fundador[]' value='" . $row["valor_fundador"] . "'></td>
-                    <td>
-                        <a href='precio.php?delete_id=" . $row["id"] . "'  onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>
-                        <img class='img-borrar' src='./img/borrar.png' alt='Eliminar'>
-                        </a>
-                    </td>
-                  </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
-                }
-
-                $conn = null;
-                ?>
-            </table>
-            <br>
-            <button type="submit" name="update" value="Guardar Cambios" class="btn save-btn">Guardar Cambios </button>
-        </form>
+                        $conn = null;
+                        ?>
+                    </table>
+                </div>
+                <br>
+                <button type="submit" name="update" value="Guardar Cambios" class="btn save-btn">Guardar Cambios </button>
+            </form>
+        </div>
         <?php if (isset($update_msg2)) {
             echo "<p>$update_msg2</p>";
         } ?>
@@ -207,15 +209,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
         } ?>
         <div class="div_agregar">
             <h2>Agregar Nuevo Registro</h2>
-            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
-                <input class="inp-form" type="number" name="new_medida_inicial" placeholder="Medida Inicial" required>
-                <input class="inp-form" type="number" name="new_medida_final" placeholder="Medida Final" required>
-                <input class="inp-form" type="number" name="new_valor_residencial" placeholder="Valor Residencial" required>
-                <input class="inp-form" type="number" name="new_valor_comercial" placeholder="Valor Comercial" required>
-                <input class="inp-form" type="number" name="new_valor_industrial" placeholder="Valor Industrial" required>
-                <input class="inp-form" type="number" name="new_valor_fundador" placeholder="Valor Fundador" required> <Br></Br>
-                <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
-            </form>
+            <div class="datosregistronuevo">
+                <form method="post" class="formdatos" action="<?php echo $_SERVER['PHP_SELF']; ?>" class="add-form">
+                    <div class="form-row">
+                        <input type="number" required name="new_medida_inicial" min="0">
+                        <label alt="Label" data-placeholder="Medida Inicial"></label>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" required name="new_medida_final" min="0">
+                        <label alt="Label" data-placeholder="Medida Final"></label>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" required name="new_valor_residencial" min="0">
+                        <label alt="Label" data-placeholder="Valor Residencial"></label>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" required name="new_valor_comercial" min="0">
+                        <label alt="Label" data-placeholder="Valor Comercial"></label>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" required name="new_valor_industrial" min="0">
+                        <label alt="Label" data-placeholder="Valor Industrial"></label>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" required name="new_valor_fundador" min="0">
+                        <label alt="Label" data-placeholder="Valor Fundador"></label>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit" name="add" class="btn save-btn">Agregar Registro</button>
+                    </div>
+                </form>
+            </div>
             <?php if (isset($add_msg)) {
                 echo "<p>$add_msg</p>";
             } ?>

@@ -32,6 +32,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Modulo Deudas y Facturas</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"></i></a></div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
             </div>
