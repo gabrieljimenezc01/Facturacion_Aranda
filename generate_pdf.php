@@ -52,7 +52,7 @@ class PDF extends FPDF
         $this->Cell(43, 8, 'No: ' . $this->factura['cod_factura'], 1, 1, 'C');
         $this->Ln(2);
         
-        //mensaje
+        //mensaje datos personales
         $this->SetX($x);
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(48);
@@ -89,47 +89,43 @@ class PDF extends FPDF
 
         $this->SetX($x);
         //concepto de porque se cobra
-        $this->Cell(65, 6, 'Concepto ', 1, 0);
-        $this->Cell(20, 6, 'Unidades ', 1, 0);
-        $this->Cell(20, 6, 'Val. Unit ', 1, 0);
-        $this->Cell(20, 6, 'Val. Total ', 1, 1);
+        $this->Cell(75, 6, 'Concepto ', 1, 0);
+        $this->Cell(25, 6, 'Unidades ', 1, 0);
+        $this->Cell(25, 6, 'Val. Total ', 1, 1);
 
         $this->SetFont('Arial', '', 10);
         
         $this->SetX($x);
-        $this->Cell(65, 6, utf8_decode('Recaudo Básico '), 1, 0);
-        $this->Cell(20, 6, '', 1, 0);
-        $this->Cell(20, 6, '', 1, 0);
-        $this->Cell(20, 6, '', 1, 1);
+        $this->Cell(75, 6, utf8_decode('Recaudo Básico '), 1, 0);
+        $this->Cell(25, 6, '', 1, 0);
+        $this->Cell(25, 6, $this->factura['valor_basico'], 1, 1,'R');
 
         $this->SetX($x);
-        $this->Cell(65, 6, 'Consumo M3 ', 1, 0);
-        $this->Cell(20, 6, ''. $this->factura['consumo_m3'], 1, 0);
-        $this->Cell(20, 6, ' ', 1, 0);
-        $this->Cell(20, 6, ' ', 1, 1);
+        $this->Cell(75, 6, 'Consumo M3 ', 1, 0);
+        $this->Cell(25, 6, $this->factura['consumo_m3'], 1, 0,'R');
+        $this->Cell(25, 6, $this->factura['valor_consumo'], 1, 1,'R');
 
         $this->SetX($x);
-        $this->Cell(65, 6, 'Deuda ', 1, 0);
-        $this->Cell(20, 6, ' ', 1, 0);
-        $this->Cell(20, 6, ' ', 1, 0);
-        $this->Cell(20, 6, ''. number_format($this->factura['valor_deuda']), 1, 1);
+        $this->Cell(75, 6, 'Deuda ', 1, 0);
+        $this->Cell(25, 6, '', 1, 0);
+        $this->Cell(25, 6, ''. number_format($this->factura['valor_deuda']), 1, 1,'R');
         
         $this->SetX($x);
-        $this->Cell(105, 6, 'Total a Pagar ', 1, 0);
-        $this->Cell(20, 6, ''. number_format($this->factura['valor_total']), 1, 1);
+        $this->Cell(100, 6, 'Total a Pagar ', 1, 0);
+        $this->Cell(25, 6, ''. number_format($this->factura['valor_total']), 1, 1,'R');
         $this->Ln(8);
 
         $this->SetX($x);
         $this->Cell(125, 6, 'Anotaciones: '. $this->factura['Anotaciones'], 1, 1);
         $this->SetX($x);
-        $this->Cell(125, 6, utf8_decode('Valor último pago: '). number_format($this->factura['valor_ultima_factura']), 1, 1);
+        $this->Cell(125, 6, utf8_decode('Valor último pago:  '). number_format($this->factura['valor_ultima_factura']), 1, 1);
         $this->SetX($x);
-        $this->Cell(125, 6, utf8_decode('Fecha límite de pago: '). $this->factura['fecha_limite_pago'], 1, 1);
+        $this->Cell(125, 6, utf8_decode('Fecha límite de pago:  '). $this->factura['fecha_limite_pago'], 1, 1);
         $this->Ln(8);
 
         $this->SetX($x);
-        $this->Cell(105, 6, 'Total a Pagar ', 1, 0);
-        $this->Cell(20, 6, ''. number_format($this->factura['valor_total']), 1, 1);
+        $this->Cell(100, 6, 'Total a Pagar ', 1, 0);
+        $this->Cell(25, 6, ''. number_format($this->factura['valor_total']), 1, 1,'C');
         $this->Ln(10);
 
         
