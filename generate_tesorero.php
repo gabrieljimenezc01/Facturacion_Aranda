@@ -39,9 +39,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function Header()
         {
             // Marco alrededor del encabezado
-            $this->Rect(10, 10, 190, 30);
+            $this->Rect(10, 10, 195, 30);
             // Agregar el logo
-            $this->Image('img/logo.png', 15, 15, 20);
+            $this->Image('img/logo.png', 15, 11, 28);
             $this->SetFont('Arial', 'B', 12);
             // Título
             $this->Cell(30); // Espacio para el logo
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Posición a 1.5 cm del final
             $this->SetY(-30);
             // Marco alrededor del pie de página
-            $this->Rect(10, $this->GetY(), 190, 20);
+            $this->Rect(10, $this->GetY(), 195, 20);
             $this->SetFont('Arial', 'I', 12);
             // Número de página
             $this->Cell(95, 20, 'Pagina ' . $this->PageNo(), 0, 0, 'L');
@@ -71,23 +71,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function ImprovedTable($header, $data)
         {
             // Anchuras de las columnas
-            $w = array(20, 30, 30, 20, 15, 30, 30, 20);
+            $w = array(15, 40, 40, 15, 15, 25, 25, 20);
             // Cabeceras
+            $this->SetFont('Arial', 'B', 10);
             for ($i = 0; $i < count($header); $i++) {
                 $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
             }
             $this->Ln();
             // Datos
+            $this->SetFont('Arial', '', 10);
             foreach ($data as $row) {
                 $this->CheckPageBreak($header);
-                $this->Cell($w[0], 6, $row['codigo'], 'LR', 0, 'C');
-                $this->Cell($w[1], 6, $row['nombre'], 'LR', 0, 'C');
-                $this->Cell($w[2], 6, $row['apellido'], 'LR', 0, 'C');
-                $this->Cell($w[3], 6, $row['factura'], 'LR', 0, 'C');
-                $this->Cell($w[4], 6, $row['m3'], 'LR', 0, 'C');
-                $this->Cell($w[5], 6, $row['valor_ingreso'], 'LR', 0, 'C');
-                $this->Cell($w[6], 6, $row['deuda'], 'LR', 0, 'C');
-                $this->Cell($w[7], 6, $row['fundador'], 'LR', 0, 'C');
+                // Ajustar altura de la fila en función del contenido más grande
+                $maxHeight = $this->getMaxRowHeight($w, $row);
+                $this->Cell($w[0], $maxHeight, $row['codigo'], 'LR', 0, 'C');
+                $this->Cell($w[1], $maxHeight, $row['nombre'], 'LR', 0, 'C');
+                $this->Cell($w[2], $maxHeight, $row['apellido'], 'LR', 0, 'C');
+                $this->Cell($w[3], $maxHeight, $row['factura'], 'LR', 0, 'C');
+                $this->Cell($w[4], $maxHeight, $row['m3'], 'LR', 0, 'C');
+                $this->Cell($w[5], $maxHeight, $row['valor_ingreso'], 'LR', 0, 'C');
+                $this->Cell($w[6], $maxHeight, $row['deuda'], 'LR', 0, 'C');
+                $this->Cell($w[7], $maxHeight, $row['fundador'], 'LR', 0, 'C');
                 $this->Ln();
             }
             // Línea de cierre
@@ -103,13 +107,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $this->AddPage();
                 $this->SetFont('Arial', 'B', 10);
                 // Anchuras de las columnas
-                $w = array(20, 30, 30, 20, 15, 30, 30, 20);
+                $w = array(15, 40, 40, 15, 15, 25, 25, 20);
                 // Cabeceras
                 for ($i = 0; $i < count($header); $i++) {
                     $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
                 }
                 $this->Ln();
+                $this->SetFont('Arial', '', 10); // Mantener el mismo estilo de fuente para el contenido
             }
+        }
+
+        function getMaxRowHeight($w, $row)
+        {
+            // Calcular la altura de la fila en función del contenido más grande
+            $maxHeight = 6; // Altura mínima de la fila
+            $this->SetFont('Arial', '', 10);
+            foreach ($row as $key => $col) {
+                $numLines = $this->NbLines($w[array_search($key, array_keys($row))], $col);
+                $maxHeight = max($maxHeight, $numLines * 6);
+            }
+            return $maxHeight;
+        }
+
+        function NbLines($w, $txt)
+        {
+            // Calcular el número de líneas que ocupa un texto
+            $cw = &$this->CurrentFont['cw'];
+            if ($w == 0)
+                $w = $this->w - $this->rMargin - $this->x;
+            $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+            $s = str_replace("\r", '', $txt);
+            $nb = strlen($s);
+            if ($nb > 0 and $s[$nb - 1] == "\n")
+                $nb--;
+            $sep = -1;
+            $i = 0;
+            $j = 0;
+            $l = 0;
+            $nl = 1;
+            while ($i < $nb) {
+                $c = $s[$i];
+                if ($c == "\n") {
+                    $i++;
+                    $sep = -1;
+                    $j = $i;
+                    $l = 0;
+                    $nl++;
+                    continue;
+                }
+                if ($c == ' ')
+                    $sep = $i;
+                $l += $cw[$c];
+                if ($l > $wmax) {
+                    if ($sep == -1) {
+                        if ($i == $j)
+                            $i++;
+                    } else
+                        $i = $sep + 1;
+                    $sep = -1;
+                    $j = $i;
+                    $l = 0;
+                    $nl++;
+                } else
+                    $i++;
+            }
+            return $nl;
         }
     }
 

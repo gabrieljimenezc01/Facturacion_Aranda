@@ -53,26 +53,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     {
         function Header()
         {
+            // Marco alrededor del encabezado
+            $this->Rect(10, 10, 195, 30);
             // Agregar el logo
-            $this->Image('img/logo.png', 10, 10, 30);
+            $this->Image('img/logo.png', 15, 11, 28);
             $this->SetFont('Arial', 'B', 12);
             // Título
-            $this->Cell(40); // Espacio para el logo
-            $this->Cell(100, 10, 'Lista de Recaudo', 0, 1, 'C');
-            $this->Cell(40);
-            $this->Cell(100, 10, 'Empresa de Acueducto | NIT: 123456789', 0, 1, 'C');
-            $this->Cell(40);
-            $this->Cell(100, 10, 'Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año']), 0, 1, 'C');
+            $this->Cell(30); // Espacio para el logo
+            $this->Cell(130, 10, 'Lista de Recaudo', 0, 1, 'C');
+            $this->Cell(30);
+            $this->Cell(130, 10, 'Empresa de Acueducto | NIT: 123456789', 0, 1, 'C');
+            $this->Cell(30);
+            $this->Cell(130, 10, 'Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año']), 0, 1, 'C');
             $this->Ln(10); // Salto de línea
         }
 
         function Footer()
         {
-            // Posición a 1.5 cm del final
-            $this->SetY(-15);
-            $this->SetFont('Arial', 'I', 8);
+            global $total_recaudado, $total_deuda;
+            // Posición a 3 cm del final
+            $this->SetY(-30);
+            // Marco alrededor del pie de página
+            $this->Rect(10, $this->GetY(), 195, 20);
+            $this->SetFont('Arial', 'I', 12);
             // Número de página
-            $this->Cell(0, 10, 'Página ' . $this->PageNo(), 0, 0, 'C');
+            $this->Cell(65, 20, 'Pagina ' . $this->PageNo(), 0, 0, 'L');
+            // Total recaudado
+            $this->SetFont('Arial', 'B', 12);
+            $this->Cell(65, 20, 'Total Recaudado: ' . number_format($total_recaudado, 2), 0, 0, 'C');
+            // Total deuda
+            $this->SetFont('Arial', 'B', 12);
+            $this->Cell(65, 20, 'Total Deuda: ' . number_format($total_deuda, 2), 0, 1, 'R');
         }
 
         function ImprovedTable($header, $data, $title)
@@ -83,14 +94,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->SetFont('Arial', 'B', 10);
 
             // Anchuras de las columnas
-            $w = array(20, 30, 30, 20, 15, 30, 30, 20);
+            $w = array(15, 40, 40, 15, 15, 25, 25, 20);
             // Cabeceras
             for ($i = 0; $i < count($header); $i++) {
                 $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
             }
             $this->Ln();
             // Datos
+            $this->SetFont('Arial', '', 10);
             foreach ($data as $row) {
+                $this->CheckPageBreak($header);
                 $this->Cell($w[0], 6, $row['codigo'], 'LR', 0, 'C');
                 $this->Cell($w[1], 6, $row['nombre'], 'LR', 0, 'C');
                 $this->Cell($w[2], 6, $row['apellido'], 'LR', 0, 'C');
@@ -104,6 +117,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Línea de cierre
             $this->Cell(array_sum($w), 0, '', 'T');
             $this->Ln(10);
+        }
+
+        function CheckPageBreak($header)
+        {
+            // If the height of the content surpasses the page height, add a new page
+            if($this->GetY() > 240)
+            {
+                $this->AddPage();
+                $this->SetFont('Arial', 'B', 10);
+                // Anchuras de las columnas
+                $w = array(15, 40, 40, 15, 15, 25, 25, 20);
+                // Cabeceras
+                for ($i = 0; $i < count($header); $i++) {
+                    $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
+                }
+                $this->Ln();
+                $this->SetFont('Arial', '', 10); // Mantener el mismo estilo de fuente para el contenido
+            }
         }
     }
 
@@ -119,11 +150,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->ImprovedTable($header, $no_pagados, 'Clientes que no han pagado');
 
     // Mostrar total recaudado
-    $pdf->SetFont('Arial', 'B', 12);
-    $pdf->Cell(0, 10, 'Total Recaudado: ' . number_format($total_recaudado, 2), 0, 1, 'C');
+    // $pdf->SetFont('Arial', 'B', 12);
+    // $pdf->Cell(0, 10, 'Total Recaudado: ' . number_format($total_recaudado, 2), 0, 1, 'C');
 
     // Mostrar total de la deuda
-    $pdf->Cell(0, 10, 'Total Deuda: ' . number_format($total_deuda, 2), 0, 1, 'C');
+    // $pdf->Cell(0, 10, 'Total Deuda: ' . number_format($total_deuda, 2), 0, 1, 'C');
 
     // Generar el PDF
     $pdf->Output('I', 'lista_recaudo_secretario.pdf');
