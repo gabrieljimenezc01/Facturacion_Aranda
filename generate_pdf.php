@@ -160,6 +160,6 @@ $pdf = new PDF($factura);
 $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->FacturaInfo();
-$pdf->Output();
+$pdf->Output('I','Factura_'.$factura['cod_factura'] . '_' . $factura['cod_cliente'].'.pdf' );
 //$pdf->Output('D', 'Factura_'.$factura['cod_factura'].' ' . $factura['cod_cliente'] . '.pdf');
 ?>

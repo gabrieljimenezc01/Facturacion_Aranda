@@ -256,6 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                                 <th>Concepto</th>
                                 <th>Fecha</th>
                                 <th>Valor</th>
+                                <th>Imprimir</th>
                             </tr>
                             <?php
                             $sql = "SELECT * FROM abonos where cod_cliente= :cliente";
@@ -270,6 +271,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                                 <td> " . $row["concepto"] . "</td>
                                 <td> " . $row["fecha"] . "</td>
                                 <td> " . $row["valor"] . "</td>
+                                <td>
+                                    <a href='generate_abono.php?cod_abono=" . htmlspecialchars($row["cod_abono"]) . "' target='_blank'>
+                                    <i class='fa fa-file-pdf-o' aria-hidden='true'></i>
+                                    </a>
+                                </td>
                             </tr>";
                                 }
                             } else {
