@@ -31,7 +31,7 @@ if (count($result) > 0) {
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Modulo Deudas y Facturas</div>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
             </div>

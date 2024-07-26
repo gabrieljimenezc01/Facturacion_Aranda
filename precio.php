@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
 <body>
     <nav class="navbar">
         <div class="navbar-brand">Modulo Precios</div>
-        <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"></i></a></div>
+        <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
         <div>
             <button class="logout-button">Cerrar Sesión</button>
         </div>

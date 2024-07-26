@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Facturación</div>
-            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"></i></a></div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
             </div>
