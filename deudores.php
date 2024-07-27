@@ -1,5 +1,10 @@
 <?php
+session_start();
 require 'db.php';
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 
 
 // Filtrado de clientes
@@ -34,7 +39,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="navbar-brand">Modulo Deudas y Facturas</div>
             <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
             <div>
-                <button class="logout-button">Cerrar Sesión</button>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
         </nav>
 
@@ -99,5 +104,10 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 </body>
+<script>
+    function cerrar(){    
+        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    }
+</script>
 
 </html>
