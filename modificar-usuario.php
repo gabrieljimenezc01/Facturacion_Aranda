@@ -65,9 +65,10 @@ if (isset($_GET['modificar_id'])) {
 <body>
     <div class="main-container">
         <nav class="navbar">
-            <div class="navbar-brand">Sistema de Facturación</div>
+            <div class="navbar-brand">Módulo Usuarios</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
             <div>
-                <button class="logout-button">Cerrar Sesión</button>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
         </nav>
         <div class="content">

@@ -17,7 +17,7 @@ if (!isset($_SESSION['user'])) {
     <link rel="stylesheet" href="principal-styles.css">
     <link rel="shortcut icon" href="../img/disponibilidad.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
 </head>
 
 <body>
@@ -43,7 +43,7 @@ if (!isset($_SESSION['user'])) {
         </div><br>
         <div class="icons-container">
             <a href="agregar-usuario.php" class="icon-card">
-                <h2>Modulo Usuarios</h2><br>
+                <h2>Modulo Clientes</h2><br>
                 <i class="fa fa-users fa-5x icon"></i>
             </a>
             <a href="deudores.php" class="icon-card">

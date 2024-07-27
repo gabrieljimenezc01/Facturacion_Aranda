@@ -292,3 +292,7 @@ button {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+h2 {
+  color: #0074D9;
+  margin-bottom: 1.5rem;
+}
