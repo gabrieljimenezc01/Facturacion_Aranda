@@ -51,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <li><a href="facturas.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
                     <li><a href="facturas.php"><i class="fa fa-print" aria-hidden="true"></i><br>Imprimir Facturas</a></li>
                     <li><a href="facturas.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
+                    <li><a href="eliminar_facturas.php"><i class="fa fa-trash-o" aria-hidden="true"></i><br>Eliminar Facturas</a></li>
                 </ul>
             </aside>
             <main class="main-content">

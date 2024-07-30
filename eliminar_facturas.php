@@ -3,6 +3,7 @@ require 'db.php';
 $sector = "";
 $año = "";
 $mes = "MES";
+$msg_eliminacion = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sector = $_POST['sector'];
     $mes = $_POST['mes'];
@@ -15,14 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 WHERE clientes.sector = '$sector' 
                 AND factura.mes_cobrado = '$mes' 
                 AND YEAR(factura.fecha_fin_cobro) = $año";
-        $stmt= $conn->query($sql);
+        $stmt = $conn->query($sql);
         $stmt->execute();
-        if ($stmt->rowCount() > 0) {
-            $msg_eliminacion ="Eliminación exitosa";
-        } else {
-            $msg_eliminacion= "No se encontraron facturas para eliminar";
-        }
-        
+        $msg_eliminacion = "Ejecución completada";
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
@@ -52,13 +48,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="deudores.php"><i class="fa fa-list" aria-hidden="true"></i><br>Lista Deudores</a></li>
-                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Acuerdos de pago</a></li>
-                    <li><a href="clientes_facturas.php"><i class="fa fa-user" aria-hidden="true"></i><br>Facturas de clientes</a></li>
+                    <li><a href="facturas.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
+                    <li><a href="facturas.php"><i class="fa fa-print" aria-hidden="true"></i><br>Imprimir Facturas</a></li>
+                    <li><a href="facturas.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
+                    <li><a href="eliminar_facturas.php"><i class="fa fa-trash-o" aria-hidden="true"></i><br>Eliminar Facturas</a></li>
                 </ul>
             </aside>
             <main class="main-content">
+                <div style=" text-align:center">
+                    <h2>Eliminar Facturas</h2>
+                </div>
                 <div class="content_div_eliminacion">
+                    <div style="margin-bottom: 1rem; text-align:center">
+                    <label>Digite los datos de las facturas que desea eliminar</label>
+                    </div>
                     <form action="" method="post" class="form_eliminacion">
                         <div class="form-row">
                             <input type="number" name="sector" required value='<?php echo $sector ?>' min="1">
@@ -86,10 +89,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label alt="Label" data-placeholder="Año..."></label>
                         </div>
                         <div class="form-row">
-                            <button type="submit" name="cliente">Eliminar</button>
+                            <button type="submit" name="cliente" style=" background-color: red">Eliminar</button>
                         </div>
                     </form>
-                    <?php  echo $msg_eliminacion;?>
+                    <?php echo $msg_eliminacion; ?>
                 </div>
             </main>
         </div>
