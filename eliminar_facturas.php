@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="main-container">
         <nav class="navbar">
-            <div class="navbar-brand">Modulo Deudas y Facturas</div>
+            <div class="navbar-brand">Facturación</div>
             <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
             <div>
                 <button class="logout-button">Cerrar Sesión</button>
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="content_div_eliminacion">
                     <div style="margin-bottom: 1rem; text-align:center">
-                    <label>Digite los datos de las facturas que desea eliminar</label>
+                        <label>Digite los datos de las facturas que desea eliminar</label>
                     </div>
                     <form action="" method="post" class="form_eliminacion">
                         <div class="form-row">
