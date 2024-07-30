@@ -291,4 +291,65 @@ button {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  width: 100%;
+}
+.content_div_eliminacion{
+  margin: 30%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.form_eliminacion{
+  display: block;
+
+  .form-row {
+    margin-bottom:1rem;
+    position: relative;
+    padding: 0px 10px;
+    
+    input[type="number"] {
+      box-sizing:border-box;
+      width:100%;
+      padding:10px;
+      border:1px solid #ddd;
+      border-radius:4px;
+      transition:all 0.5s ease-in-out;
+      outline:0;
+
+      + label[data-placeholder] {
+        pointer-events:none;
+
+        &:after {
+          content:attr(data-placeholder);
+          display:block;
+          position:absolute;
+          top:50%;
+          left:0.5rem;
+          transform: translate(0%, -50%);
+          transition:all 0.5s ease-in-out;
+          padding:0 0.25rem;
+          background-color:rgba(255,255,255,0);
+        }
+      }
+      &:focus,
+      &:valid {
+        border:1px solid #0074D9;
+
+        + label[data-placeholder] {
+          &:after {
+            transform: translate(-5%, -150%) scale(0.9, 0.9);
+            color:#0074D9;
+            background-color:rgba(255,255,255,1);
+            border-radius: 5px;
+          }
+        }
+      }
+    }
+  }
+}
+.div_mes{
+  width: 95%;
+  background-color: #0074D9;
+  margin: auto;
+  margin-bottom:1rem;
+  border-radius:4px;
 }
