@@ -42,7 +42,7 @@ if (!isset($_SESSION['user'])) {
             </div>
             <div id="form-details" class="form-container" style="display: none;">
                 <div class="form-left">
-                <div class="form-group">
+                    <div class="form-group">
                         <label for="sector">Sector</label>
                         <select id="sector" name="sector">
                             <option value="">Seleccione un sector</option>
@@ -73,36 +73,66 @@ if (!isset($_SESSION['user'])) {
                         <label for="año">Año</label>
                         <input type="text" id="año" name="año">
                     </div>
-                    <button type="submit" class="btn">Generar PDF</button>
+                    <button type="button" class="btn" id="show-info-btn" style="display: none;" onclick="fetchData()">Mostrar Información</button>
                 </div>
                 <div class="form-right">
-                    <img src="img/agua.gif" alt="GIF Animado" class="form-gif"> <!-- Ruta local al GIF -->
+                    <img src="img/agua.gif" alt="GIF Animado" class="form-gif">
                 </div>
             </div>
+            <div id="data-table" style="display: none; margin-top: 20px;">
+                <!-- Aquí se mostrará la información de la base de datos -->
+            </div><br>
+            <button type="submit" class="btn" style="display: none;" id="generate-btn">Generar PDF</button>
         </form>
     </div>
     <script>
-        function showForm() {
-            var listType = document.getElementById("list-type").value;
-            var formDetails = document.getElementById("form-details");
-            if (listType) {
-                formDetails.style.display = "flex";
-            } else {
-                formDetails.style.display = "none";
-            }
-        }
-
         function updateFormAction() {
             var listType = document.getElementById("list-type").value;
             var form = document.getElementById("pdfForm");
-            if (listType === "tesorero") {
-                form.action = "generate_tesorero.php";
-            } else if (listType === "secretario") {
+            var generateBtn = document.getElementById("generate-btn");
+            var showInfoBtn = document.getElementById("show-info-btn");
+            var dataTable = document.getElementById("data-table");
+
+            if (listType === "secretario") {
                 form.action = "generate_secretario.php";
+                showInfoBtn.style.display = "inline-block"; // Mostrar el botón de "Mostrar Información"
+                dataTable.style.display = "none"; // Ocultar la tabla de datos inicialmente
+            } else if (listType === "tesorero") {
+                form.action = "generate_tesorero.php";
+                showInfoBtn.style.display = "none"; // Ocultar el botón de "Mostrar Información"
+                dataTable.style.display = "none"; // Ocultar la tabla de datos
+                generateBtn.style.display = "inline-block"; // Mostrar el botón de "Generar PDF"
             } else {
                 form.action = "";
+                showInfoBtn.style.display = "none"; // Ocultar el botón de "Mostrar Información"
+                dataTable.style.display = "none"; // Ocultar la tabla de datos
+                generateBtn.style.display = "none"; // Ocultar el botón de "Generar PDF"
             }
-            showForm();
+
+            document.getElementById("form-details").style.display = listType ? "flex" : "none";
+        }
+
+        function fetchData() {
+            var sector = document.getElementById("sector").value;
+            var mes = document.getElementById("mes").value;
+            var año = document.getElementById("año").value;
+
+            if (!sector || !mes || !año) {
+                alert("Por favor complete todos los campos.");
+                return;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "fetch_data.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById("data-table").style.display = "block";
+                    document.getElementById("data-table").innerHTML = xhr.responseText;
+                    document.getElementById("generate-btn").style.display = "inline-block";
+                }
+            };
+            xhr.send("sector=" + sector + "&mes=" + mes + "&año=" + año);
         }
     </script>
 </body>

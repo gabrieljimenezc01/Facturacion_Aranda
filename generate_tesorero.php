@@ -21,14 +21,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die("No se encontraron datos para el sector, mes y año especificados.");
         }
 
-        // Calcular total recaudado
-        $stmt_total_recaudado = $conn->prepare("
-            SELECT SUM(f.valor_total) AS total_recaudado
+        // Calcular total esperado (suma de todos los valores de ingreso)
+        $stmt_total_esperado = $conn->prepare("
+            SELECT SUM(f.valor_total) AS total_esperado
             FROM factura f
             JOIN clientes c ON f.cod_cliente = c.codigo
-            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'si'");
-        $stmt_total_recaudado->execute([$sector, $mes, $año]);
-        $total_recaudado = $stmt_total_recaudado->fetch(PDO::FETCH_ASSOC)['total_recaudado'];
+            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ?");
+        $stmt_total_esperado->execute([$sector, $mes, $año]);
+        $total_esperado = $stmt_total_esperado->fetch(PDO::FETCH_ASSOC)['total_esperado'];
 
     } catch (PDOException $e) {
         die("Error: " . $e->getMessage());
@@ -49,13 +49,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->Cell(30);
             $this->Cell(130, 10, 'Empresa de Acueducto | NIT: 123456789', 0, 1, 'C');
             $this->Cell(30);
-            $this->Cell(130, 10, 'Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año']), 0, 1, 'C');
+            $this->Cell(130, 10, utf8_decode('Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año'])), 0, 1, 'C');
             $this->Ln(10); // Salto de línea
         }
 
         function Footer()
         {
-            global $total_recaudado;
+            global $total_esperado;
             // Posición a 1.5 cm del final
             $this->SetY(-30);
             // Marco alrededor del pie de página
@@ -63,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->SetFont('Arial', 'I', 12);
             // Número de página
             $this->Cell(95, 20, 'Pagina ' . $this->PageNo(), 0, 0, 'L');
-            // Total recaudado
+            // Total esperado
             $this->SetFont('Arial', 'B', 12);
-            $this->Cell(95, 20, 'Total Recaudado: ' . number_format($total_recaudado, 2), 0, 1, 'R');
+            $this->Cell(95, 20, 'Total Esperado: ' . number_format($total_esperado, 2), 0, 1, 'R');
         }
 
         function ImprovedTable($header, $data)
@@ -85,8 +85,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Ajustar altura de la fila en función del contenido más grande
                 $maxHeight = $this->getMaxRowHeight($w, $row);
                 $this->Cell($w[0], $maxHeight, $row['codigo'], 'LR', 0, 'C');
-                $this->Cell($w[1], $maxHeight, $row['nombre'], 'LR', 0, 'C');
-                $this->Cell($w[2], $maxHeight, $row['apellido'], 'LR', 0, 'C');
+                $this->Cell($w[1], 6, utf8_decode($row['nombre']), 'LR', 0, 'C');
+                $this->Cell($w[2], 6, utf8_decode($row['apellido']), 'LR', 0, 'C');
                 $this->Cell($w[3], $maxHeight, $row['factura'], 'LR', 0, 'C');
                 $this->Cell($w[4], $maxHeight, $row['m3'], 'LR', 0, 'C');
                 $this->Cell($w[5], $maxHeight, $row['valor_ingreso'], 'LR', 0, 'C');
@@ -101,9 +101,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function CheckPageBreak($header)
         {
-            // If the height of the content surpasses the page height, add a new page
-            if($this->GetY() > 240)
-            {
+            // Si la altura del contenido supera la altura de la página, añade una nueva página
+            if ($this->GetY() > 240) {
                 $this->AddPage();
                 $this->SetFont('Arial', 'B', 10);
                 // Anchuras de las columnas
