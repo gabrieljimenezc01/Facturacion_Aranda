@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
 ?>
 
@@ -15,7 +20,7 @@ $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
 <body>
     <div class="main-container">
         <nav class="navbar">
-            <div class="navbar-brand">Módulo Usuarios</div>
+            <div class="navbar-brand">Módulo Clientes</div>
             <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
             <div>
                 <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>

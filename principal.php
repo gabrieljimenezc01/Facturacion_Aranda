@@ -24,21 +24,21 @@ if (!isset($_SESSION['user'])) {
     <div class="background-overlay"></div>
     <div class="navbar">
         <div class="user-container">
-            <button class="user-btn" onclick="window.location.href='agregar-usuario.php'">Usuarios</button>
-            <button class="user-btn" onclick="window.location.href='deudores.php'">Busqueda</button>
+            <button class="user-btn" onclick="window.location.href='agregar-usuario.php'">Clientes</button>
+            <button class="user-btn" onclick="window.location.href='deudores.php'">Deudas</button>
             <button class="user-btn" onclick="window.location.href='facturas.php'">Facturación</button>
             <button class="user-btn" onclick="window.location.href='listados.php'">Listados</button>
             <button class="user-btn" onclick="window.location.href='precio.php'">Precios</button>
-            <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
+            <button class="user-btn" onclick="window.location.href='logout.php'">Cerrar Sesión</button>
         </div>
     </div>
     <div class="main-container">
         <div class="card-container">
-            <h1>¡Bienvenido(a) al Sistema de Facturación!</h1><br>
+            <h1>¡Bienvenido(a) al Sistema Integral de Gestión de Clientes y Facturación del Acueducto Aranda!</h1>
             <p class="welcome-message">
                 Nos complace tenerle con nosotros para gestionar nuestras operaciones.
 
-            </p><br>
+            </p>
             <h2>A continuación, encontrará las principales funcionalidades disponibles:</h2><br>
         </div><br>
         <div class="icons-container">
@@ -47,8 +47,8 @@ if (!isset($_SESSION['user'])) {
                 <i class="fa fa-users fa-5x icon"></i>
             </a>
             <a href="deudores.php" class="icon-card">
-                <h2>Buscar Usuarios</h2><br>
-                <i class="fa fa-search fa-5x icon"></i>
+                <h2>Modulo Deudas</h2><br>
+                <i class="fa fa-dollar fa-5x icon"></i>
             </a>
             <a href="facturas.php" class="icon-card">
                 <h2>Facturación</h2><br>
