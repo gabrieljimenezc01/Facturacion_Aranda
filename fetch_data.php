@@ -24,7 +24,10 @@ try {
                     <td>{$row['apellido']}</td>
                     <td>{$row['factura']}</td>
                     <td>{$row['m3']}</td>
-                    <td>{$row['valor_ingreso']}</td>
+                    <td>
+                        <input type='hidden' name='valor[]' value='{$row['valor_ingreso']}'>
+                        {$row['valor_ingreso']}
+                    </td>
                     <td>{$row['deuda']}</td>
                     <td>
                         <select name='estado_pago[]'>
