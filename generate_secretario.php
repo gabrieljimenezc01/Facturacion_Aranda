@@ -6,8 +6,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sector = $_POST['sector'];
     $mes = $_POST['mes'];
     $año = $_POST['año'];
+    $codigos = $_POST['codigo'];
+    $estados_pago = $_POST['estado_pago'];
 
-    // Obtener los datos de la base de datos
+    // Actualizar el estado de pago en la base de datos
+    try {
+        foreach ($codigos as $index => $codigo) {
+            $estado_pago = $estados_pago[$index];
+            $stmt = $conn->prepare("UPDATE factura SET estado_pago = ? WHERE cod_cliente = ? AND mes_cobrado = ? AND YEAR(fecha_inicio_cobro) = ?");
+            $stmt->execute([$estado_pago, $codigo, $mes, $año]);
+        }
+    } catch (PDOException $e) {
+        die("Error: " . $e->getMessage());
+    }
+
+    // Obtener los datos actualizados de la base de datos
     try {
         // Clientes que no han pagado
         $stmt_no_pagados = $conn->prepare("
@@ -27,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_pagados->execute([$sector, $mes, $año]);
         $pagados = $stmt_pagados->fetchAll(PDO::FETCH_ASSOC);
 
-        // Calcular total recaudado
+        // Calcular total recaudado (clientes que han pagado)
         $stmt_total_recaudado = $conn->prepare("
             SELECT SUM(f.valor_total) AS total_recaudado
             FROM factura f
@@ -36,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_total_recaudado->execute([$sector, $mes, $año]);
         $total_recaudado = $stmt_total_recaudado->fetch(PDO::FETCH_ASSOC)['total_recaudado'];
 
-        // Calcular total de la deuda
+        // Calcular total de la deuda (clientes que no han pagado)
         $stmt_total_deuda = $conn->prepare("
-            SELECT SUM(f.valor_deuda) AS total_deuda
+            SELECT SUM(f.valor_total) AS total_deuda
             FROM factura f
             JOIN clientes c ON f.cod_cliente = c.codigo
             WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'no'");
@@ -64,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->Cell(30);
             $this->Cell(130, 10, 'Empresa de Acueducto | NIT: 123456789', 0, 1, 'C');
             $this->Cell(30);
-            $this->Cell(130, 10, 'Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año']), 0, 1, 'C');
+            $this->Cell(130, 10, utf8_decode('Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año'])), 0, 1, 'C');
             $this->Ln(10); // Salto de línea
         }
 
@@ -105,8 +118,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($data as $row) {
                 $this->CheckPageBreak($header);
                 $this->Cell($w[0], 6, $row['codigo'], 'LR', 0, 'C');
-                $this->Cell($w[1], 6, $row['nombre'], 'LR', 0, 'C');
-                $this->Cell($w[2], 6, $row['apellido'], 'LR', 0, 'C');
+                $this->Cell($w[1], 6, utf8_decode($row['nombre']), 'LR', 0, 'C');
+                $this->Cell($w[2], 6, utf8_decode($row['apellido']), 'LR', 0, 'C');
                 $this->Cell($w[3], 6, $row['factura'], 'LR', 0, 'C');
                 $this->Cell($w[4], 6, $row['m3'], 'LR', 0, 'C');
                 $this->Cell($w[5], 6, $row['valor_ingreso'], 'LR', 0, 'C');
@@ -121,9 +134,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function CheckPageBreak($header)
         {
-            // If the height of the content surpasses the page height, add a new page
-            if($this->GetY() > 240)
-            {
+            // Si la altura del contenido supera la altura de la página, añade una nueva página
+            if ($this->GetY() > 240) {
                 $this->AddPage();
                 $this->SetFont('Arial', 'B', 10);
                 // Anchuras de las columnas
@@ -148,13 +160,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Datos de la tabla
     $pdf->ImprovedTable($header, $pagados, 'Clientes que han pagado');
     $pdf->ImprovedTable($header, $no_pagados, 'Clientes que no han pagado');
-
-    // Mostrar total recaudado
-    // $pdf->SetFont('Arial', 'B', 12);
-    // $pdf->Cell(0, 10, 'Total Recaudado: ' . number_format($total_recaudado, 2), 0, 1, 'C');
-
-    // Mostrar total de la deuda
-    // $pdf->Cell(0, 10, 'Total Deuda: ' . number_format($total_deuda, 2), 0, 1, 'C');
 
     // Generar el PDF
     $pdf->Output('I', 'lista_recaudo_secretario.pdf');
