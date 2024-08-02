@@ -16,12 +16,13 @@ $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="agregar-usuario-styles.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
 </head>
 <body>
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Módulo Clientes</div>
-            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
                 <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>

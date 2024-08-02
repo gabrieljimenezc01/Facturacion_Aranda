@@ -153,13 +153,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="deudas-styles.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
 </head>
 
 <body>
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Modulo Deudas</div>
-            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
                 <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>

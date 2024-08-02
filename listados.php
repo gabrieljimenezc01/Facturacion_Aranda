@@ -14,14 +14,14 @@ if (!isset($_SESSION['user'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Listas</title>
     <link rel="stylesheet" href="listados-styles.css">
-    <link rel="shortcut icon" href="../img/disponibilidad.png">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <div class="background-overlay"></div>
         <nav class="navbar">
             <div class="navbar-brand">Listados</div>
-            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
             <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
