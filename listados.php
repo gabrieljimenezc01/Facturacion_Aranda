@@ -31,10 +31,10 @@ if (!isset($_SESSION['user'])) {
     </div>
     <div class="container">
         <h1>Generador de Listas</h1>
-        <form id="pdfForm" action="generate_list.php" method="POST" target="_blank">
+        <form id="pdfForm" method="POST" target="_blank">
             <div class="form-group">
                 <label for="list-type">Tipo de Lista</label>
-                <select id="list-type" name="list_type" onchange="showForm()">
+                <select id="list-type" name="list_type" onchange="updateFormAction()">
                     <option value="">Seleccione una opción</option>
                     <option value="tesorero">Lista para Tesorero</option>
                     <option value="secretario">Lista para Secretario</option>
@@ -90,6 +90,19 @@ if (!isset($_SESSION['user'])) {
             } else {
                 formDetails.style.display = "none";
             }
+        }
+
+        function updateFormAction() {
+            var listType = document.getElementById("list-type").value;
+            var form = document.getElementById("pdfForm");
+            if (listType === "tesorero") {
+                form.action = "generate_tesorero.php";
+            } else if (listType === "secretario") {
+                form.action = "generate_secretario.php";
+            } else {
+                form.action = "";
+            }
+            showForm();
         }
     </script>
 </body>
