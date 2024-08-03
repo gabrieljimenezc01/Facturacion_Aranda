@@ -19,16 +19,13 @@ if (!isset($_SESSION['user'])) {
 </head>
 <body>
     <div class="background-overlay"></div>
-    <div class="navbar">
-        <div class="user-container">
-            <button class="user-btn" onclick="window.location.href='principal.html'">Usuarios</button>
-            <button class="user-btn" onclick="window.location.href='principal.html'">Busqueda</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Facturación</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Listados</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Precios</button>
-            <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
-        </div>
-    </div>
+    <nav class="navbar">
+            <div class="navbar-brand">Listados</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
+            <div>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
+            </div>
+        </nav>
     <div class="container">
         <h1>Generador de Listas</h1>
         <form id="pdfForm" method="POST" target="_blank">
