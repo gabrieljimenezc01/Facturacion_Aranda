@@ -17,15 +17,18 @@ class PDF extends FPDF
     {
         $this->SetXY($x, $y);
         // Logo
-        $this->Image('img/logo.png', $x + 22, 5, 30); // 150px de ancho (convertido a mm)  
+        $this->Image('img/logo.png', $x, 5, 30); // 150px de ancho (convertido a mm)  
 
         // Número de Factura
+        $this->SetFont('Arial', 'B', 12);
+        $this->Cell(26);
+        $this->MultiCell(60, 8, "JUNTA ADMINISTRADORA\nACUEDUTO ARANDA", 0, 'C');
+        $this->SetXY($x + 85, $y);
         $this->SetFont('Arial', 'B', 14);
-        $this->Cell(80, 8, '', 0, 0); // Movernos a la derecha
         $this->Cell(43, 8, 'Factura de Agua', 1, 1, 'C');
         $this->SetX($x);
         $this->SetFont('Arial', '', 10);
-        $this->Cell(80); // Movernos a la derecha
+        $this->Cell(85); // Movernos a la derecha
         $this->Cell(43, 8, 'No: ' . $this->factura['cod_factura'], 1, 1, 'C');
         $this->Ln(2);
 
@@ -88,41 +91,39 @@ class PDF extends FPDF
         $this->Cell(25, 6, '' . number_format($this->factura['valor_deuda']), 1, 1, 'R');
 
         $this->SetX($x);
-        $this->Cell(100, 6, 'Total a Pagar ', 1, 0);
+        $this->Cell(100, 6, 'Total ', 1, 0);
         $this->Cell(25, 6, '' . number_format($this->factura['valor_total']), 1, 1, 'R');
-        $this->Ln(8);
+        $this->Ln(4);
 
         $this->SetX($x);
         $this->Cell(125, 6, 'Anotaciones: ' . $this->factura['Anotaciones'], 1, 1);
         $this->SetX($x);
-        $this->Cell(125, 6, utf8_decode('Valor último pago:  ') . number_format($this->factura['valor_ultima_factura']), 1, 1);
-        $this->SetX($x);
         $this->Cell(125, 6, utf8_decode('Fecha límite de pago:  ') . $this->factura['fecha_limite_pago'], 1, 1);
-        $this->Ln(8);
+        $this->Ln(4);
 
         $this->SetX($x);
         $this->Cell(100, 6, 'Total a Pagar ', 1, 0);
-        $this->Cell(25, 6, '' . number_format($this->factura['valor_total']), 1, 1, 'C');
-        $this->Ln(10);
+        $this->Cell(25, 6, '' . number_format($this->factura['valor_factura']), 1, 1, 'C');
+        $this->Ln(5);
 
 
-        $this->Image('img/gota_feliz.png', $x + 8, 148, 40);
-        $this->SetXY(50, 150); // Ajustar la posición para que el texto esté centrado debajo de la imagen
+        $this->Image('img/gota_feliz.png', $x + 0, 135, 40);
+        $this->SetXY(50, 135); // Ajustar la posición para que el texto esté centrado debajo de la imagen
         $this->SetFont('Arial', 'B', 12);
         $this->SetX($x);
-        $this->Cell(45);
+        $this->Cell(35);
         $this->MultiCell(40, 6, "EL AGUA ES VIDA\nUNIDOS TODOS\nTRABAJAREMOS PARA\nCUIDARLA", 0, 'C');
-        $this->SetXY($x + 85, 150);
-        $this->Cell(40, 30, '', 1, 0);
+        $this->SetXY($x + 75, 135);
+        $this->Cell(50, 35, '', 1, 0);
 
-        $this->SetY(-33);
+        $this->SetY(-42);
         $this->SetX($x);
         $this->SetFont('Arial', '', 10);
         $this->Cell(80, 6, utf8_decode('Período Facturado De: ') . $this->factura['fecha_inicio_cobro'] . ' A ' . $this->factura['fecha_fin_cobro'], 1);
         $this->Cell(45, 6, 'Mes Facturado: ' . $this->factura['mes_cobrado'], 1, 1);
-        $this->SetX($x + 55);
         $this->SetFont('Arial', 'I', 8);
-        $this->Cell(20, 6, utf8_decode('Página') . $this->PageNo() . '/{nb}', 0, 0, 'C');
+        $this->SetX($x);
+        $this->MultiCell(125, 5, utf8_decode("Los pagos se atenderan unicamente en la oficina del acueducto\nHorario de atención al publico: sabado de 2 a 6 pm y domingo de 8 a 12pm\nNumero del cel fontanero:3162507515-presidente:3206401175"), 0, 'C');
     }
     function FacturaInfo()
     {

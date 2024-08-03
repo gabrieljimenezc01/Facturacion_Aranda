@@ -28,7 +28,7 @@ if (count($result) > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facturas del Cliente</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="deudas-styles.css">
     <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
 </head>
@@ -49,6 +49,7 @@ if (count($result) > 0) {
                     <li><a href="deudores.php"><i class="fa fa-list" aria-hidden="true"></i><br>Lista Deudores</a></li>
                     <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Acuerdos de pago</a></li>
                     <li><a href="clientes_facturas.php"><i class="fa fa-user" aria-hidden="true"></i><br>Facturas de clientes</a></li>
+                    <li><a href="registro_deudas.php"><i class="fa fa-plus-square-o" aria-hidden="true"></i><br>Registro de Deuda</a></li>
                 </ul>
             </aside>
             <main class="main-content">
@@ -86,7 +87,7 @@ if (count($result) > 0) {
                                             <th>" . $row['mes_cobrado'] . "</th>
                                             <th>" . $row['consumo_m3'] . "</th>
                                             <th>" . $row['valor_deuda'] . "</th>
-                                            <th>" . $row['valor_total'] . "</th>
+                                            <th>" . $row['valor_factura'] . "</th>
                                             <th>" . $row['estado_pago'] . "</th>
                                             <td><a href='generate_pdf.php?cod_factura=" . htmlspecialchars($row["cod_factura"]) . "' target='_blank'>
                                                     <i class='fa fa-file-pdf-o' aria-hidden='true'></i>
