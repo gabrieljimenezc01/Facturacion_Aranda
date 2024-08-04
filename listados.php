@@ -9,6 +9,7 @@ if (!isset($_SESSION['user'])) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,7 @@ if (!isset($_SESSION['user'])) {
     <link rel="shortcut icon" href="../img/disponibilidad.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+
 <body>
     <div class="background-overlay"></div>
     <div class="navbar">
@@ -73,7 +75,8 @@ if (!isset($_SESSION['user'])) {
                         <label for="año">Año</label>
                         <input type="text" id="año" name="año" onchange="handleDateChange()">
                     </div>
-                    <button type="button" class="btn" id="show-info-btn" style="display: none;" onclick="fetchData()">Mostrar Información</button>
+                    <button type="button" class="btn" id="show-info-btn" style="display: none;"
+                        onclick="fetchData()">Mostrar Información</button>
                 </div>
                 <div class="form-right">
                     <img src="img/agua.gif" alt="GIF Animado" class="form-gif">
@@ -187,17 +190,29 @@ if (!isset($_SESSION['user'])) {
             var sector = document.getElementById("sector").value;
             var mes = document.getElementById("mes").value;
             var año = document.getElementById("año").value;
-            var savedStates = JSON.parse(localStorage.getItem('savedStates')) || [];
-            var currentState = sector + '_' + mes + '_' + año;
 
-            if (listType === "secretario" && savedStates.includes(currentState)) {
-                document.getElementById("save-btn").style.display = "none";
-                document.getElementById("save-confirmation").style.display = "inline-block";
-            } else {
-                document.getElementById("save-btn").style.display = listType === "secretario" ? "inline-block" : "none";
-                document.getElementById("save-confirmation").style.display = "none";
-            }
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "check_saved_state.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    if (xhr.responseText === "saved") {
+                        document.getElementById("save-btn").style.display = "none";
+                        if (listType === "secretario") {
+                            document.getElementById("save-confirmation").style.display = "inline-block";
+                        } else {
+                            document.getElementById("save-confirmation").style.display = "none";
+                        }
+                    } else {
+                        document.getElementById("save-btn").style.display = listType === "secretario" ? "inline-block" : "none";
+                        document.getElementById("save-confirmation").style.display = "none";
+                    }
+                }
+            };
+            xhr.send("sector=" + sector + "&mes=" + mes + "&año=" + año);
         }
+
+
 
         function handleSectorChange() {
             resetSaveButton();
@@ -227,4 +242,5 @@ if (!isset($_SESSION['user'])) {
 
     </script>
 </body>
+
 </html>
