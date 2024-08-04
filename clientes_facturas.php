@@ -10,7 +10,7 @@ $codigo = isset($_POST['codigo']) ? $_POST['codigo'] : '';
 $nombre = "";
 $sql = "SELECT factura.*, clientes.nombre, clientes.apellido 
         FROM factura JOIN clientes 
-        ON factura.cod_cliente=clientes.codigo
+        ON factura.cod_cliente = clientes.codigo
         WHERE cod_cliente = :codigo";
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':codigo', $codigo, PDO::PARAM_INT);
@@ -39,7 +39,7 @@ if (count($result) > 0) {
             <div class="navbar-brand">Modulo Deudas</div>
             <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
-            <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
         </nav>
 
@@ -76,27 +76,36 @@ if (count($result) > 0) {
                                 <th>Mes Cobrado</th>
                                 <th>Consumo M3</th>
                                 <th>Valor de Deuda</th>
-                                <th>Valor Total</th>
+                                <th>Valor Factura</th>
                                 <th>Estado de Pago</th>
                                 <th>Ver</th>
+                                <th>Guardar</th>
                             </tr>
                             <?php if (count($result) > 0) {
                                 foreach ($result as $row) {
                                     echo "<tr> 
-                                            <th>" . $row['cod_factura'] . "</th>
-                                            <th>" . $row['mes_cobrado'] . "</th>
-                                            <th>" . $row['consumo_m3'] . "</th>
-                                            <th>" . $row['valor_deuda'] . "</th>
-                                            <th>" . $row['valor_factura'] . "</th>
-                                            <th>" . $row['estado_pago'] . "</th>
+                                            <td>" . $row['cod_factura'] . "</td>
+                                            <td>" . $row['mes_cobrado'] . "</td>
+                                            <td>" . $row['consumo_m3'] . "</td>
+                                            <td>" . $row['valor_deuda'] . "</td>
+                                            <td>" . $row['valor_factura'] . "</td>
+                                            <td>
+                                                <select name='estado_pago' id='estado_pago_{$row['cod_factura']}'>
+                                                    <option value='si' " . ($row['estado_pago'] == 'si' ? 'selected' : '') . ">Sí</option>
+                                                    <option value='no' " . ($row['estado_pago'] == 'no' ? 'selected' : '') . ">No</option>
+                                                </select>
+                                            </td>
                                             <td><a href='generate_pdf.php?cod_factura=" . htmlspecialchars($row["cod_factura"]) . "' target='_blank'>
                                                     <i class='fa fa-file-pdf-o' aria-hidden='true'></i>
                                                 </a>
                                             </td>
+                                            <td>
+                                                <button class='save-btn' data-factura='{$row['cod_factura']}'>Guardar</button>
+                                            </td>
                                         </tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='7'>No hay registros en el inventario</td></tr>";
+                                echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
                             }
                             ?>
                         </table>
@@ -107,8 +116,34 @@ if (count($result) > 0) {
     </div>
 </body>
 <script>
-    function cerrar(){    
-        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    function cerrar() {
+        setTimeout(function() {
+            window.location = "<?= 'logout.php' ?>";}, 0000);
     }
+
+    document.querySelectorAll('.save-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            var cod_factura = this.getAttribute('data-factura');
+            var estado_pago = document.getElementById('estado_pago_' + cod_factura).value;
+            var valor_total = this.closest('tr').querySelector('td:nth-child(5)').innerText;
+            var codigo_cliente = <?php echo json_encode($codigo); ?>;
+
+            var formData = new FormData();
+            formData.append('cod_factura', cod_factura);
+            formData.append('estado_pago', estado_pago);
+            formData.append('valor_total', valor_total);
+            formData.append('codigo_cliente', codigo_cliente);
+            formData.append('guardar', true);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "actualizar_estado_pago.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    alert(xhr.responseText);
+                }
+            };
+            xhr.send(formData);
+        });
+    });
 </script>
 </html>
