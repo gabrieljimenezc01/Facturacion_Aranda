@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
             $stmt->bindParam(':codigo', $codigo, PDO::PARAM_INT);
             $stmt->bindParam(':valor', $valorup, PDO::PARAM_INT);
             if ($stmt->execute()) {
-                $msg = "Deuda Actualizada con exito";
+                $msg = "Deuda Actualizada con éxito";
             }
         }else {
             //insertamos el valor de la nueva deuda
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
             $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
             $stmt->bindParam(':motivo', $motivo, PDO::PARAM_STR);
             if ($stmt->execute()) {
-                $msg = "Datos insertado con exito";
+                $msg = "Datos ingresados con éxito";
             }
         }
     } catch (PDOException $e) {
