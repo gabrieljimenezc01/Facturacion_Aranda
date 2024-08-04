@@ -1,7 +1,67 @@
 <?php
+session_start();
+require 'db.php';
+
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
+$codigo = "";
+$motivo = "";
+$valor = "";
+$msg = "";
+$valorant= "";
+$valorup= "";
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
+    $codigo = $_POST['codigo'];
+    $motivo = $_POST['concepto'];
+    $valor = $_POST['valor'];
+    try {
+        //BUSCAR SI EL CLIENTE ESTA EN LA TABLA DEUDORES
+        $sql = "SELECT COUNT(*) FROM deudores WHERE cod_cliente = :codi_cliente";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+
+        if ($count > 0) {
+            //buscamos el valor de la deuda
+            $sql="SELECT valor_total FROM deudores WHERE cod_cliente=:codigo";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':codigo', $codigo, PDO::PARAM_INT);
+            $stmt->execute();
+            $dato=$stmt->fetch(PDO::FETCH_ASSOC);
+            $valorant= $dato['valor_total'];
+            //echo"valor anterior: ".$valorant;
+            //actualizamos el valor de la deuda
+            $valorup=$valorant+$valor;
+            //echo"valor nuevo: ".$valorup;
+            $sql="UPDATE deudores SET valor_total =:valor WHERE cod_cliente = :codigo";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':codigo', $codigo, PDO::PARAM_INT);
+            $stmt->bindParam(':valor', $valorup, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                $msg = "Deuda Actualizada con exito";
+            }
+        }else {
+            //insertamos el valor de la nueva deuda
+            $sql = "INSERT INTO deudores (cod_cliente, valor_total, motivo) VALUES (:codigo, :valor, :motivo)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':codigo', $codigo, PDO::PARAM_INT);
+            $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
+            $stmt->bindParam(':motivo', $motivo, PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                $msg = "Datos insertado con exito";
+            }
+        }
+    } catch (PDOException $e) {
+        echo "Error en la consulta: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +70,7 @@
     <link rel="stylesheet" href="deudas-styles.css">
     <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
 </head>
+
 <body>
     <div class="main-container">
         <nav class="navbar">
@@ -30,8 +91,39 @@
                 </ul>
             </aside>
             <main class="main-content">
+                <div class="registro_deuda">
+                    <div style=" text-align:center">
+                        <h2> Registro de Duedas</h2>
+                    </div>
+                    <div>
+                        <p>
+                            Digite los datos del usuario y la deuda
+                        </p>
+                    </div>
+                    <form action="registro_deudas.php" method="post" class="form_eliminacion">
+                        <div class="form-row">
+                            <input type="number" name="codigo" required min="1" value='<?php echo $codigo ?>'>
+                            <label alt="Label" data-placeholder="Código del cliente..."></label>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" name="concepto" required maxlength="100" value='<?php echo $motivo ?>'>
+                            <label alt="Label" data-placeholder="Concepto de la deuda"></label>
+                        </div>
+                        <div class="form-row">
+                            <input type="number" name="valor" required min="1" value='<?php echo $valor ?>'>
+                            <label alt="Label" data-placeholder="Valor"></label>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" name="deuda">Registrar Deuda</button>
+                        </div>
+                    </form>
+                    <?php if (isset($msg)) {
+                        echo "<p>$msg</p>";
+                    } ?>
+                </div>
             </main>
         </div>
     </div>
 </body>
+
 </html>
