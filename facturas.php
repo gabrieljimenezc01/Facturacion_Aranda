@@ -53,9 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="facturas.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
+                    <li><a href="facturacion.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
                     <li><a href="facturas.php"><i class="fa fa-print" aria-hidden="true"></i><br>Imprimir Facturas</a></li>
-                    <li><a href="facturas.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
+                    <li><a href="modificar_factura.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
                     <li><a href="eliminar_facturas.php"><i class="fa fa-trash-o" aria-hidden="true"></i><br>Eliminar Facturas</a></li>
                 </ul>
             </aside>

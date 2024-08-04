@@ -15,8 +15,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $año = $_POST['año'];
 
     try {
-        // eliminar facturas x sector and mes and año
-        $sql = "DELETE factura FROM factura
+        $sql = "SELECT * FROM factura
+                JOIN clientes ON factura.cod_cliente = clientes.codigo 
+                WHERE clientes.sector = '$sector' 
+                AND factura.mes_cobrado = '$mes' 
+                AND YEAR(factura.fecha_fin_cobro) = $año";
+        $stmt = $conn->query($sql);
+        $stmt->execute();
+        $facturas=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($facturas)>0) {
+            // eliminar facturas x sector and mes and año
+            $sql = "DELETE factura FROM factura
                 JOIN clientes ON factura.cod_cliente = clientes.codigo 
                 WHERE clientes.sector = '$sector' 
                 AND factura.mes_cobrado = '$mes' 
@@ -24,6 +33,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->query($sql);
         $stmt->execute();
         $msg_eliminacion = "Ejecución completada";
+        }else {
+            $msg_eliminacion = "No hay facturas para este sector, en este mes y año.";
+        }
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
@@ -54,9 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="facturas.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
+                    <li><a href="facturacion.php"><i class="fa fa-file" aria-hidden="true"></i><br>Generar Facturas</a></li>
                     <li><a href="facturas.php"><i class="fa fa-print" aria-hidden="true"></i><br>Imprimir Facturas</a></li>
-                    <li><a href="facturas.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
+                    <li><a href="modificar_factura.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Editar Facturas</a></li>
                     <li><a href="eliminar_facturas.php"><i class="fa fa-trash-o" aria-hidden="true"></i><br>Eliminar Facturas</a></li>
                 </ul>
             </aside>
