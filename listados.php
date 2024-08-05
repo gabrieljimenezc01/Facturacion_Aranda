@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 require 'db.php';
@@ -23,12 +22,12 @@ if (!isset($_SESSION['user'])) {
 <body>
     <div class="background-overlay"></div>
     <nav class="navbar">
-            <div class="navbar-brand">Listados</div>
-            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
-            <div>
-                <button class="logout-button" onclick="cerrar()" style="width: 100%;">Cerrar Sesión</button>
-            </div>
-        </nav>
+        <div class="navbar-brand">Listados</div>
+        <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
+        <div>
+            <button class="logout-button" onclick="cerrar()" style="width: 100%;">Cerrar Sesión</button>
+        </div>
+    </nav>
     <div class="container">
         <h1>Generador de Listas</h1>
         <form id="pdfForm" method="POST" target="_blank">
@@ -44,7 +43,7 @@ if (!isset($_SESSION['user'])) {
                 <div class="form-left">
                     <div class="form-group">
                         <label for="sector">Sector</label>
-                        <input type="number" id="sector" name="sector_facturado" placeholder="Seleccione un sector" min="1">
+                        <input type="number" id="sector" name="sector" onchange="handleDateChange()" placeholder="Seleccione un sector" min="1">
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes</label>
@@ -68,8 +67,7 @@ if (!isset($_SESSION['user'])) {
                         <label for="año">Año</label>
                         <input type="number" id="año" name="año" onchange="handleDateChange()" placeholder="Seleccione un año" min="2000">
                     </div>
-                    <button type="button" class="btn" id="show-info-btn" style="display: none;"
-                        onclick="fetchData()">Mostrar Información</button>
+                    <button type="button" class="btn" id="show-info-btn" style="display: none;" onclick="fetchData()">Mostrar Información</button>
                 </div>
                 <div class="form-right">
                     <img src="img/agua.gif" alt="GIF Animado" class="form-gif">
@@ -85,8 +83,8 @@ if (!isset($_SESSION['user'])) {
     </div>
     <script>
         function cerrar() {
-        setTimeout(function() {
-            window.location = "<?= 'logout.php' ?>";}, 0000);
+            setTimeout(function() {
+                window.location = "<?= 'logout.php' ?>";}, 0000);
         }
         function updateFormAction() {
             var listType = document.getElementById("list-type").value;
@@ -98,24 +96,24 @@ if (!isset($_SESSION['user'])) {
 
             if (listType === "secretario") {
                 form.action = "generate_secretario.php";
-                showInfoBtn.style.display = "inline-block"; // Mostrar el botón de "Mostrar Información"
-                dataTable.style.display = "none"; // Ocultar la tabla de datos inicialmente
+                showInfoBtn.style.display = "inline-block";
+                dataTable.style.display = "none";
             } else if (listType === "tesorero") {
                 form.action = "generate_tesorero.php";
-                showInfoBtn.style.display = "none"; // Ocultar el botón de "Mostrar Información"
-                saveBtn.style.display = "none"; // Asegurar que el botón de "Guardar Cambios" no se muestre nunca
-                dataTable.style.display = "none"; // Ocultar la tabla de datos
-                generateBtn.style.display = "inline-block"; // Mostrar el botón de "Generar PDF"
+                showInfoBtn.style.display = "none";
+                saveBtn.style.display = "none";
+                dataTable.style.display = "none";
+                generateBtn.style.display = "inline-block";
             } else {
                 form.action = "";
-                showInfoBtn.style.display = "none"; // Ocultar el botón de "Mostrar Información"
-                saveBtn.style.display = "none"; // Ocultar el botón de "Guardar Cambios"
-                dataTable.style.display = "none"; // Ocultar la tabla de datos
-                generateBtn.style.display = "none"; // Ocultar el botón de "Generar PDF"
+                showInfoBtn.style.display = "none";
+                saveBtn.style.display = "none";
+                dataTable.style.display = "none";
+                generateBtn.style.display = "none";
             }
 
             document.getElementById("form-details").style.display = listType ? "flex" : "none";
-            checkSavedState(); // Verificar si los cambios ya se guardaron
+            checkSavedState();
         }
 
         function fetchData() {
@@ -124,7 +122,7 @@ if (!isset($_SESSION['user'])) {
             var año = document.getElementById("año").value;
 
             if (!sector || !mes || !año) {
-                return; // Evita la alerta cuando se selecciona el sector
+                return;
             }
 
             var xhr = new XMLHttpRequest();
@@ -149,10 +147,10 @@ if (!isset($_SESSION['user'])) {
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     if (xhr.responseText === "success") {
-                        document.getElementById("save-btn").style.display = "none"; // Ocultar el botón de guardar
-                        document.getElementById("save-confirmation").style.display = "inline-block"; // Mostrar mensaje de confirmación
-                        saveState(); // Guardar el estado en localStorage
-                        callback(); // Llama a la función de generación del PDF solo si la actualización fue exitosa
+                        document.getElementById("save-btn").style.display = "none";
+                        document.getElementById("save-confirmation").style.display = "inline-block";
+                        saveState();
+                        callback();
                     } else {
                         alert("Error al actualizar los deudores.");
                     }
@@ -164,9 +162,9 @@ if (!isset($_SESSION['user'])) {
         function resetSaveButton() {
             var listType = document.getElementById("list-type").value;
             if (listType === "secretario") {
-                checkSavedState(); // Comprobar el estado guardado al cambiar sector, mes o año
+                checkSavedState();
             }
-            document.getElementById("save-confirmation").style.display = "none"; // Ocultar confirmación de guardado
+            document.getElementById("save-confirmation").style.display = "none";
         }
 
         function saveState() {
@@ -209,8 +207,6 @@ if (!isset($_SESSION['user'])) {
             xhr.send("sector=" + sector + "&mes=" + mes + "&año=" + año);
         }
 
-
-
         function handleSectorChange() {
             resetSaveButton();
             checkSavedState();
@@ -230,13 +226,12 @@ if (!isset($_SESSION['user'])) {
         document.getElementById('generate-btn').addEventListener('click', function (e) {
             var listType = document.getElementById("list-type").value;
             if (listType === "secretario") {
-                e.preventDefault(); // Evita que se envíe el formulario inmediatamente
+                e.preventDefault();
                 updateDeudores(function () {
-                    document.getElementById('pdfForm').submit(); // Genera el PDF después de actualizar los deudores
+                    document.getElementById('pdfForm').submit();
                 });
             }
         });
-
     </script>
 </body>
 
