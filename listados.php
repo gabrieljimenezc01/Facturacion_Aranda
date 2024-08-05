@@ -43,12 +43,7 @@ if (!isset($_SESSION['user'])) {
                 <div class="form-left">
                     <div class="form-group">
                         <label for="sector">Sector</label>
-                        <select id="sector" name="sector" onchange="handleSectorChange()">
-                            <option value="">Seleccione un sector</option>
-                            <?php for ($i = 1; $i <= 18; $i++): ?>
-                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                            <?php endfor; ?>
-                        </select>
+                        <input type="number" id="sector" name="sector_facturado" placeholder="Seleccione un sector" min="1">
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes</label>
@@ -70,7 +65,7 @@ if (!isset($_SESSION['user'])) {
                     </div>
                     <div class="form-group">
                         <label for="año">Año</label>
-                        <input type="number" id="año" name="año" onchange="handleDateChange()"min="2000">
+                        <input type="number" id="año" name="año" onchange="handleDateChange()" placeholder="Seleccione un año" min="2000">
                     </div>
                     <button type="button" class="btn" id="show-info-btn" style="display: none;"
                         onclick="fetchData()">Mostrar Información</button>

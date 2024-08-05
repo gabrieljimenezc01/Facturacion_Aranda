@@ -112,7 +112,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="contenedor-filtro">
                         <form method="POST" action="facturacion.php" class="filtro">
                             <label for="sector">Filtrar Por: </label>
-                            <input type="text" id="sector" name="sector_facturado" placeholder="Sector">
+                            <input type="number" id="sector" name="sector_facturado" placeholder="Sector" min="1">
                             <input type="hidden" id="f_inicio" name="fecha_inicio" value="<?php echo $f_inicio; ?>">
                             <input type="hidden" id="f_fin" name="fecha_fin" value="<?php echo $f_fin; ?>">
                             <input type="hidden" id="f_cobro" name="fecha_cobro" value="<?php echo $f_cobro; ?>">
