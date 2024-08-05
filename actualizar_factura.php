@@ -1,5 +1,10 @@
 <?php
+session_start();
 require 'db.php';
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener los valores enviados desde el formulario

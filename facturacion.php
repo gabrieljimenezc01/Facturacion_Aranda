@@ -1,6 +1,11 @@
 <?php
-
+session_start();
 require 'db.php';
+
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 
 // Definir variables con valores predeterminados
 $f_inicio = "";
@@ -477,7 +482,6 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             let deuda = row.querySelector('input.deuda').value;
                             let cobroBasico = row.getAttribute('data-cobro-basico');
                             let valorConsumo = row.getAttribute('data-cobro-consumo');
-                            let valorFactura = row.getAttribute('data-cobro-factura');
 
                             let rowData = {
                                 codigo: cells[0].innerText,
@@ -489,10 +493,10 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 consumo: consumo,
                                 anotaciones: anotaciones,
                                 deuda: deuda,
-                                total: cells[10].innerText,
+                                total: cells[11].innerText,
                                 valor_consumo: valorConsumo,
                                 valor_basico: cobroBasico,
-                                valor_factura: valorFactura
+                                valor_factura: cells[10].innerText
                             };
                             data.push(rowData);
                         }

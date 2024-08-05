@@ -1,5 +1,11 @@
 <?php
+session_start();
 require 'db.php';
+
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 
 // Consultar la tabla de precios
 $precios = [];
@@ -152,8 +158,10 @@ if (isset($_POST['search'])) {
     </div>
     <script>
         const precios = <?php echo json_encode($precios); ?>;
-        document.getElementById('lectura-actual').addEventListener('input', calcularValores);
+
+        
         document.getElementById('lectura-anterior').addEventListener('input', calcularValores);
+        document.getElementById('lectura-actual').addEventListener('input', calcularValores);
 
         function calcularValores() {
             // Obtener los valores de las lecturas
@@ -262,9 +270,6 @@ if (isset($_POST['search'])) {
                 return;
             }
         });
-        function cerrar(){    
-        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
-        }
     </script>
 </body>
 </html>

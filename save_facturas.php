@@ -1,5 +1,11 @@
 <?php
+session_start();
 require 'db.php';
+
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 
 // Configurar cabecera para recibir JSON
 header('Content-Type: application/json');
@@ -73,8 +79,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $valor_basico = $row['valor_basico'];
                 $valor_consumo = $row['valor_consumo'];
                 $valor_factura = $row['valor_factura'];
+                $estado = 'NO';
     
-                $query = "INSERT INTO factura (`cod_cliente`, `fecha_inicio_cobro`, `fecha_fin_cobro`, `mes_cobrado`, `lectura_inicial`, `lectura_final`, `consumo_m3`, `valor_total`, `valor_consumo`, `valor_basico`, `valor_factura`, `valor_deuda`, `Anotaciones`, `fecha_limite_pago`) VALUES (:cod_cliente, :fecha_inicio_cobro, :fecha_fin_cobro, :mes_cobrado, :lectura_inicial, :lectura_final, :consumo_m3, :valor_total, :valor_consumo, :valor_basico, :valor_factura, :valor_deuda, :Anotaciones, :fecha_limite_pago)";
+                $query = "INSERT INTO factura (`cod_cliente`, `fecha_inicio_cobro`, `fecha_fin_cobro`, `mes_cobrado`, `lectura_inicial`, `lectura_final`, `consumo_m3`, `valor_total`, `valor_consumo`, `valor_basico`, `valor_factura`, `valor_deuda`, `Anotaciones`, `estado_pago`, `fecha_limite_pago`) VALUES (:cod_cliente, :fecha_inicio_cobro, :fecha_fin_cobro, :mes_cobrado, :lectura_inicial, :lectura_final, :consumo_m3, :valor_total, :valor_consumo, :valor_basico, :valor_factura, :valor_deuda, :Anotaciones,  :estado_pago, :fecha_limite_pago)";
                 $stmt = $conn->prepare($query);
                 $stmt->bindValue(':cod_cliente', $codigo);
                 $stmt->bindValue(':fecha_inicio_cobro', $fi);
@@ -89,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindValue(':valor_factura', $valor_factura);
                 $stmt->bindValue(':valor_deuda', $deuda);
                 $stmt->bindValue(':Anotaciones', $anotaciones);
+                $stmt->bindValue(':estado_pago', $estado);
                 $stmt->bindValue(':fecha_limite_pago', $fc);
                 $stmt->execute();
             }
