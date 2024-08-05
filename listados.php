@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require 'db.php';
@@ -15,22 +16,19 @@ if (!isset($_SESSION['user'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Listas</title>
     <link rel="stylesheet" href="listados-styles.css">
-    <link rel="shortcut icon" href="../img/disponibilidad.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
 </head>
 
 <body>
     <div class="background-overlay"></div>
-    <div class="navbar">
-        <div class="user-container">
-            <button class="user-btn" onclick="window.location.href='principal.html'">Usuarios</button>
-            <button class="user-btn" onclick="window.location.href='principal.html'">Busqueda</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Facturación</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Listados</button>
-            <button class="user-btn" onclick="window.location.href='avanzar.html'">Precios</button>
-            <button class="user-btn" onclick="window.location.href='login.html'">Cerrar Sesión</button>
-        </div>
-    </div>
+    <nav class="navbar">
+            <div class="navbar-brand">Listados</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
+            <div>
+                <button class="logout-button" onclick="cerrar()" style="width: 100%;">Cerrar Sesión</button>
+            </div>
+        </nav>
     <div class="container">
         <h1>Generador de Listas</h1>
         <form id="pdfForm" method="POST" target="_blank">
@@ -46,12 +44,7 @@ if (!isset($_SESSION['user'])) {
                 <div class="form-left">
                     <div class="form-group">
                         <label for="sector">Sector</label>
-                        <select id="sector" name="sector" onchange="handleSectorChange()">
-                            <option value="">Seleccione un sector</option>
-                            <?php for ($i = 1; $i <= 17; $i++): ?>
-                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                            <?php endfor; ?>
-                        </select>
+                        <input type="number" id="sector" name="sector_facturado" placeholder="Seleccione un sector" min="1">
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes</label>
@@ -73,7 +66,7 @@ if (!isset($_SESSION['user'])) {
                     </div>
                     <div class="form-group">
                         <label for="año">Año</label>
-                        <input type="text" id="año" name="año" onchange="handleDateChange()">
+                        <input type="number" id="año" name="año" onchange="handleDateChange()" placeholder="Seleccione un año" min="2000">
                     </div>
                     <button type="button" class="btn" id="show-info-btn" style="display: none;"
                         onclick="fetchData()">Mostrar Información</button>
@@ -91,6 +84,10 @@ if (!isset($_SESSION['user'])) {
         </form>
     </div>
     <script>
+        function cerrar() {
+        setTimeout(function() {
+            window.location = "<?= 'logout.php' ?>";}, 0000);
+        }
         function updateFormAction() {
             var listType = document.getElementById("list-type").value;
             var form = document.getElementById("pdfForm");

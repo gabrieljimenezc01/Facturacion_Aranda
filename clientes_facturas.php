@@ -39,7 +39,7 @@ if (count($result) > 0) {
             <div class="navbar-brand">Modulo Deudas</div>
             <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
-            <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
         </nav>
 
@@ -76,7 +76,7 @@ if (count($result) > 0) {
                                 <th>Mes Cobrado</th>
                                 <th>Consumo M3</th>
                                 <th>Valor de Deuda</th>
-                                <th>Valor Total</th>
+                                <th>Valor Factura</th>
                                 <th>Estado de Pago</th>
                                 <th>Ver</th>
                                 <th>Guardar</th>
@@ -88,7 +88,7 @@ if (count($result) > 0) {
                                             <td>" . $row['mes_cobrado'] . "</td>
                                             <td>" . $row['consumo_m3'] . "</td>
                                             <td>" . $row['valor_deuda'] . "</td>
-                                            <td>" . $row['valor_total'] . "</td>
+                                            <td>" . $row['valor_factura'] . "</td>
                                             <td>
                                                 <select name='estado_pago' id='estado_pago_{$row['cod_factura']}'>
                                                     <option value='si' " . ($row['estado_pago'] == 'si' ? 'selected' : '') . ">Sí</option>
@@ -110,14 +110,19 @@ if (count($result) > 0) {
                             ?>
                         </table>
                     </div>
+                    <!-- Mensaje de confirmación -->
+                    <div id="confirmation-message" style="display:none; color: green; margin-top: 20px;">
+                        Cambios guardados correctamente.
+                    </div>
                 </div>
             </main>
         </div>
     </div>
 </body>
 <script>
-    function cerrar(){    
-        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); 
+    function cerrar() {
+        setTimeout(function() {
+            window.location = "<?= 'logout.php' ?>";}, 0000);
     }
 
     document.querySelectorAll('.save-btn').forEach(button => {
@@ -136,9 +141,10 @@ if (count($result) > 0) {
 
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "actualizar_estado_pago.php", true);
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     alert(xhr.responseText);
+                    document.getElementById('confirmation-message').style.display = 'block';  // Mostrar el mensaje después de guardar
                 }
             };
             xhr.send(formData);
