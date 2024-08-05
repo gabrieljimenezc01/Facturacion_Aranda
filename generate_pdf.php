@@ -39,12 +39,12 @@ class PDF extends FPDF
     {
         $this->SetXY($x, $y);
         // Logo
-        $this->Image('img/logo.png', $x , 5, 30); // 150px de ancho (convertido a mm)  
+        $this->Image('img/logo.png', $x, 5, 30); // 150px de ancho (convertido a mm)  
 
         // Número de Factura
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(26);
-        $this->MultiCell(60, 8, "JUNTA ADMINISTRADORA\nACUEDUTO ARANDA", 0,'C');
+        $this->MultiCell(60, 8, "JUNTA ADMINISTRADORA\nACUEDUCTO ARANDA", 0,'C');
         $this->SetXY($x+85,$y); 
         $this->SetFont('Arial', 'B', 14);
         $this->Cell(43, 8, 'Factura de Agua', 1, 1, 'C');
@@ -113,8 +113,8 @@ class PDF extends FPDF
         $this->Cell(25, 6, '' . number_format($this->factura['valor_deuda']), 1, 1, 'R');
 
         $this->SetX($x);
-        $this->Cell(100, 6, 'Total ', 1, 0);
-        $this->Cell(25, 6, '' . number_format($this->factura['valor_total']), 1, 1, 'R');
+        $this->Cell(100, 6, 'Valor del recibo ', 1, 0);
+        $this->Cell(25, 6, '' . number_format($this->factura['valor_factura']), 1, 1, 'R');
         $this->Ln(4);
 
         $this->SetX($x);
@@ -124,8 +124,10 @@ class PDF extends FPDF
         $this->Ln(4);
 
         $this->SetX($x);
-        $this->Cell(100, 6, 'Total a Pagar ', 1, 0);
-        $this->Cell(25, 6, '' . number_format($this->factura['valor_factura']), 1, 1, 'C');
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetFillColor(191, 229, 250);
+        $this->Cell(100, 6, 'TOTAL A PAGAR ', 1, 0,'l','true');
+        $this->Cell(25, 6, '' . number_format($this->factura['valor_total']), 1, 1, 'C','true');
         $this->Ln(5);
 
 
@@ -138,14 +140,15 @@ class PDF extends FPDF
         $this->SetXY($x + 75, 135);
         $this->Cell(50, 35, '', 1, 0);
 
-        $this->SetY(-42);
+        $this->SetY(-44);
         $this->SetX($x);
         $this->SetFont('Arial', '', 10);
         $this->Cell(80, 6, utf8_decode('Período Facturado De: ') . $this->factura['fecha_inicio_cobro'] . ' A ' . $this->factura['fecha_fin_cobro'], 1);
         $this->Cell(45, 6, 'Mes Facturado: ' . $this->factura['mes_cobrado'], 1, 1);
         $this->SetFont('Arial', 'I', 8);
+        $this->Ln(2);
         $this->SetX($x);
-        $this->MultiCell(125, 5, utf8_decode("Los pagos se atenderan unicamente en la oficina del acueducto\nHorario de atención al publico: sabado de 2 a 6 pm y domingo de 8 a 12pm\nNumero del cel fontanero:3162507515-presidente:3206401175"), 0, 'C');
+        $this->MultiCell(125, 5, utf8_decode("Los pagos se atenderán únicamente en la oficina del acueducto\nHorario de atención al público: sábado de 2 a 6 pm y domingo de 8 a 12pm.\nNúmero del cel. fontanero: 3162507515 - presidente: 3206401175"), 0, 'C');
     }
     function FacturaInfo()
     {

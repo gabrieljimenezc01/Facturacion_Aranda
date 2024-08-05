@@ -26,7 +26,7 @@ if (!isset($_SESSION['user'])) {
         <div class="user-container">
             <button class="user-btn" onclick="window.location.href='agregar-usuario.php'">Clientes</button>
             <button class="user-btn" onclick="window.location.href='deudores.php'">Deudas</button>
-            <button class="user-btn" onclick="window.location.href='facturas.php'">Facturación</button>
+            <button class="user-btn" onclick="window.location.href='facturacion.php'">Facturación</button>
             <button class="user-btn" onclick="window.location.href='listados.php'">Listados</button>
             <button class="user-btn" onclick="window.location.href='precio.php'">Precios</button>
             <button class="user-btn" onclick="window.location.href='logout.php'">Cerrar Sesión</button>
@@ -50,7 +50,7 @@ if (!isset($_SESSION['user'])) {
                 <h2>Modulo Deudas</h2><br>
                 <i class="fa fa-dollar fa-5x icon"></i>
             </a>
-            <a href="facturas.php" class="icon-card">
+            <a href="facturacion.php" class="icon-card">
                 <h2>Facturación</h2><br>
                 <i class="fa fa-file-pdf-o fa-5x icon"></i>
             </a>
