@@ -161,7 +161,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td> <input type='number' class='lectura-anterior' name='lectura_anterior[]' value='" . $lectura_anterior . "'> </td>
                                     <td> <input type='number' class='lectura-actual' name='lectura_actual[]' onchange='calculateConsumo(this)'></td>
                                     <td> <input type='number' class='consumo' name='consumo[]' readonly> </td>
-                                    <td class= 'table-cell'> <textarea class='anotaciones' name='anotaciones[]'></textarea> </td>
+                                    <td class= 'table-cell'> <textarea class='anotaciones' name='anotaciones[]'>Ninguna</textarea> </td>
                                     <td> <input type='number' class='deuda' name='deuda[]' value='" . $valor_deuda . "' readonly> </td>
                                     <td> 0 </td>
                                     <td> 0 </td>
