@@ -152,8 +152,7 @@ if (isset($_POST['search'])) {
     </div>
     <script>
         const precios = <?php echo json_encode($precios); ?>;
-
-        
+        document.getElementById('lectura-actual').addEventListener('input', calcularValores);
         document.getElementById('lectura-anterior').addEventListener('input', calcularValores);
 
         function calcularValores() {
