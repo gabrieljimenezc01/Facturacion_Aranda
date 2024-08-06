@@ -31,8 +31,8 @@ try {
                     <td>{$row['deuda']}</td>
                     <td>
                         <select name='estado_pago[]'>
-                            <option value='si' " . ($row['estado_pago'] == 'si' ? 'selected' : '') . ">Sí</option>
-                            <option value='no' " . ($row['estado_pago'] == 'no' ? 'selected' : '') . ">No</option>
+                            <option value='SI' " . ($row['estado_pago'] == 'SI' ? 'selected' : '') . ">Sí</option>
+                            <option value='NO' " . ($row['estado_pago'] == 'NO' ? 'selected' : '') . ">No</option>
                         </select>
                     </td>
                   </tr>";
