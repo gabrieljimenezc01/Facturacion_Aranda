@@ -91,8 +91,8 @@ if (count($result) > 0) {
                                             <td>" . $row['valor_factura'] . "</td>
                                             <td>
                                                 <select name='estado_pago' id='estado_pago_{$row['cod_factura']}'>
-                                                    <option value='si' " . ($row['estado_pago'] == 'si' ? 'selected' : '') . ">Sí</option>
-                                                    <option value='no' " . ($row['estado_pago'] == 'no' ? 'selected' : '') . ">No</option>
+                                                    <option value='SI' " . ($row['estado_pago'] == 'SI' ? 'selected' : '') . ">SI</option>
+                                                    <option value='NO' " . ($row['estado_pago'] == 'NO' ? 'selected' : '') . ">NO</option>
                                                 </select>
                                             </td>
                                             <td><a href='generate_pdf.php?cod_factura=" . htmlspecialchars($row["cod_factura"]) . "' target='_blank'>

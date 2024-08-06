@@ -16,7 +16,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
         if (!$cliente_existe) {
             throw new Exception("El cliente no existe en la base de datos.");
         }
-
+        $stmt_check_status= $conn->prepare("SELECT estado_pago FROM factura WHERE cod_factura =?");
+        $stmt_check_status->execute([$cod_factura]);
+        $estado = $stmt_check_status->fetch(PDO::FETCH_ASSOC);
+        $estado_actual=$estado['estado_pago'];
+        if ($estado_actual==$nuevo_estado_pago) {
+            echo "El estado Pago de la factura es ".$estado_actual.", por lo tanto no hay cambio";
+        } else{
         // Obtener la deuda actual del cliente
         $stmt_deuda = $conn->prepare("SELECT valor_total FROM deudores WHERE cod_cliente = ?");
         $stmt_deuda->execute([$codigo_cliente]);
@@ -26,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
         $stmt_update = $conn->prepare("UPDATE factura SET estado_pago = ? WHERE cod_factura = ?");
         $stmt_update->execute([$nuevo_estado_pago, $cod_factura]);
 
-        if ($nuevo_estado_pago === 'no') {
+        if ($nuevo_estado_pago === 'NO') {
             if ($deudor) {
                 // Sumar el valor total a la deuda existente
                 $nuevo_valor_total = $deudor['valor_total'] + $valor_total;
@@ -37,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                 $stmt_insert_deuda = $conn->prepare("INSERT INTO deudores (cod_cliente, valor_total) VALUES (?, ?)");
                 $stmt_insert_deuda->execute([$codigo_cliente, $valor_total]);
             }
-        } elseif ($nuevo_estado_pago === 'si' && $deudor) {
+        } elseif ($nuevo_estado_pago === 'SI' && $deudor) {
             // Si el cliente ha pagado parcialmente o totalmente
             $nuevo_valor_total = max($deudor['valor_total'] - $valor_total, 0);
 
@@ -51,7 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             }
         }
 
-        echo "success";
+        echo "Cambio realizado";
+        }
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     } catch (Exception $e) {
