@@ -6,19 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sector = $_POST['sector'];
     $mes = $_POST['mes'];
     $año = $_POST['año'];
-    $codigos = $_POST['codigo'];
-    $estados_pago = $_POST['estado_pago'];
-
-    // Actualizar el estado de pago en la base de datos
-    try {
-        foreach ($codigos as $index => $codigo) {
-            $estado_pago = $estados_pago[$index];
-            $stmt = $conn->prepare("UPDATE factura SET estado_pago = ? WHERE cod_cliente = ? AND mes_cobrado = ? AND YEAR(fecha_inicio_cobro) = ?");
-            $stmt->execute([$estado_pago, $codigo, $mes, $año]);
-        }
-    } catch (PDOException $e) {
-        die("Error: " . $e->getMessage());
-    }
 
     // Obtener los datos actualizados de la base de datos
     try {
@@ -27,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             SELECT c.codigo, c.nombre, c.apellido, f.cod_factura AS factura, f.consumo_m3 AS m3, f.valor_total AS valor_ingreso, f.valor_deuda AS deuda, c.fundador
             FROM clientes c
             JOIN factura f ON c.codigo = f.cod_cliente
-            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'no'");
+            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'NO'");
         $stmt_no_pagados->execute([$sector, $mes, $año]);
         $no_pagados = $stmt_no_pagados->fetchAll(PDO::FETCH_ASSOC);
 
@@ -36,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             SELECT c.codigo, c.nombre, c.apellido, f.cod_factura AS factura, f.consumo_m3 AS m3, f.valor_total AS valor_ingreso, f.valor_deuda AS deuda, c.fundador
             FROM clientes c
             JOIN factura f ON c.codigo = f.cod_cliente
-            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'si'");
+            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'SI'");
         $stmt_pagados->execute([$sector, $mes, $año]);
         $pagados = $stmt_pagados->fetchAll(PDO::FETCH_ASSOC);
 
@@ -45,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             SELECT SUM(f.valor_total) AS total_recaudado
             FROM factura f
             JOIN clientes c ON f.cod_cliente = c.codigo
-            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'si'");
+            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'SI'");
         $stmt_total_recaudado->execute([$sector, $mes, $año]);
         $total_recaudado = $stmt_total_recaudado->fetch(PDO::FETCH_ASSOC)['total_recaudado'];
 
@@ -54,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             SELECT SUM(f.valor_total) AS total_deuda
             FROM factura f
             JOIN clientes c ON f.cod_cliente = c.codigo
-            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'no'");
+            WHERE c.sector = ? AND f.mes_cobrado = ? AND YEAR(f.fecha_inicio_cobro) = ? AND f.estado_pago = 'NO'");
         $stmt_total_deuda->execute([$sector, $mes, $año]);
         $total_deuda = $stmt_total_deuda->fetch(PDO::FETCH_ASSOC)['total_deuda'];
 

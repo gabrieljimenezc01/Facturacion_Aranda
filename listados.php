@@ -23,7 +23,8 @@ if (!isset($_SESSION['user'])) {
     <div class="background-overlay"></div>
     <nav class="navbar">
         <div class="navbar-brand">Listados</div>
-        <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
+        <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"
+                    style="color:white; font-size: 30px"></i></a></div>
         <div>
             <button class="logout-button" onclick="cerrar()" style="width: 100%;">Cerrar Sesión</button>
         </div>
@@ -43,7 +44,8 @@ if (!isset($_SESSION['user'])) {
                 <div class="form-left">
                     <div class="form-group">
                         <label for="sector">Sector</label>
-                        <input type="number" id="sector" name="sector" onchange="handleDateChange()" placeholder="Seleccione un sector" min="1">
+                        <input type="number" id="sector" name="sector" onchange="handleDateChange()"
+                            placeholder="Seleccione un sector" min="1">
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes</label>
@@ -65,9 +67,11 @@ if (!isset($_SESSION['user'])) {
                     </div>
                     <div class="form-group">
                         <label for="año">Año</label>
-                        <input type="number" id="año" name="año" onchange="handleDateChange()" placeholder="Seleccione un año" min="2000">
+                        <input type="number" id="año" name="año" onchange="handleDateChange()"
+                            placeholder="Seleccione un año" min="2000">
                     </div>
-                    <button type="button" class="btn" id="show-info-btn" style="display: none;" onclick="fetchData()">Mostrar Información</button>
+                    <button type="button" class="btn" id="show-info-btn" style="display: none;"
+                        onclick="fetchData()">Mostrar Información</button>
                 </div>
                 <div class="form-right">
                     <img src="img/agua.gif" alt="GIF Animado" class="form-gif">
@@ -76,16 +80,19 @@ if (!isset($_SESSION['user'])) {
             <div id="data-table" style="display: none; margin-top: 20px;">
                 <!-- Aquí se mostrará la información de la base de datos -->
             </div><br>
-            <button type="button" class="btn" style="display: none;" id="save-btn">Guardar Cambios</button>
+            <button type="button" class="btn" style="display: none;" id="save-btn" onclick="saveChanges()">Guardar
+                Cambios</button>
             <span id="save-confirmation" style="display: none; color: green;">Cambios guardados correctamente.</span>
             <button type="submit" class="btn" style="display: none;" id="generate-btn">Generar PDF</button>
         </form>
     </div>
     <script>
         function cerrar() {
-            setTimeout(function() {
-                window.location = "<?= 'logout.php' ?>";}, 0000);
+            setTimeout(function () {
+                window.location = "<?= 'logout.php' ?>";
+            }, 0);
         }
+
         function updateFormAction() {
             var listType = document.getElementById("list-type").value;
             var form = document.getElementById("pdfForm");
@@ -95,20 +102,19 @@ if (!isset($_SESSION['user'])) {
             var dataTable = document.getElementById("data-table");
 
             if (listType === "secretario") {
-                form.action = "generate_secretario.php";
+                form.setAttribute("action", "generate_secretario.php");
                 showInfoBtn.style.display = "inline-block";
-                dataTable.style.display = "none";
+                saveBtn.style.display = "inline-block";
+                generateBtn.style.display = "inline-block";
             } else if (listType === "tesorero") {
-                form.action = "generate_tesorero.php";
+                form.setAttribute("action", "generate_tesorero.php");
                 showInfoBtn.style.display = "none";
                 saveBtn.style.display = "none";
-                dataTable.style.display = "none";
                 generateBtn.style.display = "inline-block";
             } else {
-                form.action = "";
+                form.removeAttribute("action");
                 showInfoBtn.style.display = "none";
                 saveBtn.style.display = "none";
-                dataTable.style.display = "none";
                 generateBtn.style.display = "none";
             }
 
@@ -132,32 +138,36 @@ if (!isset($_SESSION['user'])) {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     document.getElementById("data-table").style.display = "block";
                     document.getElementById("data-table").innerHTML = xhr.responseText;
-                    document.getElementById("generate-btn").style.display = "inline-block";
+                    checkSavedState(); // Verifica si el estado ya está guardado después de mostrar los datos
                 }
             };
             xhr.send("sector=" + sector + "&mes=" + mes + "&año=" + año);
         }
 
-        function updateDeudores(callback) {
+        function saveChanges() {
             var form = document.getElementById('pdfForm');
             var formData = new FormData(form);
 
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "update_deudores.php", true);
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    if (xhr.responseText === "success") {
-                        document.getElementById("save-btn").style.display = "none";
-                        document.getElementById("save-confirmation").style.display = "inline-block";
-                        saveState();
-                        callback();
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        if (xhr.responseText.trim() === "success") {
+                            document.getElementById("save-confirmation").style.display = "inline-block";
+                            document.getElementById("save-btn").style.display = "none"; // Deshabilita el botón después de guardar
+                            checkSavedState(); // Revisa el estado después de guardar
+                        } else {
+                            alert("Error al actualizar los deudores: " + xhr.responseText);
+                        }
                     } else {
-                        alert("Error al actualizar los deudores.");
+                        alert("Error al comunicarse con el servidor: " + xhr.status);
                     }
                 }
             };
             xhr.send(formData);
         }
+
 
         function resetSaveButton() {
             var listType = document.getElementById("list-type").value;
@@ -192,10 +202,11 @@ if (!isset($_SESSION['user'])) {
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     if (xhr.responseText === "saved") {
-                        document.getElementById("save-btn").style.display = "none";
                         if (listType === "secretario") {
+                            document.getElementById("save-btn").style.display = "none";
                             document.getElementById("save-confirmation").style.display = "inline-block";
                         } else {
+                            // En Lista para Tesorero no mostramos el mensaje
                             document.getElementById("save-confirmation").style.display = "none";
                         }
                     } else {
@@ -217,20 +228,9 @@ if (!isset($_SESSION['user'])) {
             checkSavedState();
         }
 
-        document.getElementById('save-btn').addEventListener('click', function () {
-            updateDeudores(function () {
-                alert("Cambios guardados correctamente.");
-            });
-        });
-
-        document.getElementById('generate-btn').addEventListener('click', function (e) {
-            var listType = document.getElementById("list-type").value;
-            if (listType === "secretario") {
-                e.preventDefault();
-                updateDeudores(function () {
-                    document.getElementById('pdfForm').submit();
-                });
-            }
+        document.getElementById('generate-btn').addEventListener('click', function () {
+            // Asegura que no se muestre el mensaje de "Cambios guardados correctamente" al generar el PDF
+            document.getElementById("save-confirmation").style.display = "none";
         });
     </script>
 </body>
