@@ -6,6 +6,24 @@ if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 };
+if (isset($_POST['ajax']) && $_POST['ajax'] == 'true') {
+    $codigo = $_POST['codigo'];
+    try {
+        $sql = "SELECT nombre, apellido FROM clientes WHERE codigo = :codigo";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            echo json_encode($result);
+        } else {
+            echo json_encode(['error' => 'Cliente no encontrado']);
+        }
+    } catch (PDOException $e) {
+        echo json_encode(['error' => htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')]);
+    }
+    exit();
+}
 $codigo = "";
 $motivo = "";
 $valor = "";
@@ -100,10 +118,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
                             Digite los datos del usuario y la deuda
                         </p>
                     </div>
-                    <form action="registro_deudas.php" method="post" class="form_eliminacion">
+                    <form action="registro_deudas.php" method="post" class="form_eliminacion" id="deuda-form">
                         <div class="form-row">
-                            <input type="number" name="codigo" required min="1" value='<?php echo $codigo ?>'>
+                            <input type="number" name="codigo" id="codigo" required min="1" value='<?php echo $codigo ?>'>
                             <label alt="Label" data-placeholder="Código del cliente..."></label>
+                        </div>
+                        <div class="form-row">
+                            <label id="nombre_completo" alt="Label" data-placeholder="Nombre del cliente"></label>
                         </div>
                         <div class="form-row">
                             <input type="text" name="concepto" required maxlength="100" value='<?php echo $motivo ?>'>
@@ -126,6 +147,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
     </div>
 </body>
 <script>
+    document.getElementById('codigo').addEventListener('input', function() {
+        var codigo = this.value;
+        if (codigo) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'registro_deudas.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.error) {
+                        document.getElementById('nombre_completo').textContent = 'No existe';
+                    } else {
+                        document.getElementById('nombre_completo').textContent = response.nombre + ' ' + response.apellido;
+                    }
+                }
+            };
+            xhr.send('ajax=true&codigo=' + codigo);
+        } else {
+            document.getElementById('nombre_completo').textContent = '';
+        }
+    });
     function cerrar(){    
         setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
     }
