@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
             <main class="main-content">
                 <div class="registro_deuda">
                     <div style=" text-align:center">
-                        <h2> Registro de Duedas</h2>
+                        <h2> Registro de Deudas</h2>
                     </div>
                     <div>
                         <p>
@@ -125,5 +125,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deuda'])) {
         </div>
     </div>
 </body>
-
+<script>
+    function cerrar(){    
+        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    }
+</script>
 </html>

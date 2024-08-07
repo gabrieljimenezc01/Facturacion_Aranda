@@ -26,7 +26,7 @@ if (!isset($_SESSION['user'])) {
         <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true"
                     style="color:white; font-size: 30px"></i></a></div>
         <div>
-            <button class="logout-button" onclick="cerrar()" style="width: 100%;">Cerrar Sesión</button>
+            <button class="logout-button" onclick="cerrar()" style="width: 100%; background-color: #005bb5;">Cerrar Sesión</button>
         </div>
     </nav>
     <div class="container">

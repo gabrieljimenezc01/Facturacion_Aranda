@@ -270,6 +270,10 @@ if (isset($_POST['search'])) {
                 return;
             }
         });
+        
+    function cerrar(){    
+        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    }
     </script>
 </body>
 </html>

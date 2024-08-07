@@ -33,11 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_insert = $conn->prepare("INSERT INTO deudores (cod_cliente, valor_total) VALUES (?, ?)");
                     $stmt_insert->execute([$codigo, $valor]);
                 }
-            } elseif ($estado_pago === 'SI' && $deudor) {
+            } /*elseif ($estado_pago === 'SI' && $deudor) {
                 // Si el estado de pago es "SI", elimina el registro de la tabla deudores si existe
                 $stmt_delete = $conn->prepare("DELETE FROM deudores WHERE cod_cliente = ?");
                 $stmt_delete->execute([$codigo]);
-            }
+            }*/
         }
         echo "success";
     } catch (PDOException $e) {

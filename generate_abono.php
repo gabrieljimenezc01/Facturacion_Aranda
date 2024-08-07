@@ -40,7 +40,7 @@ class PDF extends FPDF
         // Número de abono
         $this->SetFont('Arial', 'B', 14);
         $this->Cell(25);
-        $this->MultiCell(150,8,"JUNTA ADMINISTRADORA\nACUEDUTO ARANDA",0,'C'); 
+        $this->MultiCell(150,8,"JUNTA ADMINISTRADORA\nACUEDUCTO ARANDA",0,'C'); 
         $this->SetXY(160,10);
         $this->Cell(43, 8, 'Nota de ingreso', 1, 1, 'C');
         $this->SetFont('Arial', '', 10);

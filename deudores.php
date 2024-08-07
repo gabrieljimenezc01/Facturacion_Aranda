@@ -82,7 +82,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th>Nombre Completo</th>
                             <th>Dirección</th>
                             <th>Sector</th>
-                            <th>Fundador</th>
+                            <th>Concepto</th>
                             <th>Valor de Deuda</th>
                         </tr>
                         <?php
@@ -93,7 +93,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td> " . $row["nombre"] . " " . $row["apellido"] . "</td>
                             <td> " . $row["direccion"] . "</td>
                             <td> " . $row["sector"] . "</td>
-                            <td> " . $row["fundador"] . "</td>
+                            <td> " . $row["motivo"] . "</td>
                              <td> " . $row["valor_total"] . "</td>
                           </tr>";
                             }
