@@ -14,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $activo = 'SI';
 
     // Comprobar si el usuario ya existe
-    $sql_check = "SELECT COUNT(*) FROM clientes WHERE codigo_medidor = :codigo_medidor";
+    /*$sql_check = "SELECT COUNT(*) FROM clientes WHERE codigo_medidor = :codigo_medidor";
     $stmt_check = $conn->prepare($sql_check);
     $stmt_check->bindParam(':codigo_medidor', $codigo_medidor);
     $stmt_check->execute();
     $user_exists = $stmt_check->fetchColumn();
-
+*/
     if ($user_exists) {
         $msg = "El usuario con este código de medidor ya existe.";
         header("Location: agregar-usuario.php?msg=" . urlencode($msg));

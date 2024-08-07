@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $codigo_medidor = isset($_POST['codigo_medidor']) ? $_POST['codigo_medidor'] : '';
     $diametro_medidor = isset($_POST['diametro_medidor']) ? $_POST['diametro_medidor'] : '';
     $fundador = isset($_POST['fundador']) ? 'SI' : 'NO';
+    $activo = isset($_POST['activo']) ? 'SI' : 'NO';
 
     // Verificar si el usuario existe
     if ($codigo != "") {
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($usuario) {
             // Usuario existe, proceder con la actualización
-            $sql_update = "UPDATE clientes SET nombre = :nombre, apellido = :apellido, direccion = :direccion, estrato = :estrato, sector = :sector, uso = :uso, codigo_medidor = :codigo_medidor, diametro_medidor = :diametro_medidor, fundador = :fundador WHERE codigo = :codigo";
+            $sql_update = "UPDATE clientes SET nombre = :nombre, apellido = :apellido, direccion = :direccion, estrato = :estrato, sector = :sector, uso = :uso, codigo_medidor = :codigo_medidor, diametro_medidor = :diametro_medidor, fundador = :fundador, activo = :activo WHERE codigo = :codigo";
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bindValue(':nombre', $nombre, PDO::PARAM_STR);
             $stmt_update->bindValue(':apellido', $apellido, PDO::PARAM_STR);
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt_update->bindValue(':codigo_medidor', $codigo_medidor, PDO::PARAM_STR);
             $stmt_update->bindValue(':diametro_medidor', $diametro_medidor, PDO::PARAM_STR);
             $stmt_update->bindValue(':fundador', $fundador, PDO::PARAM_STR);
+            $stmt_update->bindValue(':activo', $activo, PDO::PARAM_STR);
             $stmt_update->bindValue(':codigo', $codigo, PDO::PARAM_STR);
 
             if ($stmt_update->execute()) {

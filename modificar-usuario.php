@@ -15,6 +15,7 @@ $uso = '';
 $codigo_medidor = '';
 $diametro_medidor = '';
 $fundador = '';
+$activo = " ";
 require 'db.php';
 
 $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
@@ -50,6 +51,7 @@ if (isset($_GET['modificar_id'])) {
         $codigo_medidor = $usuario['codigo_medidor'];
         $diametro_medidor = $usuario['diametro_medidor'];
         $fundador = $usuario['fundador'];
+        $activo = $usuario['activo'];
     }
 }
 
@@ -151,6 +153,10 @@ if (isset($_GET['modificar_id'])) {
                             <label for="diametro_medidor">Diámetro del Medidor:</label>
                             <input type="text" id="diametro_medidor" name="diametro_medidor" required value="<?php echo htmlspecialchars($diametro_medidor); ?>" maxlength="50">
                             <span class="error-message" id="error-diametro-medidor"></span>
+                        </div>
+                        <div class="form-group checkbox-group center-row">
+                            <label for="activo">Activo:</label>
+                            <input type="checkbox" id="activo" name="activo" <?php echo $activo === 'SI' ? 'checked' : ''; ?> >
                         </div>
                         <div class="form-group checkbox-group center-row">
                             <label for="fundador">Fundador:</label>

@@ -53,7 +53,7 @@ if (!empty($sector) && !empty($f_fin)) {
 // Consultar la base de datos para obtener los usuarios del sector especificado
 $clientes = [];
 if (!empty($sector) && !$facturasExistentes) {
-    $query = "SELECT codigo, nombre, apellido, fundador, uso FROM clientes WHERE sector = :sector";
+    $query = "SELECT codigo, nombre, apellido, fundador, uso FROM clientes WHERE sector = :sector and activo='SI'";
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':sector', $sector);
     $stmt->execute();
