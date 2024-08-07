@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-08-2024 a las 17:05:04
+-- Tiempo de generación: 07-08-2024 a las 18:24:40
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -52,7 +52,7 @@ CREATE TABLE `clientes` (
   `codigo_medidor` varchar(50) NOT NULL,
   `diametro_medidor` varchar(50) NOT NULL,
   `fundador` varchar(3) NOT NULL,
-  `activo` varchar(3) NOT NULL DEFAULT ''
+  `activo` varchar(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -529,7 +529,8 @@ INSERT INTO `clientes` (`codigo`, `nombre`, `apellido`, `direccion`, `estrato`, 
 (493, 'AMPARO LORENA', 'CHINCHAJOA 2', 'ARANDA', 1, '5', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
 (495, 'MARIO HERNAN', 'DE LA CRUZ', 'ARANDA', 1, '6', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
 (496, 'DERLY', 'CUSIS', 'ARANDA', 1, '11', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
-(497, 'OCTAVIO', 'NUPAN', 'ARANDA', 1, '15', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
+(497, 'OCTAVIO', 'NUPAN', 'ARANDA', 1, '15', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI');
+INSERT INTO `clientes` (`codigo`, `nombre`, `apellido`, `direccion`, `estrato`, `sector`, `uso`, `codigo_medidor`, `diametro_medidor`, `fundador`, `activo`) VALUES
 (498, 'MARIA ISABEL', 'IGUA 2', 'ARANDA', 1, '17', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
 (499, 'MARIA ISABEL', 'IGUA 3', 'ARANDA', 1, '17', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
 (500, 'EDWIN TUMAL', 'BURBANO', 'ARANDA', 1, '7', 'Residencial', '0', '1/2 PULGADA', 'NO', 'SI'),
@@ -548,6 +549,72 @@ CREATE TABLE `deudores` (
   `valor_total` int(11) NOT NULL,
   `motivo` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `deudores`
+--
+
+INSERT INTO `deudores` (`cod_cliente`, `valor_total`, `motivo`) VALUES
+(3, 11800, 'FACTURA'),
+(11, 525000, 'MATRICULA'),
+(21, 16200, 'FACTURA'),
+(35, 15400, 'FACTURA'),
+(45, 550000, 'MATRICULA'),
+(46, 300000, 'MATRICULA'),
+(52, 700000, 'MATRICULA'),
+(58, 7600, 'FACTURA'),
+(71, 46800, 'FACTURA'),
+(97, 7600, 'FACTURA'),
+(117, 1000000, 'TRASPASO'),
+(119, 10600, 'FACTURA'),
+(121, 410000, 'TRASPASO'),
+(122, 663000, 'TRASPASO'),
+(123, 300000, 'TRASPASO'),
+(124, 300000, 'TRASPASO'),
+(128, 550000, 'MATRICULA'),
+(130, 700000, 'MATRICULA'),
+(146, 250000, 'MATRICULA'),
+(159, 700000, 'MATRICULA'),
+(166, 666000, 'TRASPASO'),
+(168, 13000, 'FACTURA'),
+(171, 700000, 'MATRICULA'),
+(176, 350000, 'MATRICULA'),
+(177, 15400, 'FACTURA'),
+(178, 4600, 'FACTURA'),
+(180, 8000000, 'DOS MATRICULAS'),
+(188, 1400000, 'MATRICULA'),
+(226, 10600, 'FACTURA'),
+(227, 700000, 'MATRICULA'),
+(228, 700000, 'MATRICULA'),
+(231, 10600, 'FACTURA'),
+(239, 4000, 'FACTURA'),
+(240, 4000, 'FACTURA'),
+(244, 200000, 'TRASPASO'),
+(246, 700000, 'MATRICULA'),
+(248, 700000, 'MATRICULA'),
+(253, 8000000, 'DOS MATRICULAS'),
+(254, 9000000, 'DOS MATRICULAS Y TRASPASO'),
+(256, 1000000, 'TRASPASO'),
+(260, 700000, 'MATRICULA'),
+(266, 550000, 'MATRICULA'),
+(269, 1400000, 'DOS MATRICULAS'),
+(276, 5200, 'FACTURA'),
+(326, 30200, 'FACTURA'),
+(334, 1000000, 'TRASPASO'),
+(350, 600000, 'TRASPASO'),
+(351, 600000, 'TRASPASO'),
+(352, 900000, 'TRASPASO'),
+(373, 700000, 'MATRICULA'),
+(418, 300000, 'MATRICULA'),
+(428, 700000, 'MATRICULA'),
+(430, 700000, 'MATRICULA'),
+(433, 550000, 'MATRICULA'),
+(453, 140000, 'MATRICULA'),
+(462, 1000000, 'TRASPASO'),
+(481, 4000, 'FACTURA'),
+(489, 420000, 'MATRICULA'),
+(493, 300000, 'MATRICULA'),
+(495, 200000, 'MATRICULA');
 
 -- --------------------------------------------------------
 
@@ -569,11 +636,33 @@ CREATE TABLE `factura` (
   `valor_basico` int(11) NOT NULL,
   `valor_factura` int(11) NOT NULL,
   `valor_deuda` int(11) NOT NULL,
-  `valor_ultima_factura` int(11) NOT NULL,
   `Anotaciones` varchar(200) NOT NULL,
   `estado_pago` varchar(20) NOT NULL,
   `fecha_limite_pago` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `factura`
+--
+
+INSERT INTO `factura` (`cod_factura`, `cod_cliente`, `fecha_inicio_cobro`, `fecha_fin_cobro`, `mes_cobrado`, `lectura_inicial`, `lectura_final`, `consumo_m3`, `valor_total`, `valor_consumo`, `valor_basico`, `valor_factura`, `valor_deuda`, `Anotaciones`, `estado_pago`, `fecha_limite_pago`) VALUES
+(300, 3, '2024-06-20', '2024-07-20', 'Julio', 1076, 1089, 13, 11800, 7800, 4000, 11800, 0, 'Ninguna', 'NO', '2024-07-28'),
+(301, 21, '2024-06-20', '2024-07-20', 'Julio', 2745, 2764, 19, 16200, 12200, 4000, 16200, 0, 'Ninguna', 'NO', '2024-07-28'),
+(302, 35, '2024-06-20', '2024-07-20', 'Julio', 1960, 1978, 18, 15400, 11400, 4000, 15400, 0, 'Ninguna', 'NO', '2024-07-28'),
+(303, 58, '2024-06-20', '2024-07-20', 'Julio', 429, 435, 6, 7600, 3600, 4000, 7600, 0, 'Ninguna', 'NO', '2024-07-28'),
+(304, 71, '2024-06-20', '2024-07-20', 'Julio', 1572, 1591, 19, 46800, 12200, 4000, 16200, 30600, 'Ninguna', 'NO', '2024-07-28'),
+(305, 97, '2024-06-20', '2024-07-20', 'Julio', 834, 840, 6, 7600, 3600, 4000, 7600, 0, 'Ninguna', 'NO', '2024-07-28'),
+(306, 481, '2024-06-20', '2024-07-20', 'Julio', 0, 0, 0, 4000, 0, 4000, 4000, 0, 'Ninguna', 'NO', '2024-07-28'),
+(307, 119, '2024-06-20', '2024-07-20', 'Julio', 180, 191, 11, 10600, 6600, 4000, 10600, 0, 'Ninguna', 'NO', '2024-07-28'),
+(308, 168, '2024-06-20', '2024-07-20', 'Julio', 2359, 2374, 15, 13000, 9000, 4000, 13000, 0, 'Ninguna', 'NO', '2024-07-28'),
+(309, 177, '2024-06-20', '2024-07-20', 'Julio', 3241, 3259, 18, 15400, 11400, 4000, 15400, 0, 'Ninguna', 'NO', '2024-07-28'),
+(310, 178, '2024-06-20', '2024-07-20', 'Julio', 1502, 1503, 1, 4600, 600, 4000, 4600, 0, 'Ninguna', 'NO', '2024-07-28'),
+(311, 226, '2024-06-20', '2024-07-20', 'Julio', 1080, 1091, 11, 10600, 6600, 4000, 10600, 0, 'Ninguna', 'NO', '2024-07-28'),
+(312, 231, '2024-06-20', '2024-07-20', 'Julio', 157, 168, 11, 10600, 6600, 4000, 10600, 0, 'Ninguna', 'NO', '2024-07-28'),
+(313, 239, '2024-06-20', '2024-07-20', 'Julio', 2842, 2851, 9, 4000, 0, 4000, 4000, 0, 'Ninguna', 'NO', '2024-07-28'),
+(314, 240, '2024-06-20', '2024-07-20', 'Julio', 2296, 2296, 0, 4000, 0, 0, 4000, 0, 'Ninguna', 'NO', '2024-07-28'),
+(315, 276, '2024-06-20', '2024-07-20', 'Julio', 378, 380, 2, 5200, 1200, 4000, 5200, 0, 'Ninguna', 'NO', '2024-07-28'),
+(316, 326, '2024-06-20', '2024-07-20', 'Julio', 3036, 3060, 24, 30200, 16200, 4000, 20200, 10000, 'Ninguna', 'NO', '2024-07-28');
 
 -- --------------------------------------------------------
 
@@ -674,19 +763,19 @@ ALTER TABLE `precio`
 -- AUTO_INCREMENT de la tabla `abonos`
 --
 ALTER TABLE `abonos`
-  MODIFY `cod_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `cod_abono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=477;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=507;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
-  MODIFY `cod_factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=267;
+  MODIFY `cod_factura` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=317;
 
 --
 -- AUTO_INCREMENT de la tabla `precio`
