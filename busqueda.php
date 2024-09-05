@@ -216,10 +216,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                             <th><?php echo $deuda_cliente ?></th>
                         </tr>
                     </table>
-                </div>
-
-
-                <?php if ($deuda_cliente) : ?>
+                </div>                
                     <h2>Registrar Abono</h2>
                     <div class="infomacion_abonos">
                         <form action="busqueda.php" method="post">
@@ -240,9 +237,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                                 <input type="number" name="valor" required min="1">
                                 <label alt="Label" data-placeholder="Valor"></label>
                             </div>
+                            <?php if ($deuda_cliente) : ?>
                             <div class="form-row">
                                 <button type="submit" name="abonar">Registrar Abono</button>
                             </div>
+                            <?php endif; ?>
                         </form>
                         <?php if (isset($msgabono)) {
                             echo "<p>$msgabono</p>";
@@ -283,7 +282,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                             }
                             ?>
                         </table>
-                    <?php endif; ?>
+                    
                     </div>
             </main>
         </div>
