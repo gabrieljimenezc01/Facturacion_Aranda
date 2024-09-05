@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->Cell(30); // Espacio para el logo
             $this->Cell(130, 10, 'Lista de Recaudo', 0, 1, 'C');
             $this->Cell(30);
-            $this->Cell(130, 10, 'Empresa de Acueducto | NIT: 123456789', 0, 1, 'C');
+            $this->Cell(130, 10, 'Empresa de Acueducto | NIT: 814005102-9', 0, 1, 'C');
             $this->Cell(30);
             $this->Cell(130, 10, utf8_decode('Sector: ' . htmlspecialchars($_POST['sector']) . ' | Mes: ' . htmlspecialchars($_POST['mes']) . ' | Año: ' . htmlspecialchars($_POST['año'])), 0, 1, 'C');
             $this->Ln(10); // Salto de línea
