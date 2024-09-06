@@ -11,14 +11,16 @@ if (!isset($_SESSION['user'])) {
 $f_inicio = "";
 $f_fin = "";
 $f_cobro = "";
+$f_cobro_2 = "";
 $mes = "";
 $sector = "";
 
 // Procesar los datos del formulario cuando se envían
-if (isset($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && isset($_POST['fecha_cobro']) && isset($_POST['mes_facturado'])) {
+if (isset($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && isset($_POST['fecha_cobro']) && isset($_POST['fecha_cobro_2']) && isset($_POST['mes_facturado'])) {
     $f_inicio = $_POST['fecha_inicio'];
     $f_fin = $_POST['fecha_fin'];
     $f_cobro = $_POST['fecha_cobro'];
+    $f_cobro_2 = $_POST['fecha_cobro_2'];
 
     // Alternativa sin IntlDateFormatter: Array de meses en español
     $meses = [
@@ -108,6 +110,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <p><strong>Fecha de inicio de cobro:</strong> <?php echo isset($f_inicio) ? $f_inicio : 'N/A'; ?></p>
                             <p><strong>Fecha de finalización de cobro:</strong> <?php echo isset($f_fin) ? $f_fin : 'N/A'; ?></p>
                             <p><strong>Fecha límite de pago:</strong> <?php echo isset($f_cobro) ? $f_cobro : 'N/A'; ?></p>
+                            <p><strong>Fecha límite de pago 2:</strong> <?php echo isset($f_cobro_2) ? $f_cobro_2 : 'N/A'; ?></p>
                             <p><strong>Mes a facturar:</strong> <?php echo isset($mes) ? $mes : 'N/A'; ?></p>
                         </div>
                         <div class="button-group">
@@ -121,6 +124,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <input type="hidden" id="f_inicio" name="fecha_inicio" value="<?php echo $f_inicio; ?>">
                             <input type="hidden" id="f_fin" name="fecha_fin" value="<?php echo $f_fin; ?>">
                             <input type="hidden" id="f_cobro" name="fecha_cobro" value="<?php echo $f_cobro; ?>">
+                            <input type="hidden" id="f_cobro_2" name="fecha_cobro_2" value="<?php echo $f_cobro_2; ?>">
                             <input type="hidden" id="mes_facturado" name="mes_facturado" value="<?php echo $mes; ?>">
                             <button type="submit">Filtrar</button>
                         </form>
@@ -209,6 +213,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label for="f-cobro">Fecha límite de pago:</label>
                         <input type="date" id="f-cobro" name="fecha_cobro" value="<?php echo $f_cobro; ?>" required>
+                        <input type="date" id="f-cobro-2" name="fecha_cobro_2" value="<?php echo $f_cobro_2; ?>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes a facturar:</label>
@@ -224,6 +229,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             const editButton = document.getElementById('editButton');
             const billingForm = document.getElementById('billingForm');
@@ -231,11 +237,35 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const fFin = document.getElementById('f-fin');
             const fInicio = document.getElementById('f-inicio');
             const fCobro = document.getElementById('f-cobro');
+            const fCobro2 = document.getElementById('f-cobro-2');
             const mesLabel = document.getElementById('mes-label');
             const mesHidden = document.getElementById('mes_hidden');
             const calculateButton = document.getElementById('calculateButton');
             const saveButton = document.getElementById('saveButton');
             const facturasExistentes = <?php echo json_encode($facturasExistentes); ?>;
+
+            // Función para actualizar el mes en tiempo real
+            fCobro.addEventListener('change', function() {
+                // Obtén el valor del campo fecha_cobro1
+                const valorFecha = fCobro.value;
+                // Verifica que el campo no esté vacío
+                if (valorFecha) {
+                    // Crear un objeto Date a partir del valor de fecha
+                    const fecha = new Date(valorFecha);
+                    
+                    // Sumar un día a la fecha
+                    fecha.setDate(fecha.getDate() + 1);
+                    
+                    // Formatear la fecha para el campo input (YYYY-MM-DD)
+                    const fechaFormateada = fecha.toISOString().split('T')[0];
+                    
+                    // Actualizar el campo fecha_cobro2 con la nueva fecha
+                    fCobro2.value = fechaFormateada;    
+                } else {
+                    // Si fecha_cobro1 está vacío, limpia fecha_cobro2
+                    fCobro2.value = '';
+                }
+            });
 
             // Función para actualizar el mes en tiempo real
             fFin.addEventListener('change', function() {
@@ -439,6 +469,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     rows.forEach((row, index) => {
                         if (index > 0) { // Ignorar la cabecera
+                            
                             let cells = row.querySelectorAll('td');
                             let consumo = parseFloat(row.querySelector('.consumo').value) || 0;
                             let tipoUso = cells[4].innerText;
@@ -506,6 +537,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         fecha_inicio: '<?php echo $f_inicio; ?>',
                         fecha_fin: '<?php echo $f_fin; ?>',
                         fecha_cobro: '<?php echo $f_cobro; ?>',
+                        fecha_cobro_2: '<?php echo $f_cobro_2; ?>',
                         mes_facturado: mesHidden.value,
                         sector_facturado: '<?php echo $sector; ?>'
                     };
