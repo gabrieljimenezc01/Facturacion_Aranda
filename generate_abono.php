@@ -6,6 +6,13 @@ if (isset($_GET['cod_abono'])) {
     $cod_abono = $_GET['cod_abono'];
     // Obtener los datos del abono y del cliente de la base de datos
     try {
+        $stmt = $conn->prepare("SELECT deudores.valor_total 
+        FROM deudores JOIN abonos 
+        ON deudores.cod_cliente=abonos.cod_cliente 
+        WHERE abonos.cod_abono = ? ");
+        $stmt->execute([$cod_abono]);
+        $deuda = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($deuda) {
         $stmt = $conn->prepare("SELECT abonos.*, clientes.*, deudores.valor_total
         FROM abonos JOIN clientes JOIN deudores
         ON abonos.cod_cliente= clientes.codigo 
@@ -16,6 +23,15 @@ if (isset($_GET['cod_abono'])) {
 
         if (!$abono) {
             die("Abono no encontrado.");
+        }
+        } else {
+            $stmt = $conn->prepare("SELECT abonos.*, clientes.*
+            FROM abonos JOIN clientes
+            ON abonos.cod_cliente= clientes.codigo 
+            WHERE abonos.cod_abono = ?");
+            $stmt->execute([$cod_abono]);
+            $abono = $stmt->fetch(PDO::FETCH_ASSOC);
+            $abono['valor_total'] = 0;
         }
     } catch (PDOException $e) {
         die("Error: " . $e->getMessage());
