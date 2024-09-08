@@ -1,117 +1,305 @@
 <?php
-require('fpdf/fpdf.php');
+session_start();
 require 'db.php';
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
+$codigo_cliente = "";
+$nombre_cliente = "";
+$direccion_cliente = "";
+$sector_cliente = "";
+$uso_cliente = "";
+$fundador_cliente = "";
+$deuda_cliente = "";
 
-if (isset($_GET['cod_abono'])) {
-    $cod_abono = $_GET['cod_abono'];
-    // Obtener los datos del abono y del cliente de la base de datos
+//buscar clientes en la base de datos
+function datos($codigo)
+{
+    global $conn, $codigo_cliente, $nombre_cliente, $direccion_cliente, $sector_cliente,
+        $uso_cliente, $fundador_cliente, $deuda_cliente, $msg, $msgbase;
     try {
-        $stmt = $conn->prepare("SELECT abonos.*, clientes.*, deudores.valor_total
-        FROM abonos JOIN clientes JOIN deudores
-        ON abonos.cod_cliente= clientes.codigo 
-        AND deudores.cod_cliente=abonos.cod_cliente 
-        WHERE abonos.cod_abono = ?");
-        $stmt->execute([$cod_abono]);
-        $abono = $stmt->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM clientes WHERE codigo = :codigo ";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_INT);
 
-        if (!$abono) {
-            die("Abono no encontrado.");
+        $stmt->execute();
+
+        $turno = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($turno) {
+            // Si se encontró el cliente, mostrar la informacion
+            $codigo_cliente = $turno['codigo'];
+            $nombre_cliente = $turno['nombre'] . " " . $turno['apellido'];
+            $direccion_cliente = $turno['direccion'];
+            $sector_cliente = $turno['sector'];
+            $uso_cliente = $turno['uso'];
+            $fundador_cliente = $turno['fundador'];
+
+            $sql = "SELECT valor_total FROM deudores WHERE cod_cliente = :cliente ";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':cliente', $turno['codigo'], PDO::PARAM_INT);
+            $stmt->execute();
+            $deuda = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($deuda) {
+                $deuda_cliente = $deuda['valor_total'];
+            } else {
+                $deuda_cliente = "0";
+            }
+        } else {
+            // Si no se encontró el cliente, mostrar un mensaje
+
+            $msg = "Cliente no encontrado.";
         }
     } catch (PDOException $e) {
-        die("Error: " . $e->getMessage());
-    }
-} else {
-    die("Código de abono no especificado.");
-}
-
-class PDF extends FPDF
-{
-    private $abono;
-
-    public function __construct($abono)
-    {
-        parent::__construct('L', 'mm', array(140, 216)); // Definir el tamaño de la hoja (media carta)
-        $this->abono = $abono;
-    }
-    function Header()
-    {
-        $this->Image('img/logo.png', 22, 5, 30); // 150px de ancho (convertido a mm)  
-        
-        // Número de abono
-        $this->SetFont('Arial', 'B', 14);
-        $this->Cell(25);
-        $this->MultiCell(150,8,"JUNTA ADMINISTRADORA\nACUEDUTO ARANDA",0,'C'); 
-        $this->SetXY(160,10);
-        $this->Cell(43, 8, 'Nota de ingreso', 1, 1, 'C');
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(150); // Movernos a la derecha
-        $this->Cell(43, 8, 'No: ' . $this->abono['cod_abono'], 1, 1, 'C');
-        $this->Ln(2);
-        
-        //mensaje datos personales
-        $this->SetFont('Arial', 'B', 9);
-        $this->Cell(0, 10, 'Datos personales' ,0, 1,'C');
-
-        // Información del Cliente
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(25);
-        $this->Cell(110, 6, 'Nombre: ' . utf8_decode($this->abono['nombre']) . ' ' .utf8_decode($this->abono['apellido']), 1);
-        $this->Cell(35, 6, utf8_decode('Código: ') . $this->abono['cod_cliente'] , 1, 1);
-        $this->Cell(25);
-        $this->Cell(70, 6, utf8_decode('Dirección: '). utf8_decode($this->abono['direccion']), 1);
-        $this->Cell(25, 6, 'Sector: ' . $this->abono['sector'], 1);
-        $this->Cell(20, 6, 'Estrato: ' . $this->abono['estrato'], 1);
-        $this->Cell(30, 6, 'Uso: ' . utf8_decode($this->abono['uso']), 1,1);
-        $this->Cell(25);
-        $this->Cell(30, 6, 'Fundador:  ' . $this->abono['fundador'] , 1);
-        $this->Cell(55, 6, 'Medidor No: ' . $this->abono['codigo_medidor'] , 1);
-        $this->Cell(60, 6, utf8_decode('Diámetro Med: ') . $this->abono['diametro_medidor'] , 1,1);
-        $this->Ln(5);
-       
-    }
-
-    function Footer()
-    {
-        // Posición: a 1,5 cm del final
-        $this->SetY(-15);
-        // Arial italic 8
-        $this->SetFont('Arial', 'I', 8);
-        // Número de página
-        $this->Cell(0, 6, utf8_decode('Página') . $this->PageNo() . '/{nb}', 0, 1, 'C');
-        $this->SetFont('Arial', 'I', 7);
-        $this->Cell(0,6,utf8_decode('fecha de impresión  ').date('d/m/y'),0,1,'C');
-    }
-    // Información de la abono
-    function abonoInfo()
-    {
-        $this->SetFont('Arial', '', 9);
-        $this->Cell(25);
-        $this->Cell(85,6,'Fecha de ingreso: ',1,0);
-        $this->Cell(60,6, date($this->abono['fecha']) ,1,1,'C');
-
-        $this->Cell(0,8,'Concepto de ingreso',0,1,'C');
-
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(25);
-        $this->Cell(145, 6, 'DATOS', 1,1,'C');
-        $this->Cell(25);
-        $this->Cell(110, 6,' '. $this->abono['concepto'] ,1, 0);
-        $this->Cell(35,6,number_format($this->abono['valor']),1,1,'R');
-        $this->Ln(10);
-        $this->Cell(25);
-        $this->Cell(100,6,'valor del abono:','LTB',0);
-        $this->Cell(45,6,number_format($this->abono['valor']),'RTB',1,'C');
-        $this->Cell(25);
-        $this->Cell(100,6,'valor de la deuda:','LTB',0);
-        $this->Cell(45,6,number_format($this->abono['valor_total']),'RTB',1,'C');
-
+        $msgbase = "Error en la consulta: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
     }
 }
 
-// Crear el PDF
-$pdf = new PDF($abono);
-$pdf->AliasNbPages();
-$pdf->AddPage();
-$pdf->abonoInfo();
-$pdf->Output('I','Nota_de_ingreso_'.$abono['cod_abono'].'_'.$abono['cod_cliente'].'.pdf');
-//$pdf->Output('D', 'abono_'.$abono['cod_abono'].' ' . $abono['cod_cliente'] . '.pdf');
+//procesar datos del cliente
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cliente'])) {
+    $codigo = $_POST['codigo'];
+    datos($codigo);
+}
+
+// Procesar abono
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
+    $codigo = $_POST['codigo_cliente'];
+    $concepto = $_POST['concepto'];
+    $fecha = $_POST['fecha'];
+    $valor = $_POST['valor'];
+
+    try {
+        //BUSCAR SI EL CLIENTE ESTA EN LA TABLA DEUDORES
+        $conn->beginTransaction();
+        $sql = "SELECT COUNT(*) FROM deudores WHERE cod_cliente = :codi_cliente";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+
+        if ($count > 0) {
+            //validar que el valor de la deuda sea diferente a 0
+            $sql = "SELECT * FROM deudores WHERE cod_cliente = :codi_cliente";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $valor_total = $stmt->fetch(PDO::FETCH_ASSOC);
+            //validar que el abono no supere la deuda
+            if ($valor > $valor_total['valor_total']) {
+                $msgabono = "Valor de abono mayor al de la deuda";
+            } else {
+                // Insertar el abono en la tabla abonos
+                $sql = "INSERT INTO abonos (cod_cliente, concepto, fecha, valor) VALUES (:codigo_cliente, :concepto, :fecha, :valor)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':codigo_cliente', $codigo, PDO::PARAM_INT);
+                $stmt->bindParam(':concepto', $concepto, PDO::PARAM_STR);
+                $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+                $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
+
+                if ($stmt->execute()) {
+                    // Actualizar el valor de la deuda en la tabla deudores
+                    $sql = "UPDATE deudores SET valor_total = valor_total - :valor WHERE cod_cliente = :codigo_cliente";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
+                    $stmt->bindParam(':codigo_cliente', $codigo, PDO::PARAM_INT);
+
+                    if ($stmt->execute()) {
+                        //validar si el valor de la deuda es 0 para eliminar al cliente
+                        $sql = "SELECT * FROM deudores WHERE cod_cliente = :codi_cliente";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+                        $stmt->execute();
+                        $valor_actualizado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($valor_actualizado['valor_total'] == 0) {
+                            //eliminar de deudores si el cliente tiene la deuda en 0
+                            $sql = "DELETE FROM deudores WHERE cod_cliente = :codi_cliente";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bindParam(':codi_cliente', $codigo, PDO::PARAM_INT);
+                            $stmt->execute();
+                            // echo "cliente eliminado de deudas";
+                        }
+                        $conn->commit();
+                        $msgabono = "Abono registrado y deuda actualizada exitosamente. ";
+                    } else {
+                        $conn->rollBack();
+                        $msgabono = "Error al actualizar la deuda.";
+                    }
+                } else {
+                    $conn->rollBack();
+                    $msgabono = "Error al registrar el abono.";
+                }
+            }
+        } else {
+            echo "El Cliente no tiene deudas registradas";
+        }
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        echo "Error en la consulta: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+    }
+    datos($codigo);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Deudas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="deudas-styles.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+</head>
+
+<body>
+    <div class="main-container">
+        <nav class="navbar">
+            <div class="navbar-brand">Modulo Deudas</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
+            <div>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <div class="content">
+            <aside class="sidebar">
+                <ul class="menu-list">
+                    <li><a href="deudores.php"><i class="fa fa-list" aria-hidden="true"></i><br>Lista Deudores</a></li>
+                    <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Acuerdos de pago</a></li>
+                    <li><a href="clientes_facturas.php"><i class="fa fa-user" aria-hidden="true"></i><br>Facturas de clientes</a></li>
+                    <li><a href="registro_deudas.php"><i class="fa fa-plus-square-o" aria-hidden="true"></i><br>Registro de Deuda</a></li>
+                </ul>
+            </aside>
+            <main class="main-content">
+                <?php if (isset($msgbase)) {
+                    echo "<p>$msgbase</p>";
+                } ?>
+
+                <div class="busqueda_ususario">
+                    <h2>Pago de Deudas</h2>
+                    <form action="busqueda.php" method="post">
+                        <div class="form-row">
+                            <input type="number" name="codigo" required value='<?php echo $codigo_cliente ?>' min="1">
+                            <label alt="Label" data-placeholder="Código de usuario..."></label>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" name="cliente"> Buscar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <?php if (isset($msg)) {
+                    echo "<label >$msg </label>";
+                } ?>
+
+                <div class="datos-usuario">
+                    <table>
+                        <tr>
+                            <th> Código</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Dirección</th>
+                            <th>Sector</th>
+                        </tr>
+                        <tr>
+                            <th><?php echo $codigo_cliente ?></th>
+                            <th><?php echo $nombre_cliente ?></th>
+                            <th><?php echo $direccion_cliente ?></th>
+                            <th><?php echo $sector_cliente ?></th>
+
+                        </tr>
+                        <tr>
+                            <th>Uso</th>
+                            <th>Fundador</th>
+                            <th>Valor de Deuda</th>
+                        </tr>
+                        <tr>
+                            <th><?php echo $uso_cliente ?></th>
+                            <th><?php echo $fundador_cliente ?></th>
+                            <th><?php echo $deuda_cliente ?></th>
+                        </tr>
+                    </table>
+                </div>
+
+
+                
+                    <h2>Registrar Abono</h2>
+                    <div class="infomacion_abonos">
+                        <form action="busqueda.php" method="post">
+                            <input type="hidden" name="codigo_cliente" value="<?php echo $codigo_cliente; ?>">
+
+
+                            <div class="form-row">
+                                <input type="date" name="fecha" required>
+                                <label alt="Label" data-placeholder="Fecha"></label>
+                            </div>
+
+                            <div class="form-row">
+                                <input type="text" name="concepto" required maxlength="100">
+                                <label alt="Label" data-placeholder="Concepto"></label>
+                            </div>
+
+                            <div class="form-row">
+                                <input type="number" name="valor" required min="1">
+                                <label alt="Label" data-placeholder="Valor"></label>
+                            </div>
+                            <?php if ($deuda_cliente) { ?>
+                            <div class="form-row">
+                                <button type="submit" name="abonar">Registrar Abono</button>
+                            </div>
+                            <?php } ?>
+                        </form>
+                        <?php if (isset($msgabono)) {
+                            echo "<p>$msgabono</p>";
+                        } ?>
+                    </div>
+                    <div class="historial-abono">
+                        <h2> Historial de Pagos o Abonos </h2>
+                        <table>
+                            <tr>
+                                <th>Código</th>
+                                <th>Concepto</th>
+                                <th>Fecha</th>
+                                <th>Valor</th>
+                                <th>Imprimir</th>
+                            </tr>
+                            <?php
+                            $sql = "SELECT * FROM abonos where cod_cliente= :cliente";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bindParam(':cliente', $codigo_cliente, PDO::PARAM_INT);
+                            $stmt->execute();
+                            $abonos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            if (count($abonos) > 0) {
+                                foreach ($abonos as $row) {
+                                    echo "<tr>
+                                <td> " . $row["cod_abono"] . "</td>
+                                <td> " . $row["concepto"] . "</td>
+                                <td> " . $row["fecha"] . "</td>
+                                <td> " . $row["valor"] . "</td>
+                                <td>
+                                    <a href='generate_abono.php?cod_abono=" . htmlspecialchars($row["cod_abono"]) . "' target='_blank'>
+                                    <i class='fa fa-file-pdf-o' aria-hidden='true'></i>
+                                    </a>
+                                </td>
+                            </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='8'>No hay registros en el inventario</td></tr>";
+                            }
+                            ?>
+                        </table>
+                    </div>
+            </main>
+        </div>
+    </div>
+</body>
+<script>
+    function cerrar(){    
+        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    }
+</script>
+</html>

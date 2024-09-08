@@ -1,5 +1,11 @@
+//búsqueda.php
 <?php
+session_start();
 require 'db.php';
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+};
 $codigo_cliente = "";
 $nombre_cliente = "";
 $direccion_cliente = "";
@@ -145,18 +151,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pago Deudas</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="deudas-styles.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
 </head>
 
 <body>
     <div class="main-container">
         <nav class="navbar">
-            <div class="navbar-brand">Modulo Deudas y Facturas</div>
-            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white"></i></a></div>
+            <div class="navbar-brand">Modulo Deudas</div>
+            <div><a href="principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
-                <button class="logout-button">Cerrar Sesión</button>
+                <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
         </nav>
 
@@ -166,6 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                     <li><a href="deudores.php"><i class="fa fa-list" aria-hidden="true"></i><br>Lista Deudores</a></li>
                     <li><a href="busqueda.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br>Acuerdos de pago</a></li>
                     <li><a href="clientes_facturas.php"><i class="fa fa-user" aria-hidden="true"></i><br>Facturas de clientes</a></li>
+                    <li><a href="registro_deudas.php"><i class="fa fa-plus-square-o" aria-hidden="true"></i><br>Registro de Deuda</a></li>
                 </ul>
             </aside>
             <main class="main-content">
@@ -216,7 +224,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                             <th><?php echo $deuda_cliente ?></th>
                         </tr>
                     </table>
-                </div>                
+                </div>
+
+
+                
                     <h2>Registrar Abono</h2>
                     <div class="infomacion_abonos">
                         <form action="busqueda.php" method="post">
@@ -237,11 +248,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                                 <input type="number" name="valor" required min="1">
                                 <label alt="Label" data-placeholder="Valor"></label>
                             </div>
-                            <?php if ($deuda_cliente) : ?>
+                            <?php if ($deuda_cliente) { ?>
                             <div class="form-row">
                                 <button type="submit" name="abonar">Registrar Abono</button>
                             </div>
-                            <?php endif; ?>
+                            <?php } ?>
                         </form>
                         <?php if (isset($msgabono)) {
                             echo "<p>$msgabono</p>";
@@ -266,7 +277,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                             if (count($abonos) > 0) {
                                 foreach ($abonos as $row) {
                                     echo "<tr>
-                                <td> " . $row["cod_cliente"] . "</td>
+                                <td> " . $row["cod_abono"] . "</td>
                                 <td> " . $row["concepto"] . "</td>
                                 <td> " . $row["fecha"] . "</td>
                                 <td> " . $row["valor"] . "</td>
@@ -282,13 +293,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['abonar'])) {
                             }
                             ?>
                         </table>
-                    
                     </div>
             </main>
         </div>
     </div>
-
-
 </body>
-
+<script>
+    function cerrar(){    
+        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    }
+</script>
 </html>
