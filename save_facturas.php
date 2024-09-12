@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fi = $generalData['fecha_inicio'];
     $ff = $generalData['fecha_fin'];
     $fc = $generalData['fecha_cobro'];
-    $fc-2 = $generalData['fecha_cobro_2'];
+    $fc_2 = $generalData['fecha_cobro_2'];
     $mes = $generalData['mes_facturado'];
     $sector = $generalData['sector_facturado'];
 
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindValue(':Anotaciones', $anotaciones);
                 $stmt->bindValue(':estado_pago', $estado);
                 $stmt->bindValue(':fecha_limite_pago', $fc);
-                $stmt->bindValue(':fecha_limite_pago_2', $fc-2);
+                $stmt->bindValue(':fecha_limite_pago_2', $fc_2);
                 $stmt->execute();
             }
             // Confirmar la transacción
