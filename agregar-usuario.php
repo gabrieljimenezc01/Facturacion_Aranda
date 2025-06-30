@@ -1,10 +1,10 @@
 <?php
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit();
-};
-$add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
+    session_start();
+    if (!isset($_SESSION['user'])) {
+        header("Location: login.php");
+        exit();
+    };
+    $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -103,6 +103,13 @@ $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                             <input type="text" id="diametro_medidor" name="diametro_medidor" required maxlength="50">
                             <span class="error-message" id="error-diametro-medidor"></span>
                         </div>
+                        <div class="form-group">
+                            <label for="diametro_medidor">Orden:</label>
+                            <select id="orden" name="orden">
+                                <option value="ninguna" selected>Ninguna</option>
+                            </select>
+                            <span class="error-message" id="error-diametro-medidor"></span>
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group checkbox-group center-row">
@@ -117,6 +124,40 @@ $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
     </div>
 </body>
 <script>
+    //Logica para asignar opciones de orden dinamicamente-------------------------------------------------------------------------------------------------------------------
+
+    document.getElementById('sector').addEventListener('input', function () {
+        const sector = this.value.trim();
+        const ordenSelect = document.getElementById('orden');
+
+        // Limpia el combobox
+        ordenSelect.innerHTML = '<option value="ninguna" selected>Ninguna</option>';
+
+        if (sector !== '') {
+            fetch(`obtener_ordenes.php?sector=${encodeURIComponent(sector)}`)
+                .then(response => response.json())
+                .then(ordenes => {
+                    if (ordenes.length > 0) {
+                        // Agrega los órdenes existentes de ese sector
+                        ordenes.forEach(ord => {
+                            const opt = document.createElement('option');
+                            opt.value = ord;
+                            opt.textContent = ord;
+                            ordenSelect.appendChild(opt);
+                        });
+                    } else {
+                        // No hay órdenes para este sector, muestra solo "1"
+                    }
+                })
+                .catch(error => {
+                    console.error('Error obteniendo órdenes por sector:', error);
+                });
+        }
+    });
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('form');
         const nombre = document.getElementById('nombre');

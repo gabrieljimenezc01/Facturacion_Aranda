@@ -53,7 +53,7 @@ if (!empty($sector) && !empty($f_fin)) {
 // Consultar la base de datos para obtener los usuarios del sector especificado
 $clientes = [];
 if (!empty($sector) && !$facturasExistentes) {
-    $query = "SELECT codigo, nombre, apellido, fundador, uso FROM clientes WHERE sector = :sector and activo='SI'";
+    $query = "SELECT codigo, nombre, apellido, fundador, uso, orden FROM clientes WHERE sector = :sector and activo='SI' ORDER BY orden ASC";
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':sector', $sector);
     $stmt->execute();
@@ -127,6 +127,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <table>
                         <tr>
+                            <th>Orden</th>
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Apellido</th>
@@ -158,6 +159,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 $factura = $stmt->fetch(PDO::FETCH_ASSOC);
                                 $lectura_anterior = $factura ? $factura['lectura_final'] : 0;
                                 echo "<tr>
+                                    <td> " . $row["orden"] . "</td>
                                     <td> " . $row["codigo"] . "</td>
                                     <td> " . $row["nombre"] . "</td>
                                     <td> " . $row["apellido"] . "</td>
