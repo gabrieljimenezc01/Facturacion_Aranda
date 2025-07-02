@@ -26,7 +26,7 @@ $codigo = isset($_POST['codigo']) ? $_POST['codigo'] : '';
 $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
 $sector = isset($_POST['sector']) ? $_POST['sector'] : '';
 
-$sql = "SELECT * FROM clientes WHERE (codigo LIKE :codigo) AND (nombre LIKE :nombre) AND (sector LIKE :sector)";
+$sql = "SELECT * FROM clientes WHERE (codigo LIKE :codigo) AND (nombre LIKE :nombre) AND (sector LIKE :sector) ORDER BY orden ASC";
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':codigo', "%$codigo%", PDO::PARAM_STR);
 $stmt->bindValue(':nombre', "%$nombre%", PDO::PARAM_STR);
@@ -193,6 +193,7 @@ if (isset($_GET['modificar_id'])) {
                     <table>
                     <tr>
                         <th>Codigo</th>
+                        <th>Orden</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Dirección</th>
@@ -205,6 +206,7 @@ if (isset($_GET['modificar_id'])) {
                         foreach ($result as $row) {
                             echo "<tr>
                             <td> ". $row["codigo"] ."</td>
+                            <td> ". $row["orden"] ."</td>
                             <td> ". $row["nombre"] ."</td>
                             <td> ". $row["apellido"] ."</td>
                             <td> ". $row["direccion"] ."</td>

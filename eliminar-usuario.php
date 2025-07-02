@@ -9,11 +9,28 @@ if (!isset($_SESSION['user'])) {
 if (isset($_GET['delete_id'])) {
     try {
         $delete_id = $_GET['delete_id'];
+
+        // Obtener el orden del usuario a eliminar
+        $sql_orden = "SELECT orden FROM clientes WHERE codigo = :codigo";
+        $stmt_orden = $conn->prepare($sql_orden);
+        $stmt_orden->bindParam(':codigo', $delete_id, PDO::PARAM_INT);
+        $stmt_orden->execute();
+        $orden_eliminado = (int)$stmt_orden->fetchColumn();
+
+        // Eliminar el usuario
         $sql = "DELETE FROM clientes WHERE codigo = :delete_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':delete_id', $delete_id, PDO::PARAM_INT);
         if ($stmt->execute()) {
+            $sql_shift = "UPDATE clientes SET orden = orden - 1 WHERE orden > :orden_eliminado";
+            $stmt_shift = $conn->prepare($sql_shift);
+            $stmt_shift->bindValue(':orden_eliminado', $orden_eliminado, PDO::PARAM_INT);
+            $stmt_shift->execute();
             $delete_msg = "Registro eliminado con éxito";
+
+            // ✅ Redirigir para evitar doble ejecución en recarga
+            header("Location: eliminar-usuario.php?msg=Registro eliminado con éxito");
+            exit();
         } else {
             $delete_msg = "Error al eliminar el registro";
         }
@@ -27,7 +44,7 @@ $codigo = isset($_POST['codigo']) ? $_POST['codigo'] : '';
 $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
 $sector = isset($_POST['sector']) ? $_POST['sector'] : '';
 
-$sql = "SELECT * FROM clientes WHERE (codigo LIKE :codigo) AND (nombre LIKE :nombre) AND (sector LIKE :sector)";
+$sql = "SELECT * FROM clientes WHERE (codigo LIKE :codigo) AND (nombre LIKE :nombre) AND (sector LIKE :sector) ORDER BY orden ASC";
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':codigo', "%$codigo%", PDO::PARAM_STR);
 $stmt->bindValue(':nombre', "%$nombre%", PDO::PARAM_STR);
@@ -98,6 +115,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <table>
                     <tr>
+                        <th>Orden</th>
                         <th>Código</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
@@ -110,6 +128,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     if (count($result) > 0) {
                         foreach ($result as $row) {
                             echo "<tr>
+                            <td> " . $row["orden"] . "</td>
                             <td> " . $row["codigo"] . "</td>
                             <td> " . $row["nombre"] . "</td>
                             <td> " . $row["apellido"] . "</td>
@@ -126,7 +145,6 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     }
                     ?>
                 </table>
-
             </main>
         </div>
     </div>
