@@ -115,8 +115,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <table>
                     <tr>
-                        <th>Orden</th>
                         <th>Código</th>
+                        <th>Orden</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Dirección</th>
@@ -128,8 +128,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     if (count($result) > 0) {
                         foreach ($result as $row) {
                             echo "<tr>
-                            <td> " . $row["orden"] . "</td>
                             <td> " . $row["codigo"] . "</td>
+                            <td> " . $row["orden"] . "</td>
                             <td> " . $row["nombre"] . "</td>
                             <td> " . $row["apellido"] . "</td>
                             <td> " . $row["direccion"] . "</td>

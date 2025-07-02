@@ -127,8 +127,8 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <table>
                         <tr>
-                            <th>Orden</th>
                             <th>Código</th>
+                            <th>Orden</th>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Fundador</th>
@@ -159,8 +159,8 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 $factura = $stmt->fetch(PDO::FETCH_ASSOC);
                                 $lectura_anterior = $factura ? $factura['lectura_final'] : 0;
                                 echo "<tr>
-                                    <td> " . $row["orden"] . "</td>
                                     <td> " . $row["codigo"] . "</td>
+                                    <td> " . $row["orden"] . "</td>
                                     <td> " . $row["nombre"] . "</td>
                                     <td> " . $row["apellido"] . "</td>
                                     <td> " . $row["fundador"] . "</td>
