@@ -28,9 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         //Logica para agregar orden
-
         if ($orden_input === 'ninguna') {
-            // Obtener el último orden del mismo sector
+            //Obtener el último orden del mismo sector
             $sql_max_sector = "SELECT MAX(orden) AS max_orden FROM clientes WHERE sector = :sector";
             $stmt_max_sector = $conn->prepare($sql_max_sector);
             $stmt_max_sector->bindParam(':sector', $sector);
@@ -48,15 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $nuevo_orden = $max_result['max_orden'] + 1;
             }
         } else {
-            //Si se seleccionó un orden específico
             $nuevo_orden = intval($orden_input);
-
-            // 4. Mover hacia abajo los clientes que tienen orden igual o mayor
-            $sql_update = "UPDATE clientes SET orden = orden + 1 WHERE orden >= :nuevo_orden";
-            $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bindParam(':nuevo_orden', $nuevo_orden, PDO::PARAM_INT);
-            $stmt_update->execute();
         }
+        // 4. Mover hacia abajo los clientes que tienen orden igual o mayor
+        $sql_update = "UPDATE clientes SET orden = orden + 1 WHERE orden >= :nuevo_orden";
+        $stmt_update = $conn->prepare($sql_update);
+        $stmt_update->bindParam(':nuevo_orden', $nuevo_orden, PDO::PARAM_INT);
+        $stmt_update->execute();
         // Si el usuario no existe, insertarlo
         $sql = "INSERT INTO clientes (nombre, apellido, direccion, estrato, sector, uso, codigo_medidor, diametro_medidor, fundador, activo, orden) VALUES (:nombre, :apellido, :direccion, :estrato, :sector, :uso, :codigo_medidor, :diametro_medidor, :fundador, :activo, :orden)";
         $stmt = $conn->prepare($sql);
