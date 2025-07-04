@@ -42,21 +42,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Solo mover si el orden ha cambiado
             if ($orden_nuevo !== $orden_anterior) {
-                if ($orden_nuevo < $orden_anterior) {
-                    // Desplazar hacia abajo los que están entre nuevo y anterior (inclusive nuevo, exclusivo anterior)
+                if ($orden_anterior == 0) {
+                    // Cliente nuevo o sin orden previa: insertar en la posición deseada
                     $sql_shift = "UPDATE clientes 
                                 SET orden = orden + 1 
-                                WHERE orden >= :nuevo_orden AND orden < :anterior_orden AND codigo != :codigo";
+                                WHERE orden >= :nuevo_orden 
+                                AND codigo != :codigo";
+                } elseif ($orden_nuevo < $orden_anterior) {
+                    // Movimiento hacia arriba
+                    $sql_shift = "UPDATE clientes 
+                                SET orden = orden + 1 
+                                WHERE orden >= :nuevo_orden 
+                                AND orden < :anterior_orden 
+                                AND codigo != :codigo";
                 } else {
-                    // Desplazar hacia arriba los que están entre anterior y nuevo (exclusivo anterior, inclusivo nuevo)
+                    // Movimiento hacia abajo
                     $sql_shift = "UPDATE clientes 
                                 SET orden = orden - 1 
-                                WHERE orden <= :nuevo_orden AND orden > :anterior_orden AND codigo != :codigo";
+                                WHERE orden <= :nuevo_orden 
+                                AND orden > :anterior_orden 
+                                AND codigo != :codigo";
                 }
 
+                // Preparar la consulta
                 $stmt_shift = $conn->prepare($sql_shift);
                 $stmt_shift->bindValue(':nuevo_orden', $orden_nuevo, PDO::PARAM_INT);
-                $stmt_shift->bindValue(':anterior_orden', $orden_anterior, PDO::PARAM_INT);
+                if ($orden_anterior != 0) {
+                    $stmt_shift->bindValue(':anterior_orden', $orden_anterior, PDO::PARAM_INT);
+                }
                 $stmt_shift->bindValue(':codigo', $codigo, PDO::PARAM_STR);
                 $stmt_shift->execute();
             }
