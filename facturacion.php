@@ -11,20 +11,22 @@ if (!isset($_SESSION['user'])) {
 $f_inicio = "";
 $f_fin = "";
 $f_cobro = "";
+$f_cobro_2 = "";
 $mes = "";
 $sector = "";
 
 // Procesar los datos del formulario cuando se envían
-if (isset($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && isset($_POST['fecha_cobro']) && isset($_POST['mes_facturado'])) {
+if (isset($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && isset($_POST['fecha_cobro']) && isset($_POST['fecha_cobro_2']) && isset($_POST['mes_facturado'])) {
     $f_inicio = $_POST['fecha_inicio'];
     $f_fin = $_POST['fecha_fin'];
     $f_cobro = $_POST['fecha_cobro'];
+    $f_cobro_2 = $_POST['fecha_cobro_2'];
 
     // Alternativa sin IntlDateFormatter: Array de meses en español
     $meses = [
-        1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril',
-        5 => 'mayo', 6 => 'junio', 7 => 'julio', 8 => 'agosto',
-        9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'
+        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
     ];
     $mes_numero = date('n', strtotime($f_fin)); // 'n' devuelve el mes sin ceros iniciales
     $mes = $meses[$mes_numero];
@@ -108,6 +110,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <p><strong>Fecha de inicio de cobro:</strong> <?php echo isset($f_inicio) ? $f_inicio : 'N/A'; ?></p>
                             <p><strong>Fecha de finalización de cobro:</strong> <?php echo isset($f_fin) ? $f_fin : 'N/A'; ?></p>
                             <p><strong>Fecha límite de pago:</strong> <?php echo isset($f_cobro) ? $f_cobro : 'N/A'; ?></p>
+                            <p><strong>Fecha límite de pago 2:</strong> <?php echo isset($f_cobro_2) ? $f_cobro_2 : 'N/A'; ?></p>
                             <p><strong>Mes a facturar:</strong> <?php echo isset($mes) ? $mes : 'N/A'; ?></p>
                         </div>
                         <div class="button-group">
@@ -121,6 +124,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <input type="hidden" id="f_inicio" name="fecha_inicio" value="<?php echo $f_inicio; ?>">
                             <input type="hidden" id="f_fin" name="fecha_fin" value="<?php echo $f_fin; ?>">
                             <input type="hidden" id="f_cobro" name="fecha_cobro" value="<?php echo $f_cobro; ?>">
+                            <input type="hidden" id="f_cobro_2" name="fecha_cobro_2" value="<?php echo $f_cobro_2; ?>">
                             <input type="hidden" id="mes_facturado" name="mes_facturado" value="<?php echo $mes; ?>">
                             <button type="submit">Filtrar</button>
                         </form>
@@ -169,7 +173,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td> <input type='number' class='lectura-actual' name='lectura_actual[]' onchange='calculateConsumo(this)'></td>
                                     <td> <input type='number' class='consumo' name='consumo[]' readonly> </td>
                                     <td class= 'table-cell'> <textarea class='anotaciones' name='anotaciones[]'>Ninguna</textarea> </td>
-                                    <td> <input type='number' class='deuda' name='deuda[]' value='" . $valor_deuda . "' readonly> </td>
+                                    <td> <input type='number' class='deuda' name='deuda[]' value='" . $valor_deuda . "'> </td>
                                     <td> 0 </td>
                                     <td> 0 </td>
                                 </tr>";
@@ -211,10 +215,11 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-group">
                         <label for="f-cobro">Fecha límite de pago:</label>
                         <input type="date" id="f-cobro" name="fecha_cobro" value="<?php echo $f_cobro; ?>" required>
+                        <input type="date" id="f-cobro-2" name="fecha_cobro_2" value="<?php echo $f_cobro_2; ?>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes a facturar:</label>
-                        <label id="mes-label"><?php echo isset($mes) ? ucfirst($mes) : ''; ?></label>
+                        <label id="mes-label"><?php echo isset($mes) ? ucfirst(strtolower(trim($mes))) : ''; ?></label>
                     </div>
                     <input type="hidden" id="sector_hidden" name="sector_facturado" value="<?php echo $sector; ?>">
                     <input type="hidden" id="mes_hidden" name="mes_facturado" value="<?php echo $mes; ?>">
@@ -233,11 +238,35 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const fFin = document.getElementById('f-fin');
             const fInicio = document.getElementById('f-inicio');
             const fCobro = document.getElementById('f-cobro');
+            const fCobro2 = document.getElementById('f-cobro-2');
             const mesLabel = document.getElementById('mes-label');
             const mesHidden = document.getElementById('mes_hidden');
             const calculateButton = document.getElementById('calculateButton');
             const saveButton = document.getElementById('saveButton');
             const facturasExistentes = <?php echo json_encode($facturasExistentes); ?>;
+
+            // Función para actualizar el mes en tiempo real
+            fCobro.addEventListener('change', function() {
+                // Obtén el valor del campo fecha_cobro1
+                const valorFecha = fCobro.value;
+                // Verifica que el campo no esté vacío
+                if (valorFecha) {
+                    // Crear un objeto Date a partir del valor de fecha
+                    const fecha = new Date(valorFecha);
+                    
+                    // Sumar un día a la fecha
+                    fecha.setDate(fecha.getDate() + 1);
+                    
+                    // Formatear la fecha para el campo input (YYYY-MM-DD)
+                    const fechaFormateada = fecha.toISOString().split('T')[0];
+                    
+                    // Actualizar el campo fecha_cobro2 con la nueva fecha
+                    fCobro2.value = fechaFormateada;    
+                } else {
+                    // Si fecha_cobro1 está vacío, limpia fecha_cobro2
+                    fCobro2.value = '';
+                }
+            });
 
             // Función para actualizar el mes en tiempo real
             fFin.addEventListener('change', function() {
@@ -443,8 +472,8 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         if (index > 0) { // Ignorar la cabecera
                             let cells = row.querySelectorAll('td');
                             let consumo = parseFloat(row.querySelector('.consumo').value) || 0;
-                            let tipoUso = cells[4].innerText;
-                            let fundador = cells[3].innerText;
+                            let tipoUso = cells[5].innerText;
+                            let fundador = cells[4].innerText;
 
                             let resultado = calcularValorTotal(consumo, tipoUso, fundador, <?php echo json_encode($precios); ?>);
 
@@ -453,12 +482,12 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             let cobroConsumo = resultado.cobroConsumo;
 
                             row.setAttribute('data-cobro-factura', valorTotal);
-                            cells[10].innerText = valorTotal.toFixed(); // Actualizar la celda de total factura
+                            cells[11].innerText = valorTotal.toFixed(); // Actualizar la celda de total factura
 
                             let deuda = parseFloat(row.querySelector('.deuda').value) || 0;
                             valorTotal = valorTotal + deuda;
 
-                            cells[11].innerText = valorTotal.toFixed(); // Actualizar la celda de total
+                            cells[12].innerText = valorTotal.toFixed(); // Actualizar la celda de total
 
                             row.setAttribute('data-cobro-basico', cobroBasico);
                             row.setAttribute('data-cobro-consumo', cobroConsumo);
@@ -487,18 +516,18 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                             let rowData = {
                                 codigo: cells[0].innerText,
-                                nombre: cells[1].innerText,
-                                apellido: cells[2].innerText,
-                                fundador: cells[3].innerText,
+                                nombre: cells[2].innerText,
+                                apellido: cells[3].innerText,
+                                fundador: cells[4].innerText,
                                 lectura_anterior: lectura_anterior,
                                 lectura_actual: lectura_actual,
                                 consumo: consumo,
                                 anotaciones: anotaciones,
                                 deuda: deuda,
-                                total: cells[11].innerText,
+                                total: cells[12].innerText,
                                 valor_consumo: valorConsumo,
                                 valor_basico: cobroBasico,
-                                valor_factura: cells[10].innerText
+                                valor_factura: cells[11].innerText
                             };
                             data.push(rowData);
                         }
@@ -508,6 +537,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         fecha_inicio: '<?php echo $f_inicio; ?>',
                         fecha_fin: '<?php echo $f_fin; ?>',
                         fecha_cobro: '<?php echo $f_cobro; ?>',
+                        fecha_cobro_2: '<?php echo $f_cobro_2; ?>',
                         mes_facturado: mesHidden.value,
                         sector_facturado: '<?php echo $sector; ?>'
                     };

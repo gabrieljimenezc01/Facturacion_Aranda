@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fi = $generalData['fecha_inicio'];
     $ff = $generalData['fecha_fin'];
     $fc = $generalData['fecha_cobro'];
+    $fc_2 = $generalData['fecha_cobro_2'];
     $mes = $generalData['mes_facturado'];
     $sector = $generalData['sector_facturado'];
 
@@ -81,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $valor_factura = $row['valor_factura'];
                 $estado = 'NO';
     
-                $query = "INSERT INTO factura (`cod_cliente`, `fecha_inicio_cobro`, `fecha_fin_cobro`, `mes_cobrado`, `lectura_inicial`, `lectura_final`, `consumo_m3`, `valor_total`, `valor_consumo`, `valor_basico`, `valor_factura`, `valor_deuda`, `Anotaciones`, `estado_pago`, `fecha_limite_pago`) VALUES (:cod_cliente, :fecha_inicio_cobro, :fecha_fin_cobro, :mes_cobrado, :lectura_inicial, :lectura_final, :consumo_m3, :valor_total, :valor_consumo, :valor_basico, :valor_factura, :valor_deuda, :Anotaciones,  :estado_pago, :fecha_limite_pago)";
+                $query = "INSERT INTO factura (cod_cliente, fecha_inicio_cobro, fecha_fin_cobro, mes_cobrado, lectura_inicial, lectura_final, consumo_m3, valor_total, valor_consumo, valor_basico, valor_factura, valor_deuda, Anotaciones, estado_pago, fecha_limite_pago, fecha_limite_pago_2) VALUES (:cod_cliente, :fecha_inicio_cobro, :fecha_fin_cobro, :mes_cobrado, :lectura_inicial, :lectura_final, :consumo_m3, :valor_total, :valor_consumo, :valor_basico, :valor_factura, :valor_deuda, :Anotaciones,  :estado_pago, :fecha_limite_pago, :fecha_limite_pago_2)";
                 $stmt = $conn->prepare($query);
                 $stmt->bindValue(':cod_cliente', $codigo);
                 $stmt->bindValue(':fecha_inicio_cobro', $fi);
@@ -98,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindValue(':Anotaciones', $anotaciones);
                 $stmt->bindValue(':estado_pago', $estado);
                 $stmt->bindValue(':fecha_limite_pago', $fc);
+                $stmt->bindValue(':fecha_limite_pago_2', $fc_2);
                 $stmt->execute();
             }
             // Confirmar la transacción
@@ -111,6 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode(["status" => "error", "message" => "Database error: " . $error_message]);
     }
 } else {
-    echo json_encode(["status" => "error", "message" => "Invalid request method"]);
+    echo json_encode(["status" => "error", "message" => "Invalid request method"]);
 }
 ?>
