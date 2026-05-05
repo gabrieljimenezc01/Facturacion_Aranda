@@ -134,7 +134,7 @@ if (isset($_POST['search'])) {
                     <input type="text" id="anotaciones" class="modify-input" name="anotaciones" value="<?php echo $anotaciones; ?>">
 
                     <label for="deuda">Deuda:</label>
-                    <input type="number" id="deuda" name="deuda" value="<?php echo $deuda; ?>">
+                    <input type="number" id="deuda" name="deuda" value="<?php echo $deuda; ?>" readonly>
 
                     <label for="valorfactura">Valor Factura:</label>
                     <input type="number" id="valorfactura" name="valor_factura" value="<?php echo $total_factura; ?>" readonly>
@@ -162,6 +162,7 @@ if (isset($_POST['search'])) {
         
         document.getElementById('lectura-anterior').addEventListener('input', calcularValores);
         document.getElementById('lectura-actual').addEventListener('input', calcularValores);
+        document.getElementById('deuda').addEventListener('input', calcularValores);
 
         function calcularValores() {
             // Obtener los valores de las lecturas
@@ -186,17 +187,17 @@ if (isset($_POST['search'])) {
             if (!isNaN(lecturaActual) && !isNaN(lecturaAnterior)) {
                 const consumo = lecturaActual - lecturaAnterior;
                 consumoInput.value = consumo;
-                const resultado = calcularValorTotal(consumo, tipoUso, fundador, precios);
+                const resultado = calcularValorTotal(consumo, tipoUso, fundador, precios, deudaInput);
 
                 valorFacturaInput.value = resultado.valorTotal;
                 document.getElementById('valor_basico').value = resultado.cobroBasico;
                 document.getElementById('valor_consumo').value = resultado.cobroConsumo;
-                const total = resultado.valorTotal + deudaInput;
+                const total = resultado.valorTotal ;
                 totalInput.value = total;
             }
         }
 
-        function calcularValorTotal(consumo, tipoUso, fundador, precios) {
+        function calcularValorTotal(consumo, tipoUso, fundador, precios, deudaInput) {
             let valorTotal = 0;
             let valorBase = 0;
             let valorConsumo = 0;
@@ -243,6 +244,7 @@ if (isset($_POST['search'])) {
                 }
             });
             valorConsumo = valorTotal - valorBase;
+            valorTotal = valorTotal + deudaInput;
             return {
                 valorTotal: valorTotal,
                 cobroBasico: valorBase,

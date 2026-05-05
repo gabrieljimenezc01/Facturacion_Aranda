@@ -24,9 +24,9 @@ if (isset($_POST['fecha_inicio']) && isset($_POST['fecha_fin']) && isset($_POST[
 
     // Alternativa sin IntlDateFormatter: Array de meses en español
     $meses = [
-        1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril',
-        5 => 'mayo', 6 => 'junio', 7 => 'julio', 8 => 'agosto',
-        9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'
+        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
     ];
     $mes_numero = date('n', strtotime($f_fin)); // 'n' devuelve el mes sin ceros iniciales
     $mes = $meses[$mes_numero];
@@ -55,7 +55,7 @@ if (!empty($sector) && !empty($f_fin)) {
 // Consultar la base de datos para obtener los usuarios del sector especificado
 $clientes = [];
 if (!empty($sector) && !$facturasExistentes) {
-    $query = "SELECT codigo, nombre, apellido, fundador, uso FROM clientes WHERE sector = :sector and activo='SI'";
+    $query = "SELECT codigo, nombre, apellido, fundador, uso, orden FROM clientes WHERE sector = :sector and activo='SI' ORDER BY orden ASC";
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':sector', $sector);
     $stmt->execute();
@@ -132,6 +132,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <table>
                         <tr>
                             <th>Código</th>
+                            <th>Orden</th>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Fundador</th>
@@ -163,6 +164,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 $lectura_anterior = $factura ? $factura['lectura_final'] : 0;
                                 echo "<tr>
                                     <td> " . $row["codigo"] . "</td>
+                                    <td> " . $row["orden"] . "</td>
                                     <td> " . $row["nombre"] . "</td>
                                     <td> " . $row["apellido"] . "</td>
                                     <td> " . $row["fundador"] . "</td>
@@ -171,7 +173,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td> <input type='number' class='lectura-actual' name='lectura_actual[]' onchange='calculateConsumo(this)'></td>
                                     <td> <input type='number' class='consumo' name='consumo[]' readonly> </td>
                                     <td class= 'table-cell'> <textarea class='anotaciones' name='anotaciones[]'>Ninguna</textarea> </td>
-                                    <td> <input type='number' class='deuda' name='deuda[]' value='" . $valor_deuda . "' readonly> </td>
+                                    <td> <input type='number' class='deuda' name='deuda[]' value='" . $valor_deuda . "'> </td>
                                     <td> 0 </td>
                                     <td> 0 </td>
                                 </tr>";
@@ -217,7 +219,7 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <div class="form-group">
                         <label for="mes">Mes a facturar:</label>
-                        <label id="mes-label"><?php echo isset($mes) ? ucfirst($mes) : ''; ?></label>
+                        <label id="mes-label"><?php echo isset($mes) ? ucfirst(strtolower(trim($mes))) : ''; ?></label>
                     </div>
                     <input type="hidden" id="sector_hidden" name="sector_facturado" value="<?php echo $sector; ?>">
                     <input type="hidden" id="mes_hidden" name="mes_facturado" value="<?php echo $mes; ?>">
@@ -472,8 +474,8 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             
                             let cells = row.querySelectorAll('td');
                             let consumo = parseFloat(row.querySelector('.consumo').value) || 0;
-                            let tipoUso = cells[4].innerText;
-                            let fundador = cells[3].innerText;
+                            let tipoUso = cells[5].innerText;
+                            let fundador = cells[4].innerText;
 
                             let resultado = calcularValorTotal(consumo, tipoUso, fundador, <?php echo json_encode($precios); ?>);
 
@@ -482,12 +484,12 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             let cobroConsumo = resultado.cobroConsumo;
 
                             row.setAttribute('data-cobro-factura', valorTotal);
-                            cells[10].innerText = valorTotal.toFixed(); // Actualizar la celda de total factura
+                            cells[11].innerText = valorTotal.toFixed(); // Actualizar la celda de total factura
 
                             let deuda = parseFloat(row.querySelector('.deuda').value) || 0;
                             valorTotal = valorTotal + deuda;
 
-                            cells[11].innerText = valorTotal.toFixed(); // Actualizar la celda de total
+                            cells[12].innerText = valorTotal.toFixed(); // Actualizar la celda de total
 
                             row.setAttribute('data-cobro-basico', cobroBasico);
                             row.setAttribute('data-cobro-consumo', cobroConsumo);
@@ -516,18 +518,18 @@ $precios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                             let rowData = {
                                 codigo: cells[0].innerText,
-                                nombre: cells[1].innerText,
-                                apellido: cells[2].innerText,
-                                fundador: cells[3].innerText,
+                                nombre: cells[2].innerText,
+                                apellido: cells[3].innerText,
+                                fundador: cells[4].innerText,
                                 lectura_anterior: lectura_anterior,
                                 lectura_actual: lectura_actual,
                                 consumo: consumo,
                                 anotaciones: anotaciones,
                                 deuda: deuda,
-                                total: cells[11].innerText,
+                                total: cells[12].innerText,
                                 valor_consumo: valorConsumo,
                                 valor_basico: cobroBasico,
-                                valor_factura: cells[10].innerText
+                                valor_factura: cells[11].innerText
                             };
                             data.push(rowData);
                         }

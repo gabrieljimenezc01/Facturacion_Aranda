@@ -98,7 +98,7 @@ class PDF extends FPDF
         $this->SetX($x);
         $this->Cell(125, 6, 'Anotaciones: ' . $this->factura['Anotaciones'], 1, 1);
         $this->SetX($x);
-        $this->Cell(125, 6, utf8_decode('Fecha límite de pago:  ') . $this->factura['fecha_limite_pago'], 1, 1);
+        $this->Cell(125, 6, utf8_decode('Fecha límite de pago:  ') . $this->factura['fecha_limite_pago'].'  y  '.$this->factura['fecha_limite_pago_2'], 1, 1);
         $this->Ln(4);
 
         $this->SetX($x);

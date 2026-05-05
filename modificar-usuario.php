@@ -16,6 +16,7 @@ $codigo_medidor = '';
 $diametro_medidor = '';
 $fundador = '';
 $activo = " ";
+$orden = " ";
 require 'db.php';
 
 $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
@@ -25,7 +26,7 @@ $codigo = isset($_POST['codigo']) ? $_POST['codigo'] : '';
 $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
 $sector = isset($_POST['sector']) ? $_POST['sector'] : '';
 
-$sql = "SELECT * FROM clientes WHERE (codigo LIKE :codigo) AND (nombre LIKE :nombre) AND (sector LIKE :sector)";
+$sql = "SELECT * FROM clientes WHERE (codigo LIKE :codigo) AND (nombre LIKE :nombre) AND (sector LIKE :sector) ORDER BY orden ASC";
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':codigo', "%$codigo%", PDO::PARAM_STR);
 $stmt->bindValue(':nombre', "%$nombre%", PDO::PARAM_STR);
@@ -52,6 +53,7 @@ if (isset($_GET['modificar_id'])) {
         $diametro_medidor = $usuario['diametro_medidor'];
         $fundador = $usuario['fundador'];
         $activo = $usuario['activo'];
+        $orden = $usuario['orden'];
     }
 }
 
@@ -154,6 +156,13 @@ if (isset($_GET['modificar_id'])) {
                             <input type="text" id="diametro_medidor" name="diametro_medidor" required value="<?php echo htmlspecialchars($diametro_medidor); ?>" maxlength="50">
                             <span class="error-message" id="error-diametro-medidor"></span>
                         </div>
+                        <div class="form-group">
+                            <label for="orden">Orden:</label>
+                            <select id="orden" name="orden">
+                                <option value="ninguna" selected>Ninguna</option>
+                            </select>
+                            <span class="error-message" id="error-orden"></span>
+                        </div>
                         <div class="form-group checkbox-group center-row">
                             <label for="activo">Activo:</label>
                             <input type="checkbox" id="activo" name="activo" <?php echo $activo === 'SI' ? 'checked' : ''; ?> >
@@ -184,6 +193,7 @@ if (isset($_GET['modificar_id'])) {
                     <table>
                     <tr>
                         <th>Codigo</th>
+                        <th>Orden</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Dirección</th>
@@ -196,6 +206,7 @@ if (isset($_GET['modificar_id'])) {
                         foreach ($result as $row) {
                             echo "<tr>
                             <td> ". $row["codigo"] ."</td>
+                            <td> ". $row["orden"] ."</td>
                             <td> ". $row["nombre"] ."</td>
                             <td> ". $row["apellido"] ."</td>
                             <td> ". $row["direccion"] ."</td>
@@ -217,6 +228,51 @@ if (isset($_GET['modificar_id'])) {
     </div>
 </body>
 <script>
+    //Agregar la casilla orden dinamicamente-------------------------------------------------------------------------------------------------------------------------
+
+    const ordenActual = <?php echo isset($orden) ? json_encode($orden) : 'null'; ?>;
+    const sectorOriginal = <?php echo json_encode($sector); ?>;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const sectorInput = document.getElementById('sector');
+        const ordenSelect = document.getElementById('orden');
+
+        function cargarOrdenes(sector, forzar) {
+            fetch('obtener_ordenes.php?sector=' + sector)
+                .then(response => response.json())
+                .then(data => {
+                    ordenSelect.innerHTML = `<option value="ninguna">Ninguna</option>`;
+                    let max = 0;
+                    data.forEach(orden => {
+                        orden = parseInt(orden);
+                        ordenSelect.innerHTML += `<option value="${orden}">${orden}</option>`;
+                        if (orden > max) max = orden;
+                    });
+
+                    // Si hay orden actual del usuario, selecciónala
+                    if (ordenActual !== " " && forzar !== true) {
+                        ordenSelect.value = ordenActual;
+                    }else {
+                        ordenSelect.value = "ninguna";
+                    }
+                });
+        }
+
+        // Cargar al inicio si ya hay un sector cargado
+        if (sectorInput.value.trim()) {
+            cargarOrdenes(sectorInput.value.trim());
+        }
+
+        sectorInput.addEventListener('input', () => {
+            const sector = sectorInput.value.trim();
+            if (sector !== '') {
+                const forzar = (sector !== sectorOriginal);
+                cargarOrdenes(sector, forzar);
+            }
+        });
+    });
+
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('form');
         const nombre = document.getElementById('nombre');
