@@ -1,9 +1,9 @@
 <?php
 session_start();
-require 'db.php';
+require_once __DIR__ . '/../../config/db.php';
 
 if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");
     exit();
 };
 ?>
@@ -14,10 +14,10 @@ if (!isset($_SESSION['user'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ventana Principal</title>
-    <link rel="stylesheet" href="principal-styles.css">
-    <link rel="shortcut icon" href="../img/disponibilidad.png">
-    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../public/css/principal-styles.css">
+    <link rel="shortcut icon" href="../../../public/img/disponibilidad.png">
+    <link rel="stylesheet" href="../../../public/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="../../../public/img/logo.png" type="image/x-icon">
 </head>
 
 <body>
@@ -29,7 +29,7 @@ if (!isset($_SESSION['user'])) {
             <button class="user-btn" onclick="window.location.href='facturacion.php'">Facturación</button>
             <button class="user-btn" onclick="window.location.href='listados.php'">Listados</button>
             <button class="user-btn" onclick="window.location.href='precio.php'">Precios</button>
-            <button class="user-btn" onclick="window.location.href='logout.php'">Cerrar Sesión</button>
+            <button class="user-btn" onclick="window.location.href='../auth/logout.php'">Cerrar Sesión</button>
         </div>
     </div>
     <div class="main-container">

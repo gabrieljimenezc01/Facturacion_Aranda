@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('img/fondo1.jpg') no-repeat center center fixed; /* Ruta local a la imagen de textura */
+    background: url('../img/fondo1.jpg') no-repeat center center fixed; /* Ruta local a la imagen de textura */
     background-size: cover;
     margin: 0;
     padding: 0;

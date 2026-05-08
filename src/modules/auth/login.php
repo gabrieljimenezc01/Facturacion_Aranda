@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de Sesión</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="login-styles.css">
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../public/css/login-styles.css">
+    <link rel="stylesheet" href="../../../public/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="../../../public/img/logo.png" type="image/x-icon">
 </head>
 <body>
     <div class="container">
@@ -46,7 +46,7 @@
             </form>
         </div>
         <div class="image-container">
-            <img src="img/prueba1.jpg" alt="Imagen de la Empresa1">
+            <img src="../../../public/img/prueba1.jpg" alt="Imagen de la Empresa1">
         </div>
     </div>
 

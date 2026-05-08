@@ -1,7 +1,8 @@
 <?php
-require 'db.php';
-require 'encryption.php'; // Include encryption functions
-require 'Validator.php'; // Include Validator class
+require_once '../../config/db.php';
+require_once '../../includes/encryption.php';
+require_once '../../includes/Validator.php';
+
 session_start();
 
 $key = 'secure_key_Facturacion_Aranda'; // Use the same secret key for encryption and decryption
@@ -28,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user && decrypt($user['contraseña'], $key) === $password) {
             $_SESSION['user'] = $user['usuario'];
             $_SESSION['password'] = $user['contraseña'];
-            header("Location: principal.php");
+            header("Location: ../reportes/principal.php");
             exit();
         } else {
             $_SESSION['errors'] = ["general" => "Usuario o contraseña incorrectos."];
