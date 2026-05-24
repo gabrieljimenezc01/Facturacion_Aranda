@@ -1,7 +1,7 @@
 <?php
-require 'db.php';
-require 'encryption.php'; // Include encryption functions
-require 'Validator.php'; // Include Validator class
+require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/config/database.php';
+require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/includes/encryption.php';
+require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/includes/Validator.php';
 session_start();
 
 $key = 'secure_key_Facturacion_Aranda'; // Use the same secret key for encryption and decryption
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bindParam(':password', $encrypted_password);
             $stmt->execute();
 
-            header("Location: principal.php");
+            header("Location: login.php");
             exit();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();

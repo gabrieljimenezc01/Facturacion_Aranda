@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/config/database.php';
 
 if (isset($_GET['sector'])) {
     $sector = $_GET['sector'];

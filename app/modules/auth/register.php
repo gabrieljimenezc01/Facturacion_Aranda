@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="register-styles.css">
+    <link rel="stylesheet" href="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/css/register-styles.css">
 </head>
 <body>
     <div class="container">
@@ -57,7 +57,7 @@
             </form>
         </div>
         <div class="image-container">
-            <img src="img/prueba1.jpg" alt="Imagen de la Empresa1">
+            <img src="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/img/prueba1.jpg" alt="Imagen de la Empresa1">
         </div>
     </div>
 

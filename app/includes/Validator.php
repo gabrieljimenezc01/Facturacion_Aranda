@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/db.php';
+// Validator.php - VERSIÓN CORREGIDA
 
 class Validator {
   private $errors = [];
@@ -12,8 +12,10 @@ class Validator {
   }
 
   public function validateDuplicateUsername($username) {
+    // Nota: Esta función usa $conn, pero debe recibirla o usarse donde $conn existe
+    // Por ahora la dejamos, pero asumimos que $conn está disponible globalmente
     global $conn;
-    if (!empty($username)) {
+    if (!empty($username) && isset($conn)) {
       $sql = "SELECT COUNT(*) FROM login WHERE usuario = :user";
       $stmt = $conn->prepare($sql);
       $stmt->bindParam(':user', $username, PDO::PARAM_STR);

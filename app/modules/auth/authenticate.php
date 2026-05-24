@@ -1,11 +1,17 @@
 <?php
-require_once '../../config/db.php';
-require_once '../../includes/encryption.php';
-require_once '../../includes/Validator.php';
+// authenticate.php - Versión corregida para la nueva estructura
+
+// Cargar configuración central (esto reemplaza los require individuales)
+require_once dirname(__DIR__, 2) . '/config/app.php';
+
+// Asegurar conexión a base de datos
+if (!isset($conn)) {
+    require_once APP_PATH . '/config/database.php';
+}
 
 session_start();
 
-$key = 'secure_key_Facturacion_Aranda'; // Use the same secret key for encryption and decryption
+$key = 'secure_key_Facturacion_Aranda';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['user']);
@@ -18,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($validator->hasErrors()) {
         $_SESSION['errors'] = $validator->getErrors();
         $_SESSION['old_data'] = $_POST;
-        header("Location: login.php");
+        header("Location: " . PUBLIC_URL . "/index.php?page=login");
         exit();
     } else {
         $stmt = $conn->prepare("SELECT usuario, contraseña FROM login WHERE usuario = :username");
@@ -29,12 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user && decrypt($user['contraseña'], $key) === $password) {
             $_SESSION['user'] = $user['usuario'];
             $_SESSION['password'] = $user['contraseña'];
-            header("Location: ../reportes/principal.php");
+            header("Location: " . PUBLIC_URL . "/index.php?page=dashboard");
             exit();
         } else {
             $_SESSION['errors'] = ["general" => "Usuario o contraseña incorrectos."];
             $_SESSION['old_data'] = $_POST;
-            header("Location: login.php");
+            header("Location: " . PUBLIC_URL . "/index.php?page=login");
             exit();
         }
     }

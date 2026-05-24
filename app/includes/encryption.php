@@ -1,5 +1,6 @@
 <?php
-// encryption.php
+// encryption.php - Solo las funciones, sin variable $key
+
 function encrypt($data, $key) {
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
     $encrypted = openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv);
@@ -11,5 +12,5 @@ function decrypt($data, $key) {
     return openssl_decrypt($encrypted_data, 'aes-256-cbc', $key, 0, $iv);
 }
 
-$key = 'secure_key_Facturacion_Aranda'; // This should be stored securely
+// NO definir $key aquí porque ya se define en authenticate.php y register.php
 ?>
