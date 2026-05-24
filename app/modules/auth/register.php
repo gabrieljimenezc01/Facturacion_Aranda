@@ -6,16 +6,8 @@ if (!defined('BASE_PATH')) {
     require_once dirname(__DIR__, 3) . '/config/app.php';
 }
 
-// Iniciar sesión para manejar errores
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Si ya está logueado, redirigir al dashboard
-if (isset($_SESSION['user'])) {
-    header("Location: " . PUBLIC_URL . "/index.php?page=dashboard");
-    exit();
-}
+require_once APP_PATH . '/middleware/AuthMiddleware.php';
+checkGuest();
 
 $errors = isset($_SESSION['errors']) ? $_SESSION['errors'] : [];
 $old_data = isset($_SESSION['old_data']) ? $_SESSION['old_data'] : [];

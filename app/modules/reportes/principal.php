@@ -5,17 +5,10 @@
 if (!defined('BASE_PATH')) {
     require_once dirname(__DIR__, 3) . '/config/app.php';
 }
+// Verificar autenticación con middleware
+require_once APP_PATH . '/middleware/AuthMiddleware.php';
+checkAuth();
 
-// Iniciar sesión si no está iniciada
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Verificar que el usuario está autenticado
-if (!isset($_SESSION['user'])) {
-    header("Location: " . PUBLIC_URL . "/index.php?page=login");
-    exit();
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">

@@ -4,6 +4,9 @@ if (!defined('BASE_PATH')) {
     require_once dirname(__DIR__, 3) . '/config/app.php';
 }
 
+require_once APP_PATH . '/middleware/AuthMiddleware.php';
+checkGuest();
+
 $errors = isset($_SESSION['errors']) ? $_SESSION['errors'] : [];
 $old_data = isset($_SESSION['old_data']) ? $_SESSION['old_data'] : [];
 unset($_SESSION['errors'], $_SESSION['old_data']);
