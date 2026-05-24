@@ -1,10 +1,19 @@
 <?php
-require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/config/database.php';
-require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/includes/encryption.php';
-require_once '../C:\xampp\htdocs\Facturacion_Aranda/app/includes/Validator.php';
+// create_users.php - Procesa el registro de nuevos usuarios
+
+// Cargar configuración central
+if (!defined('BASE_PATH')) {
+    require_once dirname(__DIR__, 3) . '/config/app.php';
+}
+
+// Asegurar conexión a base de datos
+if (!isset($conn)) {
+    require_once APP_PATH . '/config/database.php';
+}
+
 session_start();
 
-$key = 'secure_key_Facturacion_Aranda'; // Use the same secret key for encryption and decryption
+$key = 'secure_key_Facturacion_Aranda';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = trim($_POST['nombre']);
@@ -13,19 +22,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = trim($_POST['password']);
     $special = trim($_POST['special']);
     
-    $errors = [];
     $validator = new Validator();
     $validator->validateSpecialPassword($special);
     $validator->validatePassword($password);
     $validator->validateUsername($username);
+    $validator->validateDuplicateUsername($username);  // ← Verifica si ya existe
     $validator->validateName($nombre);
     $validator->validateSurname($apellido);
 
     if ($validator->hasErrors()) {
-        $errors = $validator->getErrors();
-        $_SESSION['errors'] = $errors;
+        $_SESSION['errors'] = $validator->getErrors();
         $_SESSION['old_data'] = $_POST;
-        header("Location: register.php");
+        header("Location: " . PUBLIC_URL . "/index.php?page=register");
         exit();
     } else {
         $encrypted_password = encrypt($password, $key);
@@ -38,11 +46,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bindParam(':password', $encrypted_password);
             $stmt->execute();
 
-            header("Location: login.php");
+            // Redirigir al login con mensaje de éxito
+            $_SESSION['success'] = "Usuario registrado exitosamente. Ahora puedes iniciar sesión.";
+            header("Location: " . PUBLIC_URL . "/index.php?page=login");
             exit();
         } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
+            $_SESSION['errors'] = ["general" => "Error al registrar usuario: " . $e->getMessage()];
+            $_SESSION['old_data'] = $_POST;
+            header("Location: " . PUBLIC_URL . "/index.php?page=register");
+            exit();
         }
     }
+} else {
+    header("Location: " . PUBLIC_URL . "/index.php?page=register");
+    exit();
 }
 ?>

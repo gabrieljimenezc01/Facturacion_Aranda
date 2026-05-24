@@ -45,6 +45,12 @@ switch($request) {
     case 'precios':
         require_once APP_PATH . '/modules/reportes/precio.php';
         break;
+    case 'logout':
+        require_once APP_PATH . '/modules/auth/logout.php';
+        break;
+    case 'create_user':
+        require_once APP_PATH . '/modules/auth/create_users.php';
+        break;
     default:
         require_once APP_PATH . '/modules/auth/login.php';
         break;
