@@ -1,6 +1,19 @@
 <?php
+// procesar_modificacion.php - Procesa la modificación de clientes
 
-require 'db.php';
+// Cargar configuración central
+if (!defined('BASE_PATH')) {
+    require_once dirname(__DIR__, 3) . '/config/app.php';
+}
+
+// Verificar autenticación
+require_once APP_PATH . '/middleware/AuthMiddleware.php';
+checkAuth();
+
+// Asegurar conexión a base de datos
+if (!isset($conn)) {
+    require_once APP_PATH . '/config/database.php';
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $codigo = isset($_POST['codigo']) ? $_POST['codigo'] : '';
@@ -25,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $usuario = $stmt_verificar->fetch(PDO::FETCH_ASSOC);
 
         if ($usuario) {
-            //logica de orden
+            // Lógica de orden
             $orden_anterior = (int)$usuario['orden'];
             $orden_nuevo = $orden;
 
@@ -35,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt_max = $conn->prepare($sql_max);
                 $stmt_max->bindValue(':sector', $sector, PDO::PARAM_STR);
                 $stmt_max->execute();
-                $orden_nuevo = (int)$stmt_max->fetchColumn() + 1;
+                $max_orden = $stmt_max->fetchColumn();
+                $orden_nuevo = ($max_orden ? (int)$max_orden : 0) + 1;
             } else {
                 $orden_nuevo = (int)$orden;
             }
@@ -43,11 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Solo mover si el orden ha cambiado
             if ($orden_nuevo !== $orden_anterior) {
                 if ($orden_anterior == 0) {
-                    // Cliente nuevo o sin orden previa: insertar en la posición deseada
+                    // Cliente sin orden previa: insertar en la posición deseada
                     $sql_shift = "UPDATE clientes 
                                 SET orden = orden + 1 
                                 WHERE orden >= :nuevo_orden 
                                 AND codigo != :codigo";
+                    $stmt_shift = $conn->prepare($sql_shift);
+                    $stmt_shift->bindValue(':nuevo_orden', $orden_nuevo, PDO::PARAM_INT);
+                    $stmt_shift->bindValue(':codigo', $codigo, PDO::PARAM_STR);
                 } elseif ($orden_nuevo < $orden_anterior) {
                     // Movimiento hacia arriba
                     $sql_shift = "UPDATE clientes 
@@ -55,6 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE orden >= :nuevo_orden 
                                 AND orden < :anterior_orden 
                                 AND codigo != :codigo";
+                    $stmt_shift = $conn->prepare($sql_shift);
+                    $stmt_shift->bindValue(':nuevo_orden', $orden_nuevo, PDO::PARAM_INT);
+                    $stmt_shift->bindValue(':anterior_orden', $orden_anterior, PDO::PARAM_INT);
+                    $stmt_shift->bindValue(':codigo', $codigo, PDO::PARAM_STR);
                 } else {
                     // Movimiento hacia abajo
                     $sql_shift = "UPDATE clientes 
@@ -62,20 +83,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE orden <= :nuevo_orden 
                                 AND orden > :anterior_orden 
                                 AND codigo != :codigo";
-                }
-
-                // Preparar la consulta
-                $stmt_shift = $conn->prepare($sql_shift);
-                $stmt_shift->bindValue(':nuevo_orden', $orden_nuevo, PDO::PARAM_INT);
-                if ($orden_anterior != 0) {
+                    $stmt_shift = $conn->prepare($sql_shift);
+                    $stmt_shift->bindValue(':nuevo_orden', $orden_nuevo, PDO::PARAM_INT);
                     $stmt_shift->bindValue(':anterior_orden', $orden_anterior, PDO::PARAM_INT);
+                    $stmt_shift->bindValue(':codigo', $codigo, PDO::PARAM_STR);
                 }
-                $stmt_shift->bindValue(':codigo', $codigo, PDO::PARAM_STR);
+                
                 $stmt_shift->execute();
             }
             
-            // Usuario existe, proceder con la actualización
-            $sql_update = "UPDATE clientes SET nombre = :nombre, apellido = :apellido, direccion = :direccion, estrato = :estrato, sector = :sector, uso = :uso, codigo_medidor = :codigo_medidor, diametro_medidor = :diametro_medidor, fundador = :fundador, activo = :activo, orden = :orden WHERE codigo = :codigo";
+            // Actualizar el usuario
+            $sql_update = "UPDATE clientes SET 
+                            nombre = :nombre, 
+                            apellido = :apellido, 
+                            direccion = :direccion, 
+                            estrato = :estrato, 
+                            sector = :sector, 
+                            uso = :uso, 
+                            codigo_medidor = :codigo_medidor, 
+                            diametro_medidor = :diametro_medidor, 
+                            fundador = :fundador, 
+                            activo = :activo, 
+                            orden = :orden 
+                          WHERE codigo = :codigo";
+            
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bindValue(':nombre', $nombre, PDO::PARAM_STR);
             $stmt_update->bindValue(':apellido', $apellido, PDO::PARAM_STR);
@@ -87,27 +118,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt_update->bindValue(':diametro_medidor', $diametro_medidor, PDO::PARAM_STR);
             $stmt_update->bindValue(':fundador', $fundador, PDO::PARAM_STR);
             $stmt_update->bindValue(':activo', $activo, PDO::PARAM_STR);
+            $stmt_update->bindValue(':orden', $orden_nuevo, PDO::PARAM_INT);
             $stmt_update->bindValue(':codigo', $codigo, PDO::PARAM_STR);
-            $stmt_update->bindValue(':orden', $orden_nuevo, PDO::PARAM_STR);
 
             if ($stmt_update->execute()) {
-                header('Location: modificar-usuario.php?msg=Usuario modificado exitosamente');
+                header("Location: " . PUBLIC_URL . "/index.php?page=modificar_cliente&msg=" . urlencode("Usuario modificado exitosamente"));
                 exit();
             } else {
-                header('Location: modificar-usuario.php?msg=Error al modificar el usuario');
+                header("Location: " . PUBLIC_URL . "/index.php?page=modificar_cliente&msg=" . urlencode("Error al modificar el usuario"));
                 exit();
             }
         } else {
             // Usuario no existe
-            header('Location: modificar-usuario.php?msg=Usuario no encontrado');
+            header("Location: " . PUBLIC_URL . "/index.php?page=modificar_cliente&msg=" . urlencode("Usuario no encontrado"));
             exit();
         }
-    }else{
-        // Usuario no existe
-        header('Location: modificar-usuario.php?msg=Usuario no encontrado o no seleccionado');
+    } else {
+        // Código no proporcionado
+        header("Location: " . PUBLIC_URL . "/index.php?page=modificar_cliente&msg=" . urlencode("Usuario no encontrado o no seleccionado"));
         exit();
     }
-}else {
-    header('Location: modificar-usuario.php');
+} else {
+    header("Location: " . PUBLIC_URL . "/index.php?page=modificar_cliente");
     exit();
 }
+?>

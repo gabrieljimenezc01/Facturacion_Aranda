@@ -1,10 +1,16 @@
 <?php
-    session_start();
-    if (!isset($_SESSION['user'])) {
-        header("Location: http://localhost/facturacion_aranda/public/index.php?page=auth/login.php");
-        exit();
-    };
-    $add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
+// agregar-usuario.php - Formulario para agregar clientes
+
+// Cargar configuración central
+if (!defined('BASE_PATH')) {
+    require_once dirname(__DIR__, 3) . '/config/app.php';
+}
+
+// Verificar autenticación
+require_once APP_PATH . '/middleware/AuthMiddleware.php';
+checkAuth();
+
+$add_msg = isset($_GET['msg']) ? $_GET['msg'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -12,17 +18,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal</title>
+    <title>Agregar Cliente - Acueducto de Aranda</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/fonts/fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/css/agregar-usuario-styles.css">
-    <link rel="shortcut icon" href="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="<?php echo PUBLIC_URL; ?>/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo PUBLIC_URL; ?>/css/agregar-usuario-styles.css">
+    <link rel="shortcut icon" href="<?php echo PUBLIC_URL; ?>/img/logo.png" type="image/x-icon">
 </head>
 <body>
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-brand">Módulo Clientes</div>
-            <div><a href="../reportes/principal.php"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
+            <div><a href="<?php echo PUBLIC_URL; ?>/index.php?page=dashboard"><i class="fa fa-home" aria-hidden="true" style="color:white; font-size: 30px"></i></a></div>
             <div>
                 <button class="logout-button" onclick="cerrar()">Cerrar Sesión</button>
             </div>
@@ -30,9 +36,9 @@
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="agregar-usuario.php"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
-                    <li><a href="modificar-usuario.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
-                    <li><a href="eliminar-usuario.php"><i class="fa fa-user-times" aria-hidden="true"></i><br> Eliminar Usuario</a></li>
+                    <li><a href="<?php echo PUBLIC_URL; ?>/index.php?page=agregar_cliente"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
+                    <li><a href="<?php echo PUBLIC_URL; ?>/index.php?page=modificar_cliente"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
+                    <li><a href="<?php echo PUBLIC_URL; ?>/index.php?page=eliminar_cliente"><i class="fa fa-user-times" aria-hidden="true"></i><br> Eliminar Usuario</a></li>
                 </ul>
             </aside>
             <main class="main-content">
@@ -41,7 +47,9 @@
                     <p class="msg"><?php echo htmlspecialchars($add_msg); ?></p>
                 <?php endif; ?>
                 <div class="mensajes"></div>
-                <form method="POST" action="procesar_registro.php" onsubmit="return validarFormulario()">
+                
+                <!-- CORREGIDO: action apunta al front controller -->
+                <form method="POST" action="<?php echo PUBLIC_URL; ?>/index.php?page=procesar_cliente" onsubmit="return validarFormulario()">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="nombre">Nombre:</label>
@@ -104,17 +112,17 @@
                             <span class="error-message" id="error-diametro-medidor"></span>
                         </div>
                         <div class="form-group">
-                            <label for="diametro_medidor">Orden:</label>
+                            <label for="orden">Orden:</label>
                             <select id="orden" name="orden">
                                 <option value="ninguna" selected>Ninguna</option>
                             </select>
-                            <span class="error-message" id="error-diametro-medidor"></span>
+                            <span class="error-message" id="error-orden"></span>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group checkbox-group center-row">
                             <label for="fundador">Fundador:</label>
-                            <input type="checkbox" id="fundador" name="fundador">
+                            <input type="checkbox" id="fundador" name="fundador" value="1">
                         </div>
                     </div>
                     <button type="submit">Agregar</button>
@@ -123,5 +131,8 @@
         </div>
     </div>
 </body>
-<script src="http://localhost/facturacion_aranda/http://localhost/facturacion_aranda/public/js/agregar-usuario.js"></script>
+<script>
+    var PUBLIC_URL = '<?php echo PUBLIC_URL; ?>';
+</script>
+<script src="<?php echo PUBLIC_URL; ?>/js/agregar-usuario.js"></script>
 </html>

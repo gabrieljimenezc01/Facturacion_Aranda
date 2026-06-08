@@ -1,10 +1,22 @@
 <?php
-session_start();
-require 'db.php';
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit();
-};
+// eliminar-usuario.php - Eliminar clientes
+
+// Cargar configuración central
+if (!defined('BASE_PATH')) {
+    require_once dirname(__DIR__, 3) . '/config/app.php';
+}
+
+// Verificar autenticación
+require_once APP_PATH . '/middleware/AuthMiddleware.php';
+checkAuth();
+
+// Asegurar conexión a base de datos
+if (!isset($conn)) {
+    require_once APP_PATH . '/config/database.php';
+}
+
+$msgerro = '';
+$mensaje = isset($_GET['msg']) ? $_GET['msg'] : '';
 
 if (isset($_GET['delete_id'])) {
     try {
@@ -26,16 +38,20 @@ if (isset($_GET['delete_id'])) {
             $stmt_shift = $conn->prepare($sql_shift);
             $stmt_shift->bindValue(':orden_eliminado', $orden_eliminado, PDO::PARAM_INT);
             $stmt_shift->execute();
-            $delete_msg = "Registro eliminado con éxito";
 
-            // ✅ Redirigir para evitar doble ejecución en recarga
-            header("Location: eliminar-usuario.php?msg=Registro eliminado con éxito");
+            // ✅ CORREGIDO: Redirigir al front controller
+            header("Location: " . PUBLIC_URL . "/index.php?page=eliminar_cliente&msg=" . urlencode("Registro eliminado con éxito"));
             exit();
         } else {
-            $delete_msg = "Error al eliminar el registro";
+            // ✅ CORREGIDO: Redirigir con mensaje de error
+            header("Location: " . PUBLIC_URL . "/index.php?page=eliminar_cliente&msg=" . urlencode("Error al eliminar el registro"));
+            exit();
         }
     } catch (PDOException $e) {
-        $msgerro =  " <h2>No se puede eliminar: El cliente tiene deudas </h2>" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+        $msgerro = "No se puede eliminar: El cliente tiene deudas";
+        // ✅ CORREGIDO: Redirigir con mensaje de error
+        header("Location: " . PUBLIC_URL . "/index.php?page=eliminar_cliente&msg=" . urlencode($msgerro));
+        exit();
     }
 }
 
@@ -61,9 +77,9 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Principal</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="deudas-styles.css">
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="<?php echo PUBLIC_URL; ?>/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo PUBLIC_URL; ?>/css/deudas-styles.css">
+    <link rel="shortcut icon" href="<?php echo PUBLIC_URL; ?>/img/logo.png" type="image/x-icon">
 </head>
 
 <body>
@@ -78,9 +94,9 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="content">
             <aside class="sidebar">
                 <ul class="menu-list">
-                    <li><a href="agregar-usuario.php"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
-                    <li><a href="modificar-usuario.php"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
-                    <li><a href="eliminar-usuario.php"><i class="fa fa-user-times" aria-hidden="true"></i><br> Eliminar Usuario</a></li>
+                     <li><a href="<?php echo PUBLIC_URL; ?>/index.php?page=agregar_cliente"><i class="fa fa-user-plus" aria-hidden="true"></i><br> Agregar Usuario</a></li>
+                    <li><a href="<?php echo PUBLIC_URL; ?>/index.php?page=modificar_cliente"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><br> Modificar Datos Usuario</a></li>
+                    <li><a href="<?php echo PUBLIC_URL; ?>/index.php?page=eliminar_cliente"><i class="fa fa-user-times" aria-hidden="true"></i><br> Eliminar Usuario</a></li>
                 </ul>
             </aside>
             <main class="main-content">
@@ -136,8 +152,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td> " . $row["sector"] . "</td>
                             <td> " . $row["fundador"] . "</td>
                             <td>
-                                <a href='eliminar-usuario.php?delete_id=" . $row["codigo"] . "'  onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>
-                                <img class='img-borrar' src='./img/borrar.png' alt='Eliminar'>
+                                <a href='" . PUBLIC_URL . "/index.php?page=eliminar_cliente&delete_id=" . $row["codigo"] . "' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\");'>
+                                    <img class='img-borrar' src='" . PUBLIC_URL . "/img/borrar.png' alt='Eliminar'>
                                 </a>
                             </td>
                           </tr>";
@@ -150,8 +166,9 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </body>
 <script>
-    function cerrar(){    
-        setTimeout(function(){ window.location="<?= 'logout.php' ?>"; }, 0000); // Aquí es donde se "redirecciona" luego de trancurridos los N segundos que indiques
+    var PUBLIC_URL = '<?php echo PUBLIC_URL; ?>';
+    function cerrar() {    
+        window.location.href = PUBLIC_URL + '/index.php?page=logout';
     }
 </script>
 </html>

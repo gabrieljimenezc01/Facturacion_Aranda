@@ -1,3 +1,6 @@
+// Script para el formulario de agregar usuario
+
+
 // Logica para asignar opciones de orden dinamicamente
 document.getElementById('sector').addEventListener('input', function () {
     const sector = this.value.trim();
@@ -7,7 +10,8 @@ document.getElementById('sector').addEventListener('input', function () {
     ordenSelect.innerHTML = '<option value="ninguna" selected>Ninguna</option>';
 
     if (sector !== '') {
-        fetch(`obtener_ordenes.php?sector=${encodeURIComponent(sector)}`)
+        // RUTA CORREGIDA - Usar el front controller
+        fetch(PUBLIC_URL + '/index.php?page=obtener_ordenes&sector=' + encodeURIComponent(sector))
             .then(response => response.json())
             .then(ordenes => {
                 if (ordenes.length > 0) {
@@ -160,6 +164,7 @@ function validarFormulario() {
     return valido;
 }
 
-function cerrar(){    
-    setTimeout(function(){ window.location = "../auth/logout.php"; }, 0);
+function cerrar() {    
+    // CORREGIDO: Usar la URL base + logout
+    window.location.href = PUBLIC_URL + '/index.php?page=logout';
 }

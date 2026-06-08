@@ -51,6 +51,24 @@ switch($request) {
     case 'create_user':
         require_once APP_PATH . '/modules/auth/create_users.php';
         break;
+    case 'agregar_cliente':
+        require_once APP_PATH . '/modules/usuarios/agregar-usuario.php';
+        break;
+    case 'procesar_cliente':
+        require_once APP_PATH . '/modules/usuarios/procesar_registro.php';
+        break;
+    case 'modificar_cliente':
+        require_once APP_PATH . '/modules/usuarios/modificar-usuario.php';
+        break;
+    case 'procesar_modificacion':
+        require_once APP_PATH . '/modules/usuarios/procesar_modificacion.php';
+        break;
+    case 'obtener_ordenes':
+        require_once APP_PATH . '/modules/utils/obtener_ordenes.php';
+        break;
+    case 'eliminar_cliente':
+        require_once APP_PATH . '/modules/usuarios/eliminar-usuario.php';
+        break;
     default:
         require_once APP_PATH . '/modules/auth/login.php';
         break;

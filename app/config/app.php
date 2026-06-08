@@ -3,7 +3,7 @@
 define('BASE_PATH', realpath(dirname(__DIR__, 2)));
 define('APP_PATH', BASE_PATH . '/app');
 define('PUBLIC_PATH', BASE_PATH . '/public');
-define('PUBLIC_URL', 'http://localhost/facturacion_aranda/public');
+define('PUBLIC_URL', 'http://localhost/Facturacion_Aranda/public');
 
 // Configuración de la base de datos
 define('DB_HOST', 'localhost');
